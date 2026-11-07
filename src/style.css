@@ -654,3 +654,9 @@ nav{position:fixed!important;top:78px!important;left:50%;transform:translateX(-5
 .shirt-wrap .cap{position:absolute;left:1px;bottom:2px;z-index:5;min-width:15px;height:15px;display:grid;place-items:center;border:1px solid #18220c;border-radius:3px;padding:0 3px;font-size:9px;line-height:1;font-weight:1000;box-shadow:0 1px 4px #0008}
 .shirt-wrap .cap.vc{background:#fff000;color:#4e4700;border-color:#5b5100}
 .shirt-wrap .live-dot{top:auto;right:1px;bottom:2px;width:12px;height:12px}
+
+
+/* Standalone Improve Your Squad page */
+.improve-page{margin:20px 0;min-height:420px;padding:18px}
+.improve-page .ideal-pitch-wrap{width:100%}
+[hidden]{display:none!important}
