@@ -1422,3 +1422,31 @@ nav a[href="/fpl-tips-transfer"].on{
 @media(prefers-reduced-motion:reduce){
   .player>.injury-stamp,.player .shirt-wrap>.injury-stamp{animation:none!important;opacity:1!important;transform:translate(-50%,-50%) rotate(-3deg) scale(1)!important}
 }
+
+
+/* Injured stamp refinement: smaller impact, then stays pressed for the full minute */
+.player:has(.injury-stamp)>.player-name{
+  background:#b42335!important;
+  border-color:#ff6677!important;
+  color:#fff!important;
+  box-shadow:0 2px 7px #0005!important;
+}
+.player>.injury-stamp,
+.player .shirt-wrap>.injury-stamp{
+  width:72px!important;
+  animation:injury-stamp-stomp 60s linear infinite!important;
+}
+@keyframes injury-stamp-stomp{
+  0%,1.2%{opacity:0;transform:translate(-50%,-155%) rotate(-8deg) scale(1.12)}
+  1.6%{opacity:1;transform:translate(-50%,-48%) rotate(-3deg) scale(1.04)}
+  1.9%{opacity:1;transform:translate(-50%,-48%) rotate(-3deg) scale(.92,.84)}
+  2.3%,98.5%{opacity:1;transform:translate(-50%,-48%) rotate(-3deg) scale(1)}
+  99.2%{opacity:0;transform:translate(-50%,-155%) rotate(-8deg) scale(1.08)}
+  100%{opacity:0;transform:translate(-50%,-155%) rotate(-8deg) scale(1.12)}
+}
+@media(prefers-reduced-motion:reduce){
+  .player>.injury-stamp,.player .shirt-wrap>.injury-stamp{
+    animation:none!important;opacity:1!important;
+    transform:translate(-50%,-48%) rotate(-3deg) scale(1)!important;
+  }
+}
