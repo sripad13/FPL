@@ -1,0 +1,17 @@
+# TheSportzine FPL
+
+> TheSportzine FPL is a fantasy football dashboard for viewing a Fantasy Premier League manager's squad, points, rank, fixtures, leagues and player price movement.
+
+## Main application
+
+- [FPL Dashboard](https://thesportzine-fpl.pages.dev/): Open the dashboard and enter an FPL manager ID to view public Fantasy Premier League data.
+
+## Data and privacy
+
+- The dashboard retrieves publicly available Fantasy Premier League data for the manager ID entered by the visitor.
+- The manager ID is saved locally in the visitor's browser to make returning to the dashboard easier.
+- The site does not provide an official Fantasy Premier League account login or manage transfers on a user's behalf.
+
+## Publisher
+
+- [TheSportzine](https://thesportzine.com/): Independent sports coverage and analysis.
