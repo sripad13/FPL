@@ -1234,3 +1234,16 @@ nav a[href="/fpl-tips-transfer"].on{
 @media(max-width:700px){
  #squad>.welcome-stats-row{margin-bottom:12px}
 }
+
+/* Squad panel inset and live-points swing indicator */
+#squad.squad.panel{padding:18px!important}
+#squad>.welcome-stats-row{width:100%;margin:0 0 16px}
+.live-points-value{display:flex;align-items:baseline;gap:10px;min-width:0}
+.live-points-value .rank-change{font-size:12px;font-weight:900;white-space:nowrap}
+.welcome-live-points{min-width:0}
+@media(max-width:700px){
+ #squad.squad.panel{padding:11px!important}
+ #squad>.welcome-stats-row{margin-bottom:12px}
+ .live-points-value{gap:7px}
+ .live-points-value .rank-change{font-size:10px}
+}
