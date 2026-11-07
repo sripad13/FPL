@@ -583,3 +583,9 @@ nav a:hover,nav a.on{border-color:var(--brand-yellow)!important}
 .league-entry-action .league-swing.up{color:#39d98a}
 .league-entry-action .league-swing.down{color:#ff5964}
 .league-entry-action .league-swing.neutral{color:#8b98aa;font-size:17px}
+
+/* Align each league rank at the right, immediately before its swing arrow */
+.league-entry-toggle{display:grid;grid-template-columns:minmax(0,1fr) auto 24px;align-items:center;gap:14px}
+.league-entry-rank{min-width:42px;text-align:right;color:#f7f7fb;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.league-entry-action{min-width:24px;justify-content:center}
+@media(max-width:700px){.league-entry-toggle{gap:10px}.league-entry-rank{font-size:12px;min-width:34px}}
