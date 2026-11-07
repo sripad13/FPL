@@ -790,3 +790,24 @@ nav a[href="/fpl-tips-transfer"].on{
  .transfer-player>strong{font-size:11px}
  .transfer-gain strong{font-size:19px}
 }
+
+
+/* Formation-aware XI swaps and player corner controls */
+.ideal-edit-player{position:relative;padding:4px 3px 7px}
+.ideal-move-arrow{position:absolute;top:0;right:0;z-index:5;width:23px;height:23px;display:grid;place-items:center;border:1px solid #fff00080;border-radius:50%;background:#fff000;color:#080d19;font-size:17px;line-height:1;font-weight:900;cursor:pointer;box-shadow:0 2px 8px #0006}
+.ideal-move-arrow:hover,.ideal-move-arrow:focus-visible{transform:scale(1.12);outline:2px solid #fff;outline-offset:2px}
+.ideal-move-arrow.up{position:absolute;top:7px;right:7px}
+.ideal-bench-player{position:relative;padding-right:30px}
+.ideal-bench-player .ideal-swap-menu{right:0;top:34px}
+.ideal-swap-menu{position:absolute;z-index:20;top:25px;right:-5px;width:min(210px,70vw);max-height:220px;overflow:auto;padding:5px;border:1px solid #fff00070;border-radius:8px;background:#091321;box-shadow:0 12px 30px #000b}
+.ideal-swap-option{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;padding:8px;border:0;border-bottom:1px solid #ffffff18;background:transparent;color:#f5f7fb;text-align:left;font-size:10px;cursor:pointer}
+.ideal-swap-option:last-child{border-bottom:0}
+.ideal-swap-option:hover,.ideal-swap-option:focus-visible{background:#fff00018;outline:none}
+.ideal-swap-option small{color:#aab8ca;white-space:nowrap}
+.ideal-player-points{font-size:9px;color:#fff000}
+.ideal-bench-player .ideal-move-arrow{top:7px;right:7px}
+@media(max-width:600px){
+ .ideal-move-arrow{width:21px;height:21px;font-size:15px}
+ .ideal-edit-player{padding-top:5px}
+ .ideal-swap-menu{width:min(190px,65vw)}
+}
