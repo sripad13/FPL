@@ -1450,3 +1450,21 @@ nav a[href="/fpl-tips-transfer"].on{
     transform:translate(-50%,-48%) rotate(-3deg) scale(1)!important;
   }
 }
+
+
+/* Simple, legible INJURED stamp — no raster artwork */
+.player>.injury-stamp,
+.player .shirt-wrap>.injury-stamp{
+  width:max-content!important;height:auto!important;
+  min-width:0!important;max-width:none!important;
+  padding:5px 9px!important;
+  border:2px solid #fff!important;border-radius:2px!important;
+  background:#d20d2e!important;color:#fff!important;
+  font:900 11px/1 "DM Sans",Arial,sans-serif!important;
+  letter-spacing:1px!important;text-align:center!important;
+  white-space:nowrap!important;
+  box-shadow:0 3px 7px #0009!important;
+  filter:none!important;
+}
+.player>.injury-stamp{top:32px!important}
+.player .shirt-wrap>.injury-stamp{top:50%!important}
