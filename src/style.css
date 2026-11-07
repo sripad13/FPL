@@ -1281,3 +1281,16 @@ nav a[href="/fpl-tips-transfer"].on{
 #squad .benchrow .pts{font-size:10px!important;line-height:1.15;padding:3px 6px!important}
 #squad .starting .pts small,
 #squad .benchrow .pts small{font-size:inherit!important}
+
+/* Header FPL ID: compact labelled field after a successful team load */
+.header-manager-fields{position:relative}
+.header-manager-fields>label{display:block;margin:0 0 3px;color:#aebbd0;font-size:9px;font-weight:900;letter-spacing:1px;line-height:1;text-transform:uppercase}
+.header-manager-fields input{order:1}
+.header-manager-fields button{order:2}
+.header-manager.team-loaded .header-manager-fields button{display:none!important}
+.header-manager.team-loaded .header-manager-fields{justify-content:center;gap:0}
+.header-manager.team-loaded .header-manager-fields input{height:34px}
+@media(max-width:700px){
+ .header-manager-fields>label{font-size:8px;margin-bottom:3px}
+ .header-manager.team-loaded .header-manager-fields input{height:31px}
+}
