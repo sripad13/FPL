@@ -308,3 +308,40 @@ header{min-width:0;gap:12px}
  .starting .pts{font-size:9px;padding:2px 4px}
  .position-label{font-size:7px}
 }
+
+/* Squad poster treatment, shirt status and fixture chips */
+.squad.panel{border:3px solid #ed2939;border-radius:3px;background:#080b13}
+.squad-rank-heading{background:repeating-linear-gradient(135deg,#ffffff09 0 1px,transparent 1px 8px),linear-gradient(110deg,#151a27,#080b13)}
+.squad-rank-heading h2{font-size:clamp(30px,3.4vw,48px);letter-spacing:1px}
+.pitchstage{background:repeating-linear-gradient(135deg,#ffffff06 0 1px,transparent 1px 9px),linear-gradient(#0c1421,#070b12 72%,#061811);padding-top:20px}
+.pitch{height:690px;background:repeating-linear-gradient(0deg,#ffffff0a 0 1px,transparent 1px 24%),repeating-linear-gradient(0deg,#ffffff09 0 85px,#0000000b 85px 170px),linear-gradient(90deg,#08713f,#079451 50%,#08713f);outline:2px solid #7af0a5a8;box-shadow:inset 0 0 38px #00190faa,0 18px 30px #0009}
+.starting .pitch-row{flex-basis:24%;height:24%;padding-top:14px}
+.starting .player{max-width:132px}
+.shirt-wrap{position:relative;width:68px;height:64px;display:flex;align-items:center;justify-content:center;margin-bottom:3px}
+.shirt-wrap .shirt{width:59px;height:56px;margin:0}
+.live-dot{position:absolute;top:2px;right:3px;width:12px;height:12px;border-radius:50%;background:#20f58a;border:2px solid #063a26;box-shadow:0 0 0 2px #20f58a55,0 0 12px #20f58a;z-index:4}
+.opponent{margin-top:4px;padding:4px 7px;background:#07131df2;border:1px solid #ffffff75;border-radius:3px;color:#f5fff9;font-size:clamp(10px,1vw,13px);font-weight:900;white-space:nowrap;box-shadow:0 3px 7px #00140d88}
+.starting .player-name{font-size:clamp(11px,1.1vw,14px);max-width:100%}
+@media(max-width:1000px){
+ .pitch{height:670px}
+}
+@media(max-width:700px){
+ .topstats{display:flex!important;visibility:visible!important}
+ .topstats span{display:grid!important}
+ .topstats span:nth-child(2){display:grid!important}
+ .topstats small{font-size:9px!important}
+ .topstats b{font-size:13px!important}
+ .pitch{height:590px}
+ .starting .pitch-row{flex-basis:24%;height:24%}
+ .shirt-wrap{width:48px;height:47px}
+ .shirt-wrap .shirt{width:43px;height:41px}
+ .live-dot{width:10px;height:10px;top:1px;right:0}
+ .opponent{font-size:clamp(8px,2.2vw,10px);padding:3px 4px}
+}
+@media(max-width:380px){
+ .pitch{height:550px}
+ .shirt-wrap{width:39px;height:40px}
+ .shirt-wrap .shirt{width:35px;height:34px}
+ .live-dot{width:9px;height:9px}
+ .opponent{font-size:8px;padding:2px 3px}
+}
