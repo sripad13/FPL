@@ -589,3 +589,11 @@ nav a:hover,nav a.on{border-color:var(--brand-yellow)!important}
 .league-entry-rank{min-width:42px;text-align:right;color:#f7f7fb;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
 .league-entry-action{min-width:24px;justify-content:center}
 @media(max-width:700px){.league-entry-toggle{gap:10px}.league-entry-rank{font-size:12px;min-width:34px}}
+
+/* Place fixtures and leagues side by side */
+.details{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr);gap:18px;align-items:start}
+.details>#fixtures,.details>#leagues{min-width:0;width:100%}
+.league-entry-toggle{display:grid;grid-template-columns:minmax(0,1fr) 64px 24px;align-items:center;gap:12px}
+.league-entry-rank{display:block;width:100%;text-align:right;justify-self:end;font-variant-numeric:tabular-nums}
+.league-entry-action{justify-self:end}
+@media(max-width:900px){.details{grid-template-columns:1fr}}
