@@ -97,6 +97,21 @@ export async function onRequest({ params }) {
       ? Number(previousOverallRank) - currentRank
       : null;
     const score = entryHistory.points ?? starting.reduce((sum, p) => sum + p.points * p.multiplier, 0);
+    const leagueLists = {
+      classic: manager.leagues?.classic || [],
+      h2h: manager.leagues?.h2h || []
+    };
+    const allLeagueIds = [...new Set([...leagueLists.classic, ...leagueLists.h2h].map(l => l.id))];
+    const leagueStandings = new Map();
+    await Promise.all(allLeagueIds.map(async leagueId => {
+      try {
+        const data = await fpl(`leagues-classic/${leagueId}/standings/?page_standings=1`);
+        leagueStandings.set(leagueId, {
+          total: data.standings?.has_next ? null : (data.standings?.results || []).length,
+          hasMore: Boolean(data.standings?.has_next)
+        });
+      } catch { leagueStandings.set(leagueId, { total: null, hasMore: true }); }
+    }));
 
     return json({
       manager: {
