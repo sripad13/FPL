@@ -1360,3 +1360,33 @@ nav a[href="/fpl-tips-transfer"].on{
 @media(prefers-reduced-motion:reduce){
   .player:has(.injury-ambulance) .injury-ambulance{animation:none;offset-path:none}
 }
+
+
+/* Corrected ambulance route: name sweep first, then a clear orbit around the shirt */
+.player:has(.injury-ambulance){position:relative;isolation:isolate}
+.player>.injury-ambulance{
+  position:absolute!important;
+  z-index:20!important;
+  left:50%!important;top:74px!important;right:auto!important;bottom:auto!important;
+  width:20px!important;height:20px!important;
+  display:grid!important;place-items:center!important;
+  font-size:16px!important;line-height:1!important;
+  offset-path:none;
+  transform:translateX(-50%);
+  animation:injury-ambulance-route 60s linear infinite!important;
+  will-change:left,top,offset-distance,transform;
+  pointer-events:none;
+}
+@keyframes injury-ambulance-route{
+  0%{left:0%;top:74px;offset-path:none;transform:translateX(-50%)}
+  2%{left:100%;top:74px;offset-path:none;transform:translateX(-50%)}
+  3%{left:50%;top:32px;offset-path:ellipse(42% 36px at 50% 32px);offset-distance:0%;transform:translate(-50%,-50%)}
+  8%{left:50%;top:32px;offset-path:ellipse(42% 36px at 50% 32px);offset-distance:100%;transform:translate(-50%,-50%)}
+  9%{left:calc(50% + 29px);top:57px;offset-path:none;offset-distance:0%;transform:translate(-50%,-50%)}
+  100%{left:calc(50% + 29px);top:57px;offset-path:none;offset-distance:0%;transform:translate(-50%,-50%)}
+}
+.bench.bench-dugout .player>.injury-ambulance{top:91px!important}
+@media(prefers-reduced-motion:reduce){
+  .player>.injury-ambulance{animation:none!important;left:calc(50% + 29px)!important;top:57px!important;offset-path:none!important}
+  .bench.bench-dugout .player>.injury-ambulance{top:57px!important}
+}
