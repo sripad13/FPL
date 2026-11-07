@@ -47,7 +47,8 @@ document.addEventListener("click",e=>{
   if(outIndex<0||inIndex<0)return;
   const outgoing=outList[outIndex],incoming=inList[inIndex];
   const next={GKP:state.xi.filter(p=>p.position==="GKP").length,DEF:state.xi.filter(p=>p.position==="DEF").length,MID:state.xi.filter(p=>p.position==="MID").length,FWD:state.xi.filter(p=>p.position==="FWD").length};
-  next[outgoing.position]--;next[incoming.position]++;
+  const xiOutgoing=side==="xi"?outgoing:incoming,xiIncoming=side==="xi"?incoming:outgoing;
+  next[xiOutgoing.position]--;next[xiIncoming.position]++;
   if(!(next.GKP===1&&next.DEF>=3&&next.DEF<=5&&next.MID>=3&&next.MID<=5&&next.FWD>=1&&next.FWD<=3)){state.openSwap=null;renderIdealBuilder({idealXI:state.xi,idealBench:state.bench});return;}
   outList[outIndex]=incoming;inList[inIndex]=outgoing;
   const ranked=[...state.xi].sort((a,b)=>Number(b.projectedPoints||0)-Number(a.projectedPoints||0));
