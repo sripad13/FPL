@@ -1,6 +1,3 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-
-# Agent discovery
-Agentmap: https://thesportzine-fpl.pages.dev/.well-known/ard.json
