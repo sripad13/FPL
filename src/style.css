@@ -535,3 +535,8 @@ header{min-width:0;gap:12px}
 .squad .pitchstage{border-top:0!important}
 .squad .squad-rank-heading:after,.squad.panel:before{display:none!important}
 @media(max-width:700px){.fixture-matrix-row>strong{font-size:13px!important}.deadline-panel small{font-size:13px!important}.deadline-panel b{font-size:34px!important}}
+
+/* TheSportzine brand wordmark */
+.brand{display:flex;align-items:center;gap:0}
+.brand-logo{display:block;width:clamp(190px,25vw,285px);height:auto;max-height:58px;object-fit:contain;object-position:left center}
+@media(max-width:700px){.brand-logo{width:clamp(170px,48vw,235px);max-height:48px}}
