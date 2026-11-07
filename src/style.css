@@ -404,3 +404,34 @@ header{min-width:0;gap:12px}
  .ideal-player>b{font-size:clamp(7px,2.2vw,10px);padding:3px 3px}
  .ideal-player>small{right:0;font-size:7px}
 }
+
+
+/* Header hierarchy: team identity and live score sit together above the squad */
+.welcome{align-items:center}
+.welcome-team{display:flex;align-items:center;gap:28px;min-width:0;flex-wrap:wrap}
+.welcome-team h1{margin:0}
+.welcome-summary{display:flex;align-items:center;gap:20px;padding-left:20px;border-left:1px solid #ffffff2b}
+.welcome-summary>div{display:grid;gap:3px}
+.welcome-summary small{font-size:9px;letter-spacing:1.2px;color:#aab6c8;font-weight:800}
+.welcome-summary b{font-family:'Barlow Condensed',sans-serif;font-size:32px;line-height:1;color:#32e49b}
+.welcome-summary span{font-size:8px;color:#b8c4d2;letter-spacing:.6px}
+.topstats{gap:0}
+.score{grid-template-columns:repeat(3,minmax(0,1fr))}
+.squad-rank-heading{min-height:94px!important;align-items:center}
+.squad-rank-heading>div{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.squad-rank-heading h2{font-size:clamp(27px,3vw,42px)!important}
+.squad-rank-heading h2 strong{color:#fff!important}
+.squad-rank-heading .rank-change{font-size:13px;font-weight:900;white-space:nowrap}
+.rank-change.up{color:#31e69a!important}
+.rank-change.down{color:#ff6578!important}
+.rank-change.neutral{color:#aab6c8!important}
+@media(max-width:700px){
+ .welcome{align-items:flex-start;flex-direction:column}
+ .welcome-team{width:100%;gap:12px;align-items:flex-start;flex-direction:column}
+ .welcome-team h1{font-size:clamp(28px,8vw,42px)}
+ .welcome-summary{padding-left:0;border-left:0}
+ .welcome-summary b{font-size:29px}
+ .squad-rank-heading>div{gap:8px}
+ .squad-rank-heading .rank-change{font-size:11px}
+ .score{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
