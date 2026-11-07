@@ -1185,3 +1185,8 @@ nav a[href="/fpl-tips-transfer"].on{
 .fpl-help-card li:before{display:none}
 .fpl-help-card li span{font-size:12px;line-height:1.55;color:#d3dce8}
 .fpl-help-card>a{display:block;width:max-content;margin:20px auto 0;text-align:center}
+
+
+/* Keep numbered FPL ID guide steps while using simple text-only instructions */
+.fpl-help-card li:before{display:grid!important;content:"(" counter(guide) ")";width:25px;height:25px;border-radius:0;background:transparent;color:#fff000;font-size:12px;font-weight:900}
+.fpl-help-card li{padding-left:34px}
