@@ -931,3 +931,11 @@ nav a[href="/fpl-tips-transfer"].on{
  .improve-page .ideal-bench .shirt-svg{width:42px;height:40px}
  .transfer-list{grid-template-columns:1fr;padding:9px}
 }
+
+
+/* Keep swap menus readable when opened from the left edge of the pitch */
+.improve-page .ideal-pitch{overflow:visible}
+.improve-page .ideal-starting .position-players>.player:first-child,
+.improve-page .ideal-starting .position-players>.player:nth-child(2){z-index:8}
+.improve-page .ideal-starting .position-players>.player:first-child .ideal-swap-menu,
+.improve-page .ideal-starting .position-players>.player:nth-child(2) .ideal-swap-menu{width:min(230px,68vw);right:calc(100% + 8px);left:auto}
