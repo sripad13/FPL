@@ -1197,3 +1197,34 @@ nav a[href="/fpl-tips-transfer"].on{
 .fpl-help-card li:before{display:none!important;content:none!important}
 .fpl-help-card li .fpl-step-number{display:block;color:#fff000;font-size:12px;font-weight:900;line-height:1.55}
 .fpl-help-card li span{display:block;font-size:12px;line-height:1.55;color:#d3dce8}
+
+
+/* Header hierarchy: team name and rank above the live/squad stat row */
+.welcome-team{width:100%}
+.welcome-title-row{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%}
+.welcome-title-row h1{margin:0;min-width:0}
+.welcome-rank{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.welcome-rank>strong{font-size:clamp(19px,2.5vw,29px);font-weight:900;color:#fff}
+.welcome-rank .rank-change{font-size:12px;font-weight:800}
+.welcome-stats-row{display:grid;grid-template-columns:minmax(125px,.7fr) minmax(0,2fr);align-items:stretch;gap:14px;margin-top:15px}
+.welcome-live-points{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:12px 15px;border:1px solid #ffffff20;border-radius:8px;background:#101d2c}
+.welcome-live-points small,.welcome-score small{color:#aebdd0;font-size:10px;font-weight:800;letter-spacing:.7px}
+.welcome-live-points>b{font-size:clamp(25px,3vw,34px);font-weight:900;line-height:1.1;color:#fff}
+.welcome-live-points>span{font-size:9px;color:#9eacc0}
+.welcome-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:10px;margin:0;padding:12px 16px}
+.welcome-score>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.welcome-score b{font-size:clamp(17px,2vw,24px);font-weight:900;color:#fff;white-space:nowrap}
+.squad-rank-heading{display:none!important}
+@media(max-width:700px){
+ .welcome-title-row{gap:10px}
+ .welcome-title-row h1{font-size:clamp(17px,5vw,23px)}
+ .welcome-rank{gap:6px}
+ .welcome-rank>strong{font-size:20px}
+ .welcome-rank .rank-change{font-size:10px}
+ .welcome-stats-row{grid-template-columns: minmax(95px,.65fr) minmax(0,1.6fr);gap:7px;margin-top:10px}
+ .welcome-live-points{padding:9px 10px}
+ .welcome-live-points small,.welcome-score small{font-size:8px}
+ .welcome-live-points>b{font-size:24px}
+ .welcome-score{gap:6px;padding:9px 8px}
+ .welcome-score b{font-size:15px}
+}
