@@ -60,11 +60,20 @@ export async function onRequest({ params }) {
     const elements = new Map((bootstrap.elements || []).map(p => [p.id, p]));
     const teams = new Map((bootstrap.teams || []).map(t => [t.id, t]));
     const liveElements = new Map((live.elements || []).map(p => [p.id, p]));
+    const eventFixtures = (fixtures || []).filter(f => f.event === picksEvent.id);
+    const fixtureByTeam = new Map();
+    for (const fixture of eventFixtures) {
+      fixtureByTeam.set(fixture.team_h, { fixture, opponent: fixture.team_a, isHome: true });
+      fixtureByTeam.set(fixture.team_a, { fixture, opponent: fixture.team_h, isHome: false });
+    }
     const picks = (picksPayload.picks || []).map(pick => {
       const player = elements.get(pick.element) || {};
       const club = teams.get(player.team) || {};
       const livePlayer = liveElements.get(pick.element) || {};
       const stats = livePlayer.stats || {};
+      const teamFixture = fixtureByTeam.get(player.team);
+      const opponentTeam = teamFixture ? teams.get(teamFixture.opponent) : null;
+      const fixture = teamFixture?.fixture;
       return {
         id: pick.element,
         name: `${player.first_name || ""} ${player.second_name || ""}`.trim() || "Player",
@@ -81,7 +90,10 @@ export async function onRequest({ params }) {
         isViceCaptain: Boolean(pick.is_vice_captain),
         positionOrder: Number(pick.position || 0),
         status: player.status || "a",
-        news: player.news || ""
+        news: player.news || "",
+        opponent: opponentTeam?.short_name || null,
+        venue: teamFixture ? (teamFixture.isHome ? "H" : "A") : null,
+        isPlaying: Boolean(fixture?.started && !fixture?.finished)
       };
     });
 
