@@ -129,11 +129,7 @@ export async function onRequest({ params }) {
     const nextGw = new Map();
     for (const [teamId, list] of teamFixtures) { const f = list.find(x => x.event === nextEvent); if (f) nextGw.set(teamId, f); }
     const scorePlayer = p => { const f = nextGw.get(p.clubId); const form = Math.min(10, Math.max(0, p.lastFiveForm || p.form || 0)); const fixture = f ? (6-f.difficulty)*2 : 2; const minutes = p.chanceOfPlaying == null ? 10 : Math.max(0, Math.min(10, Number(p.chanceOfPlaying)/10)); const home = f?.venue === "H" ? 10 : f?.venue === "A" ? 7 : 5; return form*.4 + fixture*.3 + minutes*.2 + home*.1; };
-    const groups = { GKP:picks.filter(p=>p.position==="GKP"), DEF:picks.filter(p=>p.position==="DEF"), MID:picks.filter(p=>p.position==="MID"), FWD:picks.filter(p=>p.position==="FWD") };
-    let idealXI = [], idealScore = -Infinity;
-    for (let def=3; def<=5; def++) for (let mid=3; mid<=5; mid++) { const fwd=10-def-mid; if (fwd<1 || fwd>3 || groups.DEF.length<def || groups.MID.length<mid || groups.FWD.length<fwd || !groups.GKP.length) continue; const chosen=[...groups.GKP,...groups.DEF,...groups.MID,...groups.FWD].sort((x,y)=>scorePlayer(y)-scorePlayer(x)); const xi=[...groups.GKP.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,1),...groups.DEF.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,def),...groups.MID.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,mid),...groups.FWD.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,fwd)]; const total=xi.reduce((n,p)=>n+scorePlayer(p),0); if(total>idealScore){idealScore=total;idealXI=xi;} }
-    idealXI.sort((x,y)=>["GKP","DEF","MID","FWD"].indexOf(x.position)-["GKP","DEF","MID","FWD"].indexOf(y.position));
-    const captain=[...idealXI].sort((x,y)=>scorePlayer(y)-scorePlayer(x)); if(captain[0]) captain[0].idealCaptain=true; if(captain[1]) captain[1].idealViceCaptain=true;
+    const roundFplPoints = value => Math.floor(Math.max(0, Number(value) || 0) + 0.5);
     const projectedPoints = p => {
       const element = elements.get(p.id) || {};
       const official = Number(element.ep_next);
@@ -141,6 +137,10 @@ export async function onRequest({ params }) {
       const availability = p.chanceOfPlaying == null ? 1 : Math.max(0, Math.min(1, Number(p.chanceOfPlaying) / 100));
       return Math.max(0, (Number(element.form || p.form || 0) * .45 + Number(element.points_per_game || 0) * .35 + scorePlayer(p) * .2) * availability);
     };
+    const groups = { GKP:picks.filter(p=>p.position==="GKP"), DEF:picks.filter(p=>p.position==="DEF"), MID:picks.filter(p=>p.position==="MID"), FWD:picks.filter(p=>p.position==="FWD") };
+    let idealXI = [], idealScore = -Infinity;
+    for (let def=3; def<=5; def++) for (let mid=3; mid<=5; mid++) { const fwd=10-def-mid; if (fwd<1 || fwd>3 || groups.DEF.length<def || groups.MID.length<mid || groups.FWD.length<fwd || !groups.GKP.length) continue; const xi=[...groups.GKP.slice().sort((x,y)=>projectedPoints(y)-projectedPoints(x)).slice(0,1),...groups.DEF.slice().sort((x,y)=>projectedPoints(y)-projectedPoints(x)).slice(0,def),...groups.MID.slice().sort((x,y)=>projectedPoints(y)-projectedPoints(x)).slice(0,mid),...groups.FWD.slice().sort((x,y)=>projectedPoints(y)-projectedPoints(x)).slice(0,fwd)]; const total=xi.reduce((n,p)=>n+projectedPoints(p),0); if(total>idealScore){idealScore=total;idealXI=xi;} }
+    idealXI.sort((x,y)=>["GKP","DEF","MID","FWD"].indexOf(x.position)-["GKP","DEF","MID","FWD"].indexOf(y.position));
     const projectedCaptainOrder = [...idealXI].sort((a,b)=>projectedPoints(b)-projectedPoints(a));
     idealXI.forEach(p=>{p.idealCaptain=false;p.idealViceCaptain=false;});
     if(projectedCaptainOrder[0]) projectedCaptainOrder[0].idealCaptain=true;
@@ -162,7 +162,7 @@ export async function onRequest({ params }) {
         const club = teams.get(candidate.team) || {};
         const f = nextGw.get(candidate.team);
         const projected = Number(candidate.ep_next) > 0 ? Number(candidate.ep_next) : Math.max(0, (Number(candidate.form || 0) * .45 + Number(candidate.points_per_game || 0) * .35) * (candidate.chance_of_playing_next_round == null ? 1 : Math.max(0, Math.min(1, Number(candidate.chance_of_playing_next_round) / 100))));
-        return {id:candidate.id,webName:candidate.web_name,club:club.short_name||"",position:outgoing.position,price:(candidate.now_cost||0)/10,projectedPoints:Number(projected.toFixed(2)),outId:outgoing.id,outName:outgoing.webName,outPrice:saleValue,bank,netCost:Number(((candidate.now_cost||0)/10-saleValue).toFixed(1)),gain:Number((projected-projectedPoints(outgoing)).toFixed(2)),opponent:f?.opponent||null,venue:f?.venue||null,status:candidate.status,news:candidate.news||""};
+        return {id:candidate.id,webName:candidate.web_name,club:club.short_name||"",position:outgoing.position,price:(candidate.now_cost||0)/10,projectedPoints:roundFplPoints(projected),outId:outgoing.id,outName:outgoing.webName,outPrice:saleValue,bank,netCost:Number(((candidate.now_cost||0)/10-saleValue).toFixed(1)),gain:roundFplPoints(projected)-roundFplPoints(projectedPoints(outgoing)),opponent:f?.opponent||null,venue:f?.venue||null,status:candidate.status,news:candidate.news||""};
       }).filter(candidate => candidate.gain > 0).sort((a,b)=>b.gain-a.gain);
       if (options[0]) transferOptions.push(options[0]);
     }
@@ -216,7 +216,7 @@ export async function onRequest({ params }) {
         eventName: picksEvent.name
       },
       squad: { starting, bench },
-      analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event===nextEvent).map(x=>({opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:Number(projectedPoints(p).toFixed(2)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:Number(projectedPoints(p).toFixed(2)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null})), bestTransfers, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
+      analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event===nextEvent).map(x=>({opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:roundFplPoints(projectedPoints(p)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:Number(projectedPoints(p).toFixed(2)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null})), bestTransfers, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
           id: l.id, name: l.name, rank: l.entry_rank,
