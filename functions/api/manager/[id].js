@@ -170,7 +170,7 @@ export async function onRequest({ params }) {
         overallRank: manager.summary_overall_rank,
         previousOverallRank,
         rankChange,
-        eventPoints: score,
+        eventPoints: manager.summary_event_points ?? score,
         eventRank: entryHistory.rank ?? null,
         teamValue: entryHistory.value != null ? entryHistory.value / 10 : null,
         bank: entryHistory.bank != null ? entryHistory.bank / 10 : null,
@@ -179,7 +179,7 @@ export async function onRequest({ params }) {
         eventName: picksEvent.name
       },
       squad: { starting, bench },
-      analytics: { idealXI: idealXI.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)})), priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
+      analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event===nextEvent).map(x=>({opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)}}), priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
           id: l.id, name: l.name, rank: l.entry_rank,
