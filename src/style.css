@@ -1324,3 +1324,17 @@ nav a[href="/fpl-tips-transfer"].on{
 .profile-rank strong{font-size:clamp(20px,3vw,30px);font-weight:900}
 .manager-profile-page .pitchstage{margin-top:16px}
 @media(max-width:640px){.manager-profile-page{width:calc(100% - 20px);margin:20px auto 40px}.all-leagues-page .sectiontop{align-items:flex-start}}
+
+/* League page navigation CTA */
+.league-load-more{display:table!important;width:auto!important;min-width:190px;margin:18px auto 4px!important;padding:12px 22px!important;text-align:center;text-decoration:none!important;line-height:1.2}
+/* Compact manager profile: no inherited dashboard masthead gap */
+.shell:has(+ .manager-profile-page){padding-top:0!important;min-height:0!important;height:0!important;overflow:visible!important}
+.manager-profile-page{width:min(1180px,calc(100% - 32px));margin:18px auto 48px!important;padding-top:0!important}
+.manager-profile-page .profile-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.profile-back-inline{color:#fff000;font-size:10px;font-weight:900;letter-spacing:.07em;text-decoration:none;white-space:nowrap}
+.profile-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 8px}
+.profile-metrics>div{display:flex;flex-direction:column;gap:7px;padding:14px 16px;border:1px solid #ffffff18;border-radius:9px;background:#ffffff08;min-width:0}
+.profile-metrics small{color:#aab6c7;font-size:9px;font-weight:800;letter-spacing:.09em}
+.profile-metrics strong{font-size:clamp(20px,3vw,29px);font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.manager-profile-page .pitchstage{margin-top:12px}
+@media(max-width:600px){.manager-profile-page{width:calc(100% - 20px);margin:10px auto 32px!important}.profile-metrics{gap:6px}.profile-metrics>div{padding:11px 8px}.profile-metrics small{font-size:8px;line-height:1.25}.profile-metrics strong{font-size:20px}.profile-back-inline{font-size:9px}}
