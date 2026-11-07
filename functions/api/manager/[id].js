@@ -88,7 +88,14 @@ export async function onRequest({ params }) {
     const starting = picks.filter(p => p.positionOrder <= 11).sort((a,b) => a.positionOrder-b.positionOrder);
     const bench = picks.filter(p => p.positionOrder > 11).sort((a,b) => a.positionOrder-b.positionOrder);
     const entryHistory = picksPayload.entry_history || {};
-    const gwHistory = (history.current || []).find(x => x.event === picksEvent.id);
+    const currentRank = Number(manager.summary_overall_rank || 0);
+    const previousGw = (history.current || [])
+      .filter(x => x.event < picksEvent.id)
+      .sort((x, y) => y.event - x.event)[0] || null;
+    const previousOverallRank = previousGw?.overall_rank ?? null;
+    const rankChange = previousOverallRank != null && currentRank
+      ? Number(previousOverallRank) - currentRank
+      : null;
     const score = entryHistory.points ?? starting.reduce((sum, p) => sum + p.points * p.multiplier, 0);
 
     return json({
@@ -98,6 +105,8 @@ export async function onRequest({ params }) {
         teamName: manager.name,
         overallPoints: manager.summary_overall_points,
         overallRank: manager.summary_overall_rank,
+        previousOverallRank,
+        rankChange,
         eventPoints: score,
         eventRank: entryHistory.rank ?? null,
         teamValue: entryHistory.value != null ? entryHistory.value / 10 : null,
@@ -107,6 +116,18 @@ export async function onRequest({ params }) {
         eventName: picksEvent.name
       },
       squad: { starting, bench },
+      leagues: {
+        classic: (manager.leagues?.classic || []).map(l => ({
+          id: l.id, name: l.name, rank: l.entry_rank,
+          lastRank: l.entry_last_rank, movement: l.entry_movement,
+          created: l.created, closed: l.closed, scoring: l.scoring
+        })),
+        h2h: (manager.leagues?.h2h || []).map(l => ({
+          id: l.id, name: l.name, rank: l.entry_rank,
+          lastRank: l.entry_last_rank, movement: l.entry_movement,
+          created: l.created, closed: l.closed, scoring: l.scoring
+        }))
+      },
       gameweek: {
         average: picksEvent.average_entry_score ?? null,
         highest: picksEvent.highest_score ?? null,
