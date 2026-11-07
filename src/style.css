@@ -660,3 +660,59 @@ nav{position:fixed!important;top:78px!important;left:50%;transform:translateX(-5
 .improve-page{margin:20px 0;min-height:420px;padding:18px}
 .improve-page .ideal-pitch-wrap{width:100%}
 [hidden]{display:none!important}
+
+
+/* Navigation spacing and highlighted squad-improvement CTA */
+nav a[href="/fpl-tips-transfer"]{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  align-self:center;
+  padding:9px 13px;
+  border:0;
+  border-radius:5px;
+  background:#fff000;
+  color:#080d19!important;
+  font-weight:900;
+  box-shadow:0 0 0 1px #fff00055,0 3px 12px #fff00022;
+  transform-origin:center;
+  animation:improve-cta-pulse 2.6s ease-in-out infinite;
+}
+nav a[href="/fpl-tips-transfer"]:hover,
+nav a[href="/fpl-tips-transfer"].on{
+  color:#080d19!important;
+  border:0;
+  background:#ffe600;
+}
+@keyframes improve-cta-pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.045)}
+}
+@media(max-width:700px){
+  nav{
+    height:auto!important;
+    min-height:53px;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-content:center;
+    gap:5px 9px;
+    padding:7px 10px!important;
+    overflow:visible!important;
+  }
+  nav a{
+    flex:0 0 auto;
+    padding:7px 4px 6px!important;
+    font-size:9px!important;
+    line-height:1.15;
+    border-bottom:0!important;
+  }
+  nav a[href="/fpl-tips-transfer"]{
+    padding:8px 10px!important;
+    border-radius:5px;
+    font-size:9px!important;
+  }
+  .shell{padding-top:145px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  nav a[href="/fpl-tips-transfer"]{animation:none}
+}
