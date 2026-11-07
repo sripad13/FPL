@@ -91,12 +91,48 @@ export async function onRequest({ params }) {
         positionOrder: Number(pick.position || 0),
         status: player.status || "a",
         news: player.news || "",
+        form: Number(player.form || 0),
+        chanceOfPlaying: player.chance_of_playing_next_round,
+        costChangeEvent: Number(player.cost_change_event || 0),
+        costChangeSeason: Number(player.cost_change_start || 0),
+        transfersInEvent: Number(player.transfers_in_event || 0),
+        transfersOutEvent: Number(player.transfers_out_event || 0),
         opponent: opponentTeam?.short_name || null,
         venue: teamFixture ? (teamFixture.isHome ? "H" : "A") : null,
         isPlaying: Boolean(fixture?.started && !fixture?.finished && Number(stats.minutes || 0) > 0 && Number(stats.minutes || 0) < 90)
       };
     });
 
+    const playerHistories = await Promise.all(picks.map(async p => {
+      try { const summary = await fpl("element-summary/" + p.id + "/"); return [p.id, (summary.history || []).slice(-5)]; }
+      catch { return [p.id, []]; }
+    }));
+    const historyByPlayer = new Map(playerHistories);
+    for (const p of picks) {
+      const recent = historyByPlayer.get(p.id) || [];
+      const minutes = recent.reduce((n, x) => n + Number(x.minutes || 0), 0);
+      const points = recent.reduce((n, x) => n + Number(x.total_points || 0), 0);
+      p.lastFivePoints = points; p.lastFiveMinutes = minutes;
+      p.lastFiveForm = minutes > 0 ? points / Math.max(1, minutes / 90) / 5 : 0;
+    }
+    const nextEvent = picksEvent.id + 1;
+    const teamFixtures = new Map();
+    for (const fixture of (fixtures || []).filter(f => f.event >= nextEvent && !f.finished)) {
+      for (const [teamId, opponentId, venue, difficulty] of [[fixture.team_h, fixture.team_a, "H", fixture.team_h_difficulty], [fixture.team_a, fixture.team_h, "A", fixture.team_a_difficulty]]) {
+        const list = teamFixtures.get(teamId) || [];
+        list.push({ event: fixture.event, opponent: teams.get(opponentId)?.short_name || "", venue, difficulty: Number(difficulty || 3) });
+        teamFixtures.set(teamId, list);
+      }
+    }
+    const nextGw = new Map();
+    for (const [teamId, list] of teamFixtures) { const f = list.find(x => x.event === nextEvent); if (f) nextGw.set(teamId, f); }
+    const scorePlayer = p => { const f = nextGw.get(p.clubId); const form = Math.min(10, Math.max(0, p.lastFiveForm || p.form || 0)); const fixture = f ? (6-f.difficulty)*2 : 2; const minutes = p.chanceOfPlaying == null ? 10 : Math.max(0, Math.min(10, Number(p.chanceOfPlaying)/10)); const home = f?.venue === "H" ? 10 : f?.venue === "A" ? 7 : 5; return form*.4 + fixture*.3 + minutes*.2 + home*.1; };
+    const groups = { GKP:picks.filter(p=>p.position==="GKP"), DEF:picks.filter(p=>p.position==="DEF"), MID:picks.filter(p=>p.position==="MID"), FWD:picks.filter(p=>p.position==="FWD") };
+    let idealXI = [], idealScore = -Infinity;
+    for (let def=3; def<=5; def++) for (let mid=2; mid<=5; mid++) { const fwd=10-def-mid; if (fwd<1 || fwd>3 || groups.DEF.length<def || groups.MID.length<mid || groups.FWD.length<fwd || !groups.GKP.length) continue; const chosen=[...groups.GKP,...groups.DEF,...groups.MID,...groups.FWD].sort((x,y)=>scorePlayer(y)-scorePlayer(x)); const xi=[...groups.GKP.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,1),...groups.DEF.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,def),...groups.MID.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,mid),...groups.FWD.sort((x,y)=>scorePlayer(y)-scorePlayer(x)).slice(0,fwd)]; const total=xi.reduce((n,p)=>n+scorePlayer(p),0); if(total>idealScore){idealScore=total;idealXI=xi;} }
+    idealXI.sort((x,y)=>["GKP","DEF","MID","FWD"].indexOf(x.position)-["GKP","DEF","MID","FWD"].indexOf(y.position));
+    const captain=[...idealXI].sort((x,y)=>scorePlayer(y)-scorePlayer(x)); if(captain[0]) captain[0].idealCaptain=true; if(captain[1]) captain[1].idealViceCaptain=true;
+    for (const p of picks) p.nextFixtures=(teamFixtures.get(p.clubId)||[]).filter(f=>f.event<=nextEvent+4).sort((x,y)=>x.event-y.event);
     const starting = picks.filter(p => p.positionOrder <= 11).sort((a,b) => a.positionOrder-b.positionOrder);
     const bench = picks.filter(p => p.positionOrder > 11).sort((a,b) => a.positionOrder-b.positionOrder);
     const entryHistory = picksPayload.entry_history || {};
@@ -143,6 +179,7 @@ export async function onRequest({ params }) {
         eventName: picksEvent.name
       },
       squad: { starting, bench },
+      analytics: { idealXI: idealXI.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)})), priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
           id: l.id, name: l.name, rank: l.entry_rank,
