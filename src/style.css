@@ -597,3 +597,10 @@ nav a:hover,nav a.on{border-color:var(--brand-yellow)!important}
 .league-entry-rank{display:block;width:100%;text-align:right;justify-self:end;font-variant-numeric:tabular-nums}
 .league-entry-action{justify-self:end}
 @media(max-width:900px){.details{grid-template-columns:1fr}}
+
+
+/* Keep the league type toggle at the far right of the My Leagues header */
+.league-sectiontop{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.league-sectiontop>div:first-child{display:block;min-width:0}
+.league-sectiontop>.league-tabs{margin-left:auto;flex-shrink:0}
+@media(max-width:700px){.league-sectiontop{gap:8px}.league-sectiontop>.league-tabs{margin-left:auto}.league-tabs button{padding:7px 8px}}
