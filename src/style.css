@@ -1275,3 +1275,9 @@ nav a[href="/fpl-tips-transfer"].on{
  #squad .bench.bench-dugout .shirt-wrap{width:56px;height:57px}
  #squad .bench.bench-dugout .shirt-svg{width:48px;height:47px}
 }
+
+/* Match the player points label to the fixture label typography */
+#squad .starting .pts,
+#squad .benchrow .pts{font-size:10px!important;line-height:1.15;padding:3px 6px!important}
+#squad .starting .pts small,
+#squad .benchrow .pts small{font-size:inherit!important}
