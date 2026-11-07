@@ -610,3 +610,12 @@ nav a:hover,nav a.on{border-color:var(--brand-yellow)!important}
 #leaguecontent>.league-list{grid-column:1/-1;width:100%;min-width:0}
 #leaguecontent>.no-leagues{grid-column:1/-1}
 #leaguecontent .league-entry{width:100%;min-width:0}
+
+
+/* Compact, non-scrolling primary navigation */
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px;overflow:hidden}
+nav a{flex:0 1 auto;text-align:center}
+@media(max-width:700px){
+ nav{display:flex;justify-content:space-between;gap:4px;padding:0 10px;overflow:hidden}
+ nav a{flex:1 1 0;min-width:0;padding:19px 2px 16px;font-size:clamp(8px,2.15vw,10px);letter-spacing:.35px;text-align:center}
+}
