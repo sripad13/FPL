@@ -151,3 +151,99 @@ td{font-size:13px;padding:12px 9px}
  .starting .pts{font-size:10px;padding:3px 6px}
  .league-table td{font-size:12px;padding:12px 10px}
 }
+
+/* Responsive layout and complete squad visibility */
+html,body,#app{width:100%;max-width:100%;overflow-x:hidden}
+.shell{width:100%;max-width:1680px;overflow-x:clip}
+header{min-width:0;gap:12px}
+.topstats{gap:clamp(10px,2vw,24px);flex-shrink:0}
+.topstats span{padding-left:clamp(7px,1.4vw,18px)}
+.topstats small{font-size:11px!important;letter-spacing:.9px}
+.topstats b{font-size:clamp(14px,1.4vw,19px)}
+.layout{grid-template-columns:minmax(0,1.17fr) minmax(0,.83fr)}
+.rail,.manager,.score,.tiles,.quick,.details,.details>.panel{min-width:0;max-width:100%}
+.pitch{height:590px;transform:none;overflow:visible;max-width:100%}
+.pitchstage{padding-left:4%;padding-right:4%}
+.starting{inset:2.5% 2%}
+.starting .pitch-row{height:25%;min-height:0;flex:0 0 25%;justify-content:space-around}
+.starting .player{width:24%;min-height:0}
+.league-table{min-width:0;width:100%;table-layout:fixed}
+.league-table th:first-child,.league-table td:first-child{width:68%}
+.league-table th:last-child,.league-table td:last-child{width:32%}
+.league-table td:first-child{min-width:0;overflow-wrap:anywhere}
+.league-rank{font-weight:800;margin-right:7px}
+.league-move{display:inline-block;vertical-align:middle;font-size:15px}
+@media(max-width:1000px){
+ .layout{grid-template-columns:minmax(0,1fr)}
+ .rail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .manager,.score,.tiles,.quick{grid-column:1/-1}
+ .pitch{height:590px}
+}
+@media(max-width:700px){
+ header{padding:10px 12px;align-items:center}
+ .brand{gap:8px;min-width:0}
+ .brand strong{font-size:15px;white-space:nowrap}
+ .brand small{font-size:7px;letter-spacing:1px}
+ .crest{width:32px;height:34px;flex:0 0 32px}
+ .topstats{gap:9px}
+ .topstats span{padding-left:8px;gap:2px}
+ .topstats small{font-size:9px!important}
+ .topstats b{font-size:13px}
+ nav{width:100%;max-width:100%;gap:18px;padding:0 12px;overflow-x:auto;overflow-y:hidden}
+ nav a{font-size:10px;flex:0 0 auto}
+ main{width:100%;padding:15px 10px 25px}
+ .welcome{width:100%;gap:13px}
+ .welcome h1{font-size:clamp(29px,8vw,42px);overflow-wrap:anywhere}
+ .idbox{max-width:100%;min-width:0;gap:7px;padding:8px}
+ .idbox label{font-size:9px}
+ .idbox input{min-width:0;width:65px;flex:1;font-size:16px}
+ .idbox button{font-size:10px;padding:12px 10px}
+ .layout,.rail,.details{width:100%;min-width:0;grid-template-columns:minmax(0,1fr)}
+ .manager{grid-column:auto;gap:8px;padding:10px;flex-wrap:wrap}
+ .bigcrest{width:42px;height:44px;flex:0 0 42px;font-size:21px}
+ .manager>div:nth-child(2){flex:1 1 100px;min-width:0}
+ .manager h2{font-size:19px}
+ .manager span{font-size:10px}
+ .rank{padding-left:8px;max-width:115px}
+ .rank b{font-size:14px}
+ .rank-change{font-size:9px;white-space:normal}
+ .score{grid-template-columns:repeat(2,minmax(0,1fr));grid-column:auto}
+ .score>div{min-width:0;padding:10px 8px}
+ .score b{font-size:15px;overflow-wrap:anywhere}
+ .scoremain strong{font-size:36px}
+ .tiles{grid-column:auto;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .tile{min-width:0;min-height:128px;padding:10px}
+ .tile b{font-size:clamp(21px,6vw,27px)}
+ .tile span{font-size:10px;max-width:90%;overflow-wrap:anywhere}
+ .quick{grid-column:auto;grid-template-columns:repeat(3,minmax(0,1fr))}
+ .quick div{min-width:0;padding:8px 6px}
+ .quick b{font-size:12px;overflow-wrap:anywhere}
+ .pitchstage{padding:12px 7px 0}
+ .pitch{height:520px;width:100%;transform:none}
+ .starting{inset:2% 1%;padding:0}
+ .starting .pitch-row{height:25%;flex-basis:25%;min-height:0}
+ .starting .player{width:25%;min-width:0}
+ .starting .shirt{width:40px;height:39px;margin-bottom:3px}
+ .starting .player-name{font-size:clamp(8px,2.4vw,10px);padding:3px 3px;max-width:100%}
+ .starting .pts{font-size:9px;padding:2px 5px}
+ .benchrow .player-name{font-size:9px}
+ .caption{font-size:8px;padding:9px 8px;gap:6px}
+ .details>.panel{padding:10px}
+ .tablewrap{max-width:100%;overflow-x:auto}
+ .league-table th{font-size:9px;padding:10px 7px}
+ .league-table td{font-size:12px;padding:11px 7px;white-space:normal}
+ .league-table td:first-child b{font-size:12px;overflow-wrap:anywhere}
+ .league-move{font-size:13px}
+ footer{font-size:8px;overflow-wrap:anywhere}
+}
+@media(max-width:380px){
+ .brand strong{font-size:13px}
+ .brand small{font-size:6px}
+ .topstats{gap:5px}
+ .topstats span{padding-left:5px}
+ .topstats b{font-size:12px}
+ .pitch{height:475px}
+ .starting .shirt{width:34px;height:34px}
+ .starting .player-name{font-size:8px}
+ .starting .pts{font-size:8px}
+}
