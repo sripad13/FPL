@@ -1306,3 +1306,5 @@ nav a[href="/fpl-tips-transfer"].on{
 .header-manager.team-loaded .loaded-fpl-id{position:absolute;inset:0;z-index:1;display:flex;align-items:center;gap:5px;padding:0 10px;pointer-events:none;white-space:nowrap}
 .loaded-fpl-id>span{color:#aab6c7;font-size:9px;font-weight:500;letter-spacing:.2px}
 .loaded-fpl-id strong{color:#fff;font-size:12px;font-weight:900;letter-spacing:0}
+
+.view-all-leagues{display:inline-block;margin-top:5px;color:#fff000;font-size:10px;font-weight:800;text-decoration:none}.league-standing-row{display:grid;grid-template-columns:54px 1fr 76px;align-items:center;gap:12px;padding:11px 10px;color:inherit;text-decoration:none;border-top:1px solid #ffffff12}.league-standing-row:hover{background:#ffffff0b}
