@@ -435,3 +435,8 @@ header{min-width:0;gap:12px}
  .squad-rank-heading .rank-change{font-size:11px}
  .score{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+
+.ideal-opponent{display:block;max-width:100%;padding:3px 5px;border-radius:3px;background:#c8ffe0;color:#07130e;font-size:clamp(7px,.8vw,10px);font-weight:900;white-space:nowrap;line-height:1.15}
+.ideal-opponent.no-fixture{background:#273548;color:#d5deea}
+@media(max-width:700px){.ideal-opponent{font-size:clamp(7px,2vw,9px);padding:2px 3px}}
