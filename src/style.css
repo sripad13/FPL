@@ -724,7 +724,7 @@ nav a[href="/fpl-tips-transfer"].on{
 .brand-modal-backdrop{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;padding:20px;background:#02050bd9;backdrop-filter:blur(7px)}
 .brand-modal-backdrop[hidden]{display:none!important}
 .brand-modal-card{position:relative;width:min(100%,390px);padding:30px 24px 24px;border:1px solid #ffffff30;border-radius:12px;background:linear-gradient(145deg,#17243a,#080d19);box-shadow:0 24px 70px #000b;text-align:center}
-.brand-modal-card h2{margin:0 0 22px;font-family:'Barlow Condensed',sans-serif;font-size:27px;letter-spacing:1px}
+.brand-modal-logo{display:block;width:min(100%,220px);height:auto;margin:0 auto 22px;object-fit:contain}
 .brand-modal-close{position:absolute;top:8px;right:11px;border:0;background:transparent;color:#dce4f1;font-size:27px;cursor:pointer}
 .brand-modal-action{display:block;margin-top:12px;padding:14px 12px;border-radius:6px;background:#fff000;color:#080d19;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.5px}
 .brand-modal-action.secondary{background:#19283e;border:1px solid #ffffff35;color:#fff}
