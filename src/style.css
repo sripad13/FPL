@@ -247,3 +247,64 @@ header{min-width:0;gap:12px}
  .starting .player-name{font-size:8px}
  .starting .pts{font-size:8px}
 }
+
+/* Editorial match-poster inspired squad presentation */
+.squad.panel{background:#090d17;border:2px solid #df2638;border-radius:4px;box-shadow:0 18px 48px #0009;position:relative}
+.squad.panel:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:#f02d40;z-index:3}
+.squad-rank-heading{min-height:112px;padding:21px 25px 16px;position:relative;overflow:hidden;background:repeating-linear-gradient(135deg,#ffffff08 0 2px,transparent 2px 9px),linear-gradient(110deg,#111827,#090d17)}
+.squad-rank-heading:after{content:"";position:absolute;right:0;top:0;width:5px;height:100%;background:#ed2939}
+.squad-rank-heading .eyebrow{font-size:11px;color:#ff9aa5;letter-spacing:2.5px}
+.squad-rank-heading h2{font-size:clamp(27px,3vw,43px);line-height:1.05;margin:5px 0 3px;color:#fff;letter-spacing:.6px}
+.squad-rank-heading h2 strong{color:#fff}
+.squad-rank-heading p{margin:0;color:#aab4c3;font-size:11px;letter-spacing:2px;font-weight:800}
+.xi-mark{font-family:'Barlow Condensed',sans-serif;font-size:54px;color:#ffffff18;line-height:1}
+.pitchstage{padding:22px 3% 0;background:repeating-linear-gradient(135deg,#ffffff05 0 2px,transparent 2px 10px),linear-gradient(#0c1422,#080e17 70%,#071b16)}
+.pitch{height:650px;max-width:100%;overflow:visible;transform:none;clip-path:polygon(5% 0,95% 0,100% 100%,0 100%);border:0;outline:2px solid #70e6a1a0;outline-offset:-2px;background:repeating-linear-gradient(0deg,#ffffff09 0 1px,transparent 1px 25%),repeating-linear-gradient(0deg,#ffffff0a 0 80px,#0000000b 80px 160px),linear-gradient(90deg,#087343,#079653 50%,#087343);box-shadow:inset 0 0 35px #001a11aa,0 18px 30px #0009}
+.markings{inset:3.5% 4%;border:1px solid #e6ffedaa}
+.markings i{top:50%}
+.markings b{width:118px;height:118px}
+.starting{inset:2% 3%;display:flex;flex-direction:column;justify-content:space-between;gap:0}
+.starting .pitch-row{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 24%;height:24%;min-height:0;width:100%;padding:13px 0 2px}
+.position-label{position:absolute;left:0;top:4px;color:#e5fff0a8;font-size:9px;font-weight:900;letter-spacing:2px}
+.position-players{width:100%;display:flex;align-items:center;justify-content:space-around;gap:4px}
+.starting .player{width:calc(100% / 5 - 6px);max-width:130px;min-height:0;display:flex;align-items:center;justify-content:center}
+.starting .shirt{width:59px;height:56px;margin-bottom:5px;filter:drop-shadow(0 5px 5px #00150eaa)}
+.starting .shirt span{font-size:9px}
+.starting .player-name{font-size:clamp(11px,1.1vw,14px);padding:5px 8px;border:1px solid #ffffff80;box-shadow:0 3px 7px #00140d88}
+.starting .pts{font-size:13px;padding:4px 11px;box-shadow:0 2px 5px #00140d66}
+.starting .pts small{font-size:10px}
+.bench{background:linear-gradient(110deg,#101923,#091e19);border-top:2px solid #e52b3b;padding:15px 10px 17px}
+.bench>small{font-size:10px;letter-spacing:2px;color:#e7f5ed}
+.benchrow .shirt{width:43px;height:41px}
+.benchrow .player-name{font-size:11px;padding:4px 7px}
+.benchrow .pts{font-size:12px;padding:3px 9px}
+.caption{background:#080d16;color:#9aa8b8}
+@media(max-width:1000px){
+ .pitch{height:630px}
+}
+@media(max-width:700px){
+ .squad-rank-heading{min-height:92px;padding:17px 15px}
+ .squad-rank-heading h2{font-size:clamp(24px,6vw,34px)}
+ .xi-mark{font-size:40px}
+ .pitchstage{padding:16px 2% 0}
+ .pitch{height:560px;clip-path:polygon(3% 0,97% 0,100% 100%,0 100%)}
+ .starting{inset:2% 2%}
+ .starting .pitch-row{flex-basis:24%;height:24%;padding-top:14px}
+ .position-label{font-size:8px;top:3px}
+ .starting .player{width:calc(100% / 5 - 3px)}
+ .starting .shirt{width:43px;height:41px}
+ .starting .player-name{font-size:clamp(8px,2.4vw,11px);padding:3px 4px}
+ .starting .pts{font-size:10px;padding:3px 6px}
+ .starting .pts small{font-size:8px}
+ .bench{padding:12px 5px}
+ .benchrow .shirt{width:34px;height:33px}
+ .benchrow .player-name{font-size:9px;padding:3px 4px}
+ .benchrow .pts{font-size:10px;padding:2px 6px}
+}
+@media(max-width:380px){
+ .pitch{height:510px}
+ .starting .shirt{width:34px;height:33px}
+ .starting .player-name{font-size:8px;padding:2px 3px}
+ .starting .pts{font-size:9px;padding:2px 4px}
+ .position-label{font-size:7px}
+}
