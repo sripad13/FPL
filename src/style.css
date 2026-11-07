@@ -440,3 +440,47 @@ header{min-width:0;gap:12px}
 .ideal-opponent{display:block;max-width:100%;padding:3px 5px;border-radius:3px;background:#c8ffe0;color:#07130e;font-size:clamp(7px,.8vw,10px);font-weight:900;white-space:nowrap;line-height:1.15}
 .ideal-opponent.no-fixture{background:#273548;color:#d5deea}
 @media(max-width:700px){.ideal-opponent{font-size:clamp(7px,2vw,9px);padding:2px 3px}}
+
+
+/* Place squad intelligence directly below the quick-stat strip */
+.rail{min-width:0;overflow:visible}
+.momentum-panel{margin-top:0;padding:12px}
+.momentum-panel .sectiontop{padding:7px 8px 12px}
+.momentum-panel .sectiontop>small{display:none}
+#pricemomentum{padding:0 8px 5px}
+.momentum-row{grid-template-columns:minmax(0,1fr) auto auto;gap:8px;padding:9px 2px;font-size:11px}
+.momentum-row>span{font-size:10px}
+.momentum-row em{font-size:10px;white-space:nowrap}
+#players{padding:10px}
+#players .sectiontop{padding:7px 8px 12px}
+#players .sectiontop>small{display:none}
+#idealxi{padding:0}
+.ideal-pitchstage{padding:12px 5% 0;background:radial-gradient(ellipse at 50% 55%,#2df3a122,transparent 52%),linear-gradient(#111d30,#0b1825 68%,#09251f)}
+.ideal-pitch{width:100%;max-width:720px;height:590px;aspect-ratio:auto;margin:auto;overflow:hidden;clip-path:none;border:0;outline:2px solid #8ce9b180;outline-offset:-2px;background:repeating-linear-gradient(0deg,#ffffff08 0 47px,#001b1420 47px 94px),linear-gradient(90deg,#08703f,#0a8d4e 50%,#08703f);box-shadow:inset 0 0 30px #d4ffe01a,0 22px 30px #0009}
+.ideal-pitch .markings{inset:4%;border:1px solid #e1ffe5a0}
+.ideal-pitch .markings i{top:50%;left:0;right:0;border-top:1px solid #e1ffe5a0}
+.ideal-pitch .markings b{width:100px;height:100px;border:1px solid #e1ffe5a0}
+.ideal-pitch .markings em{left:29%;top:0;width:42%;height:18%;border:1px solid #e1ffe5a0;border-top:0}
+.ideal-starting{inset:5% 3%;justify-content:space-around}
+.ideal-starting .pitch-row{flex:0 0 24%;height:24%;min-height:0;padding:8px 0}
+.ideal-starting .player{width:24%;max-width:132px;min-height:0}
+.ideal-starting .shirt-wrap{width:68px;height:64px}
+.ideal-starting .shirt-wrap .shirt{width:59px;height:56px}
+.ideal-starting .player-name{font-size:clamp(11px,1.1vw,14px);padding:5px 8px}
+.ideal-starting .opponent{margin-top:4px;padding:4px 7px;background:#c8ffe0;color:#050b0a;border:1px solid #c8ffe0;font-size:clamp(10px,1vw,13px);font-weight:900}
+.ideal-pitch-caption{text-align:center;color:#9eacc0;font-size:9px;font-weight:800;letter-spacing:1.7px;padding:10px 0 2px}
+@media(max-width:1000px){
+ .ideal-pitch{height:590px}
+}
+@media(max-width:700px){
+ .ideal-pitchstage{padding:12px 7px 0}
+ .ideal-pitch{height:520px}
+ .ideal-starting{inset:2% 1%;padding:0}
+ .ideal-starting .pitch-row{height:25%;flex-basis:25%;padding:4px 0}
+ .ideal-starting .player{width:25%;min-width:0}
+ .ideal-starting .shirt-wrap{width:48px;height:47px}
+ .ideal-starting .shirt-wrap .shirt{width:43px;height:41px}
+ .ideal-starting .player-name{font-size:clamp(8px,2.4vw,10px);padding:3px 3px}
+ .ideal-starting .opponent{font-size:clamp(8px,2.2vw,10px);padding:3px 4px}
+}
+@media(max-width:380px){.ideal-pitch{height:475px}.ideal-starting .shirt-wrap{width:39px;height:40px}.ideal-starting .shirt-wrap .shirt{width:35px;height:34px}.ideal-starting .player-name,.ideal-starting .opponent{font-size:8px;padding:2px 3px}}
