@@ -99,7 +99,7 @@ export async function onRequest({ params }) {
         transfersOutEvent: Number(player.transfers_out_event || 0),
         opponent: opponentTeam?.short_name || null,
         venue: teamFixture ? (teamFixture.isHome ? "H" : "A") : null,
-        isPlaying: Boolean(fixture?.started && !fixture?.finished && Number(stats.minutes || 0) > 0 && Number(stats.minutes || 0) < 90)
+        isPlaying: Boolean(fixture?.started && !fixture?.finished && !fixture?.finished_provisional && Number(stats.minutes || 0) > 0 && Number(stats.minutes || 0) < 90)
       };
     });
 
