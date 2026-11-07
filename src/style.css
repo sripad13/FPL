@@ -811,3 +811,6 @@ nav a[href="/fpl-tips-transfer"].on{
  .ideal-edit-player{padding-top:5px}
  .ideal-swap-menu{width:min(190px,65vw)}
 }
+
+/* Remove position labels beside the Ideal XI pitch rows */
+.ideal-edit-row>.ideal-pos{display:none}
