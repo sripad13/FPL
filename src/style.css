@@ -493,3 +493,18 @@ header{min-width:0;gap:12px}
 .ideal-sectiontop>div{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .ideal-sectiontop .ideal-next-label{font-size:9px;letter-spacing:1.5px;color:#bd91f5;font-weight:800;white-space:nowrap}
 @media(max-width:700px){.momentum-row{grid-template-columns:minmax(0,1fr) minmax(90px,1fr) auto!important;gap:5px}.momentum-meta{gap:7px}.momentum-meta strong{font-size:9px}.momentum-row em{font-size:9px}}
+
+/* Mobile welcome layout and gameweek swing colour */
+.swing-positive{color:#31e69a!important}
+.swing-negative{color:#ff6578!important}
+.swing-neutral{color:#f7f7fb!important}
+@media(max-width:700px){
+ .welcome-team{flex-direction:row!important;align-items:center!important;justify-content:flex-start;gap:12px!important;flex-wrap:nowrap!important}
+ .welcome-team h1{font-size:clamp(22px,6vw,34px)!important;line-height:1.05;max-width:58%;overflow-wrap:anywhere}
+ .welcome-summary{padding-left:12px!important;border-left:1px solid #ffffff2b!important;flex:0 0 auto}
+ .welcome-summary b{font-size:26px!important}
+ .welcome-summary small{font-size:8px!important;white-space:nowrap}
+ .welcome-summary span{font-size:8px!important;white-space:nowrap}
+ #players .ideal-sectiontop h2{font-size:clamp(20px,5vw,27px)}
+ .ideal-sectiontop .ideal-next-label{font-size:8px}
+}
