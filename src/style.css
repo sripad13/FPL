@@ -1177,3 +1177,11 @@ nav a[href="/fpl-tips-transfer"].on{
  .brand-logo{max-width:190px;height:auto}
  .header-manager-fields{width:98px}
 }
+
+
+/* FPL ID guide: compact steps and centred action */
+.fpl-help-card ol{gap:13px}
+.fpl-help-card li{padding-left:0}
+.fpl-help-card li:before{display:none}
+.fpl-help-card li span{font-size:12px;line-height:1.55;color:#d3dce8}
+.fpl-help-card>a{display:block;width:max-content;margin:20px auto 0;text-align:center}
