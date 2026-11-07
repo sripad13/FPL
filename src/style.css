@@ -939,3 +939,21 @@ nav a[href="/fpl-tips-transfer"].on{
 .improve-page .ideal-starting .position-players>.player:nth-child(2){z-index:8}
 .improve-page .ideal-starting .position-players>.player:first-child .ideal-swap-menu,
 .improve-page .ideal-starting .position-players>.player:nth-child(2) .ideal-swap-menu{width:min(230px,68vw);right:calc(100% + 8px);left:auto}
+
+
+/* Transfer horizon selector */
+.transfer-sectiontop{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.transfer-horizon{display:flex;align-items:center;gap:5px;margin-left:auto}
+.transfer-horizon button{border:1px solid #526174;background:#111e2d;color:#c4cfdd;border-radius:6px;padding:8px 11px;font-size:10px;font-weight:800;letter-spacing:.35px;cursor:pointer}
+.transfer-horizon button.active{background:#fff000;border-color:#fff000;color:#101827}
+.transfer-horizon button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.transfer-card{min-height:112px;grid-template-columns:24px minmax(0,1fr) auto;align-content:start}
+.transfer-fixture{line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:600px){.transfer-sectiontop{align-items:flex-start}.transfer-horizon{width:100%;margin:8px 0 0}.transfer-horizon button{flex:1;padding:8px 5px;font-size:9px}}
+/* Left-side pitch players open their swap list to the right */
+.improve-page .ideal-starting .position-players>.player:first-child .ideal-swap-menu,
+.improve-page .ideal-starting .position-players>.player:nth-child(2) .ideal-swap-menu{left:calc(100% + 8px);right:auto;top:22px}
+.improve-page .ideal-starting .position-players>.player:first-child,
+.improve-page .ideal-starting .position-players>.player:nth-child(2){z-index:9}
+/* Ensure the Hull kit fallback image has a stable box */
+.shirt-svg{min-width:68px;min-height:64px}
