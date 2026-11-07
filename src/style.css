@@ -636,3 +636,15 @@ nav{position:sticky;top:78px;z-index:99}
  #squad,#momentum,#players,#fixtures,#leagues{scroll-margin-top:132px}
  .back-to-top{right:14px;bottom:16px;width:44px;height:44px}
 }
+
+
+/* Pin the masthead and navigation to the viewport (not the scrolling page) */
+.shell{padding-top:131px}
+header{position:fixed!important;top:0!important;left:50%;transform:translateX(-50%);width:min(100%,1680px);height:78px;z-index:1000!important}
+nav{position:fixed!important;top:78px!important;left:50%;transform:translateX(-50%);width:min(100%,1680px);height:53px;z-index:999!important}
+@media(max-width:700px){
+ .shell{padding-top:123px}
+ header{height:70px;min-height:70px;top:0!important}
+ nav{top:70px!important;height:53px}
+ #squad,#momentum,#players,#fixtures,#leagues{scroll-margin-top:140px}
+}
