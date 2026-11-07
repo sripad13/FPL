@@ -1247,3 +1247,31 @@ nav a[href="/fpl-tips-transfer"].on{
  .live-points-value{gap:7px}
  .live-points-value .rank-change{font-size:10px}
 }
+
+/* Squad metrics: centred hierarchy and more prominent live score */
+#squad>.welcome-stats-row,
+#squad .welcome-live-points,
+#squad .welcome-score,
+#squad .welcome-score>div{ text-align:center; }
+#squad .welcome-live-points{align-items:center;justify-content:center;padding:15px 12px}
+#squad .live-points-value{justify-content:center;align-items:center;gap:12px}
+#squad .live-points-value>b{font-size:clamp(34px,4vw,46px);line-height:1.05}
+#squad .live-points-value .rank-change{font-size:13px}
+#squad .welcome-score{justify-items:center;align-items:center}
+#squad .welcome-score>div{align-items:center;justify-content:center}
+#squad .welcome-score b{font-size:clamp(19px,2.2vw,27px)}
+#squad .welcome-live-points small,
+#squad .welcome-score small{width:100%;text-align:center}
+#squad .welcome-live-points>span{text-align:center}
+#squad .bench.bench-dugout .shirt-wrap{width:68px;height:68px}
+#squad .bench.bench-dugout .shirt-svg{width:58px;height:56px}
+#squad .bench.bench-dugout .player-name{background:#09131bef}
+#squad .bench.bench-dugout .player:has(.injury-ambulance) .player-name{background:#b42335!important;border-color:#ff6677!important;color:#fff!important}
+@media(max-width:700px){
+ #squad .welcome-live-points{padding:11px 7px}
+ #squad .live-points-value>b{font-size:30px}
+ #squad .live-points-value .rank-change{font-size:10px}
+ #squad .welcome-score b{font-size:16px}
+ #squad .bench.bench-dugout .shirt-wrap{width:56px;height:57px}
+ #squad .bench.bench-dugout .shirt-svg{width:48px;height:47px}
+}
