@@ -957,3 +957,85 @@ nav a[href="/fpl-tips-transfer"].on{
 .improve-page .ideal-starting .position-players>.player:nth-child(2){z-index:9}
 /* Ensure the Hull kit fallback image has a stable box */
 .shirt-svg{min-width:68px;min-height:64px}
+
+
+/* Improve Your Squad: keep swap menus above every neighbouring player */
+.improve-page .ideal-starting .position-players{position:relative;isolation:isolate}
+.improve-page .ideal-starting .position-players>.player:has(.ideal-swap-menu){z-index:200!important}
+.improve-page .ideal-starting .position-players>.player .ideal-swap-menu{z-index:500!important;left:calc(100% + 7px)!important;right:auto!important;top:22px!important;width:min(225px,64vw);max-height:190px;overflow-y:auto}
+.improve-page .ideal-starting .position-players>.player:nth-last-child(-n+2):has(.ideal-swap-menu) .ideal-swap-menu{left:auto!important;right:calc(100% + 7px)!important}
+.improve-page .ideal-starting .position-players>.player{isolation:isolate}
+.improve-page .ideal-starting .position-players>.player:has(.ideal-swap-menu){isolation:auto}
+.improve-page .ideal-pitchstage,.improve-page .ideal-pitch,.improve-page .ideal-starting,.improve-page .ideal-starting .pitch-row{overflow:visible!important}
+
+/* Dressing-room dugout for the substitutes */
+.improve-page .ideal-bench{
+ position:relative;isolation:isolate;overflow:visible;
+ margin-top:0;padding:28px 12px 20px;
+ border-top:3px solid #d7e5df;
+ background:
+  linear-gradient(180deg,#15242b 0%,#0c171e 48%,#071117 100%);
+ box-shadow:inset 0 12px 20px #0007,inset 0 -8px 18px #0008;
+}
+.improve-page .ideal-bench:before{
+ content:"";position:absolute;z-index:-1;left:0;right:0;top:0;height:13px;
+ background:repeating-linear-gradient(90deg,#52616a 0 2px,#26363e 2px 30px);
+ border-bottom:2px solid #819099;
+ box-shadow:0 3px 8px #0009;
+}
+.improve-page .ideal-bench:after{
+ content:"";position:absolute;z-index:-1;left:0;right:0;top:45px;height:1px;
+ background:#8ca0a544;box-shadow:0 34px #8ca0a522,0 68px #8ca0a522;
+}
+.improve-page .ideal-bench>small{
+ display:block;position:relative;margin:0 auto 15px;width:max-content;
+ padding:5px 14px;border:1px solid #52646c;border-radius:3px;
+ background:#0b151b;color:#dce8e3;font-size:10px;font-weight:900;letter-spacing:2.2px;
+ box-shadow:0 3px 8px #0008;
+}
+.improve-page .ideal-bench .benchrow{
+ position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:10px;margin:0;padding:12px 5px 4px;
+ border-top:2px solid #60747a;
+ background:linear-gradient(180deg,#26363d55,#0a151b22);
+}
+.improve-page .ideal-bench .player{
+ position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+ gap:5px;width:100%;min-width:0;min-height:115px;padding:12px 4px 8px;
+ border:1px solid #ffffff14;border-radius:5px;
+ background:linear-gradient(180deg,#ffffff0c,#00000018);
+ box-shadow:inset 0 1px #ffffff0a,0 5px 10px #0004;
+}
+.improve-page .ideal-bench .shirt-wrap{
+ position:relative;display:grid;place-items:center;
+ width:58px!important;height:58px!important;margin:0 0 3px!important;
+ border-radius:4px;
+}
+.improve-page .ideal-bench .shirt-svg{
+ display:block;width:48px!important;height:46px!important;
+ min-width:0!important;min-height:0!important;
+ margin:0!important;object-fit:contain;
+ filter:drop-shadow(0 3px 3px #0009);
+}
+.improve-page .ideal-bench .player-name{
+ display:block;position:relative;z-index:1;max-width:100%;
+ padding:4px 6px;border:1px solid #ffffff48;border-radius:3px;
+ background:#09131beF;color:#fff;font-size:10px;font-weight:800;
+ line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.improve-page .ideal-bench .pts{
+ margin:0;padding:3px 9px;border-radius:3px;
+ background:#c8ffe0;color:#07130e;font-size:11px;font-weight:900;
+}
+.improve-page .ideal-bench .ideal-move-arrow{top:4px!important;right:4px!important;z-index:5}
+.improve-page .ideal-bench .ideal-swap-menu{top:34px;right:0;z-index:600}
+@media(max-width:700px){
+ .improve-page .ideal-bench{padding:24px 5px 15px}
+ .improve-page .ideal-bench .benchrow{gap:5px;padding:10px 2px 3px}
+ .improve-page .ideal-bench .player{min-height:105px;padding:10px 2px 7px;gap:4px}
+ .improve-page .ideal-bench .shirt-wrap{width:49px!important;height:50px!important}
+ .improve-page .ideal-bench .shirt-svg{width:41px!important;height:40px!important}
+ .improve-page .ideal-bench .player-name{font-size:9px;padding:3px 4px}
+ .improve-page .ideal-bench .pts{font-size:10px;padding:3px 7px}
+ .improve-page .ideal-bench .ideal-move-arrow{width:18px;height:18px;font-size:12px}
+}
