@@ -728,3 +728,65 @@ nav a[href="/fpl-tips-transfer"].on{
 .brand-modal-close{position:absolute;top:8px;right:11px;border:0;background:transparent;color:#dce4f1;font-size:27px;cursor:pointer}
 .brand-modal-action{display:block;margin-top:12px;padding:14px 12px;border-radius:6px;background:#fff000;color:#080d19;text-decoration:none;font-size:11px;font-weight:900;letter-spacing:.5px}
 .brand-modal-action.secondary{background:#19283e;border:1px solid #ffffff35;color:#fff}
+
+
+/* Improve Your Squad: editable XI, bench and budget-safe transfer cards */
+.ideal-prediction-strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:18px 20px;background:#111d30;border-bottom:1px solid #ffffff18}
+.ideal-prediction-strip>div{display:flex;flex-direction:column;gap:4px}
+.ideal-prediction-strip small{font-size:9px;letter-spacing:1.2px;color:#aab8ca;font-weight:800}
+.ideal-prediction-strip strong{font-size:30px;line-height:1.1;font-family:'Barlow Condensed',sans-serif}
+.ideal-prediction-strip p{grid-column:1/-1;margin:0;color:#aab8ca;font-size:11px}
+.ideal-edit-row{display:flex;align-items:center;gap:8px;padding:8px 0;min-height:126px}
+.ideal-pos{width:30px;flex:0 0 30px;color:#fff000;font-size:9px;font-weight:900}
+.ideal-edit-players{display:flex;justify-content:space-around;align-items:flex-start;gap:5px;flex:1;min-width:0}
+.ideal-edit-player{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;width:100%;max-width:150px;text-align:center}
+.ideal-edit-player .shirt-wrap{width:44px;height:47px;position:relative}
+.ideal-edit-player .shirt{width:42px;height:43px}
+.ideal-edit-name{max-width:100%;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ideal-edit-player small{font-size:8px;color:#b5c1d0;white-space:nowrap}
+.ideal-player-select{width:100%;max-width:145px;min-width:0;padding:5px 3px;border:1px solid #ffffff30;border-radius:5px;background:#111d30;color:#fff;font-size:9px}
+.ideal-bench{padding:18px 16px;border-top:1px solid #ffffff20;background:#0b1422}
+.ideal-subhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.ideal-subhead h3{margin:0;color:#fff000;font-size:11px;letter-spacing:1.5px}
+.ideal-subhead span{font-size:9px;color:#9eacc0}
+.ideal-bench-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ideal-bench-player{display:flex;flex-direction:column;gap:4px;min-width:0;padding:10px;background:#ffffff0a;border:1px solid #ffffff18;border-radius:7px}
+.ideal-bench-player b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ideal-bench-player small{font-size:9px;color:#9eacc0}
+.ideal-bench-player strong{font-size:11px;color:#fff000}
+.bench-order{font-size:9px;color:#9eacc0}
+.ideal-edit-hint,.transfer-disclaimer{margin:12px 16px 16px;color:#98a8bc;font-size:10px;line-height:1.5}
+.transfer-recommendations{margin-top:22px;padding-top:18px;border-top:1px solid #ffffff25}
+.transfer-list{display:flex;flex-direction:column;gap:9px;padding:0 14px}
+.transfer-card{display:flex;align-items:center;gap:12px;padding:13px;background:#111d30;border:1px solid #ffffff18;border-radius:8px}
+.transfer-rank{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:50%;background:#fff000;color:#080d19;font-size:11px;font-weight:900}
+.transfer-main{flex:1;min-width:0}
+.transfer-player{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.transfer-out{color:#f18a8a;font-size:10px;font-weight:800}
+.transfer-arrow{color:#fff000}
+.transfer-player>strong{font-size:13px}
+.transfer-player>small{color:#9eacc0;font-size:9px}
+.transfer-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.transfer-meta span{color:#9eacc0;font-size:9px}
+.transfer-meta b{color:#f5f7fb}
+.transfer-gain{display:flex;flex-direction:column;align-items:flex-end;flex:0 0 auto}
+.transfer-gain strong{color:#36dc98;font-size:22px;font-family:'Barlow Condensed',sans-serif}
+.transfer-gain small{color:#9eacc0;font-size:8px}
+@media(max-width:600px){
+ .ideal-prediction-strip{padding:14px 12px}
+ .ideal-prediction-strip strong{font-size:26px}
+ .ideal-edit-row{gap:4px}
+ .ideal-pos{width:24px;flex-basis:24px;font-size:8px}
+ .ideal-edit-players{gap:2px}
+ .ideal-edit-player .shirt-wrap{width:36px;height:39px}
+ .ideal-edit-player .shirt{width:34px;height:35px}
+ .ideal-edit-name{font-size:9px}
+ .ideal-edit-player small{font-size:7px}
+ .ideal-player-select{font-size:8px;padding:4px 1px}
+ .ideal-bench-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .transfer-card{gap:8px;padding:10px}
+ .transfer-meta{gap:6px 10px}
+ .transfer-player{gap:5px}
+ .transfer-player>strong{font-size:11px}
+ .transfer-gain strong{font-size:19px}
+}
