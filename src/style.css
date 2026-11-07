@@ -353,3 +353,24 @@ header{min-width:0;gap:12px}
 .squad-rank-heading{min-height:94px!important}
 .starting .pts,.benchrow .pts{color:#050b0a!important}
 .starting .opponent,.benchrow .opponent{background:#c8ffe0!important;color:#050b0a!important;border:1px solid #c8ffe0!important;box-shadow:0 2px 5px #00140d66!important}
+
+/* Squad intelligence panels */
+.momentum-panel{margin-top:16px;padding:14px}
+.analytics-content{padding:0 16px 16px}
+.momentum-row{display:grid;grid-template-columns:minmax(110px,1.4fr) 45px 75px 90px minmax(100px,1fr);gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid #ffffff16;font-size:12px}
+.momentum-row>span,.momentum-row small{color:#9eacc0}
+.momentum-row em{font-style:normal;font-weight:800}
+.positive{color:#28dc91!important}.negative{color:#ff6474!important}.neutral{color:#aab4c3!important}
+.ideal-row{display:grid;grid-template-columns:45px minmax(100px,1fr) 50px 85px 30px;gap:10px;align-items:center;padding:9px 4px;border-bottom:1px solid #ffffff16;font-size:12px}
+.ideal-row>span:nth-child(3){color:#9eacc0}.ideal-row em{font-style:normal;color:#d7b1ff;font-weight:900}
+.pos-tag{font-size:9px;color:#d7b1ff;font-weight:900}
+.fixture-ratings{overflow-x:auto;padding:0 12px 15px}
+.fixture-matrix{min-width:620px}
+.fixture-matrix-head,.fixture-matrix-row{display:grid;grid-template-columns:minmax(110px,1.5fr) repeat(5,minmax(78px,1fr));gap:5px;align-items:center}
+.fixture-matrix-head{padding:8px 3px;color:#9eacc0;font-size:9px}
+.fixture-matrix-row{padding:5px 3px;border-top:1px solid #ffffff14;font-size:10px}
+.fixture-matrix-row>strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.difficulty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:37px;border-radius:4px;background:#334155;font-weight:800}
+.difficulty small{font-size:9px;opacity:.75}
+.difficulty.d1{background:#087a4d;color:#e5fff2}.difficulty.d2{background:#236d50;color:#e5fff2}.difficulty.d3{background:#46566d;color:#fff}.difficulty.d4{background:#9a4d39;color:#fff}.difficulty.d5{background:#a92337;color:#fff}.difficulty.blank{color:#8794a7}
+@media(max-width:700px){.momentum-row{grid-template-columns:minmax(80px,1fr) 35px 65px 75px;gap:5px;font-size:10px}.momentum-row small{grid-column:1/-1}.ideal-row{grid-template-columns:36px minmax(80px,1fr) 38px 65px 22px;gap:5px;font-size:10px}.analytics-content{padding:0 9px 12px}}
