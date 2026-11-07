@@ -109,3 +109,45 @@ td{font-size:13px;padding:12px 9px}
  .league-card h3{font-size:18px}
  nav a{font-size:11px}
 }
+
+/* Squad pitch: provide full vertical room for goalkeeper, defence, midfield and forwards */
+.squad-rank-heading{min-height:78px;justify-content:flex-start;padding:20px 22px 15px}
+.squad-rank-heading h2{font-family:'Barlow Condensed',sans-serif;font-size:29px;letter-spacing:.7px;margin:0;color:#f7f7fb}
+.squad-rank-heading h2 strong{color:#37e6a0;font-weight:800;margin-left:6px}
+.pitchstage{padding-top:22px}
+.pitch{height:510px;overflow:visible;transform:perspective(1100px) rotateX(10deg);transform-origin:center center}
+.starting{inset:4% 3%;justify-content:space-between;padding:8px 0}
+.pitch-row{min-height:98px;flex:1;align-items:center}
+.starting .player{width:24%;min-height:92px;justify-content:center}
+.starting .shirt{width:57px;height:54px;margin-bottom:6px}
+.starting .player-name{font-size:13px;padding:5px 9px}
+.starting .pts{font-size:14px;padding:4px 12px}
+.bench{padding-top:13px}
+.leagues-page{margin-top:17px;padding:17px}
+.league-table-wrap{width:100%;overflow-x:auto}
+.league-table{width:100%;border-collapse:collapse;min-width:560px;text-align:left}
+.league-table th{font-size:11px;letter-spacing:1.1px;color:#aab6c8;padding:13px 14px;border-bottom:1px solid #ffffff25}
+.league-table td{font-size:14px;padding:15px 14px;border-bottom:1px solid #ffffff15;white-space:nowrap}
+.league-table td:first-child{white-space:normal;min-width:220px}
+.league-table td:first-child b{display:block;font-size:14px;color:#fff}
+.league-table td:first-child small{display:block;font-size:10px;color:#a995c7;margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.league-move{font-weight:900;font-size:13px;white-space:nowrap}
+.league-move.up{color:#35e49a}
+.league-move.down{color:#ff8191}
+.league-move.neutral{color:#b5bdca}
+@media(max-width:1000px){
+ .pitch{height:520px}
+}
+@media(max-width:650px){
+ .squad-rank-heading{min-height:62px;padding:15px}
+ .squad-rank-heading h2{font-size:23px}
+ .pitchstage{padding:14px 2% 0}
+ .pitch{height:470px;transform:perspective(1000px) rotateX(7deg)}
+ .starting{inset:3% 1%;padding:5px 0}
+ .pitch-row{min-height:88px}
+ .starting .player{min-height:84px;width:25%}
+ .starting .shirt{width:43px;height:42px;transform:none}
+ .starting .player-name{font-size:9px;padding:3px 4px}
+ .starting .pts{font-size:10px;padding:3px 6px}
+ .league-table td{font-size:12px;padding:12px 10px}
+}
