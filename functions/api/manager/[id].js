@@ -167,7 +167,8 @@ export async function onRequest({ params }) {
       if (options[0]) transferOptions.push(options[0]);
     }
     transferOptions.sort((a,b)=>b.gain-a.gain);
-    const bestTransfers = transferOptions.slice(0,5);
+    const seenTransferTargets = new Set();
+    const bestTransfers = transferOptions.sort((a,b)=>b.gain-a.gain).filter(option=>{if(seenTransferTargets.has(option.id))return false;seenTransferTargets.add(option.id);return true;}).slice(0,5);
     for (const p of picks) { const byEvent = new Map(); for (const f of (teamFixtures.get(p.clubId)||[]).filter(x=>x.event<=nextEvent+4)) { const entry=byEvent.get(f.event)||{event:f.event,opponents:[],difficulty:f.difficulty}; entry.opponents.push(f.opponent+" ("+f.venue+")"); entry.difficulty=Math.max(entry.difficulty,f.difficulty); byEvent.set(f.event,entry); } p.nextFixtures=[...byEvent.values()].sort((x,y)=>x.event-y.event); }
     const starting = picks.filter(p => p.positionOrder <= 11).sort((a,b) => a.positionOrder-b.positionOrder);
     const bench = picks.filter(p => p.positionOrder > 11).sort((a,b) => a.positionOrder-b.positionOrder);
