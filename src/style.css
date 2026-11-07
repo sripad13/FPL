@@ -1105,3 +1105,19 @@ nav a[href="/fpl-tips-transfer"].on{
  .bench.bench-dugout .pts{font-size:10px;padding:3px 7px}
  .why-ideal-list .why-player p{font-size:12px;line-height:1.45}
 }
+
+
+/* Transparent ambulance marker on both squad views */
+.injury-ambulance,
+.bench.bench-dugout .injury-ambulance{
+ width:auto!important;height:auto!important;
+ min-width:0!important;min-height:0!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;
+ color:inherit!important;
+ box-shadow:none!important;
+ display:block!important;
+ font-size:16px!important;line-height:1!important;
+ filter:drop-shadow(0 1px 2px #000b)!important;
+}
