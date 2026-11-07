@@ -172,7 +172,8 @@ export async function onRequest({ params }) {
         const options = (bootstrap.elements || []).filter(candidate => {
           if (ownedIds.has(candidate.id) || candidate.element_type !== outgoingElement.element_type) return false;
           if ((candidate.now_cost || 0) / 10 > budget + .0001) return false;
-          const currentClubCount = squadClubCounts.get(candidate.team) || 0;\n          const outgoingFromSameClub = candidate.team === outgoing.clubId ? 1 : 0;
+          const currentClubCount = squadClubCounts.get(candidate.team) || 0;
+          const outgoingFromSameClub = candidate.team === outgoing.clubId ? 1 : 0;
           if (currentClubCount - outgoingFromSameClub >= 3) return false;
           return candidate.status === "a" || (candidate.status === "d" && Number(candidate.chance_of_playing_next_round ?? 50) >= 75);
         }).map(candidate => {
