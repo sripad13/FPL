@@ -863,3 +863,18 @@ nav a[href="/fpl-tips-transfer"].on{
 
 
 .improve-page .ideal-starting .player,.improve-page .ideal-bench .player{position:relative}
+
+
+/* Lightweight SVG club kits */
+.shirt-svg{display:block;object-fit:contain;object-position:center;width:59px;height:56px;margin:0 auto 4px;filter:drop-shadow(0 5px 5px #00150eaa)}
+.shirt-svg:before{display:none!important;content:none!important}
+.starting .shirt-svg{width:59px;height:56px;margin-bottom:5px}
+.benchrow .shirt-svg{width:43px;height:41px;margin-bottom:4px}
+.improve-page .ideal-starting .shirt-svg{width:59px;height:56px;margin:0;filter:drop-shadow(0 5px 5px #00150eaa)}
+.improve-page .ideal-bench .shirt-svg{width:43px;height:41px;margin:0}
+@media(max-width:700px){
+ .starting .shirt-svg{width:43px;height:41px}
+ .benchrow .shirt-svg{width:35px;height:34px}
+ .improve-page .ideal-starting .shirt-svg{width:43px;height:41px}
+ .improve-page .ideal-bench .shirt-svg{width:35px;height:34px}
+}
