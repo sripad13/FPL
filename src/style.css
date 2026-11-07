@@ -508,3 +508,17 @@ header{min-width:0;gap:12px}
  #players .ideal-sectiontop h2{font-size:clamp(20px,5vw,27px)}
  .ideal-sectiontop .ideal-next-label{font-size:8px}
 }
+
+/* Next FPL deadline countdown */
+.deadline-panel{display:flex;align-items:center;justify-content:center;min-height:76px;padding:14px 18px}
+.deadline-panel>div{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.deadline-panel b{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,2.2vw,30px);letter-spacing:1px;color:#32e49b;font-variant-numeric:tabular-nums;white-space:nowrap}
+.deadline-panel small{font-size:10px;letter-spacing:1.5px;font-weight:800}
+@media(max-width:700px){
+ .welcome-team{width:100%;justify-content:space-between!important}
+ .welcome-team h1{max-width:60%;font-size:clamp(20px,5.5vw,32px)!important}
+ .welcome-summary{margin-left:auto!important;padding-left:14px!important}
+ .welcome-summary b{font-size:36px!important;line-height:1.05}
+ .deadline-panel>div{align-items:center}
+ .deadline-panel b{font-size:27px}
+}
