@@ -42,3 +42,70 @@ td{padding:10px 8px}
  .tile b{font-size:25px}
  nav a{font-size:10px}
 }
+
+/* Accessibility and readability update */
+:root{font-size:16px}
+.topstats small,.idbox label,.score small,.quick small{font-size:12px;letter-spacing:1.15px}
+.topstats b{font-size:19px}
+nav a{font-size:14px;padding-top:18px;padding-bottom:16px}
+.welcome h1{font-size:54px}
+.welcome p{font-size:16px}
+.eyebrow{font-size:12px;letter-spacing:2px}
+.idbox{gap:13px;padding:10px 12px 10px 16px;border:1px solid #a47be7;background:#111b2d;min-height:58px}
+.idbox label{font-size:11px;white-space:nowrap}
+.idbox input{width:115px;min-width:115px;height:40px;padding:0 10px;background:#050b16;border:1px solid #71809a;border-radius:5px;color:#fff!important;font-size:18px;font-weight:800;letter-spacing:.5px;outline:none;cursor:text;caret-color:#c59aff}
+.idbox input:focus{border-color:#bb8bff;box-shadow:0 0 0 3px #9d5cf344}
+.idbox button{font-size:13px;padding:14px 19px;white-space:nowrap}
+.sectiontop h2{font-size:34px}
+.formation{font-size:15px}
+.player-name{font-size:13px;padding:5px 9px}
+.pts{font-size:14px;padding:4px 12px}
+.pts small{font-size:11px}
+.shirt{width:54px;height:51px}
+.bench>small{font-size:12px}
+.score b{font-size:19px}
+.scoremain strong{font-size:47px}
+.scoremain span{font-size:10px}
+.manager h2{font-size:30px}
+.manager small,.rank small{font-size:11px}
+.manager span{font-size:13px}
+.rank b{font-size:20px}
+.rank-change{display:block;font-size:11px;font-weight:800;white-space:nowrap;margin-top:2px}
+.rank-change.up{color:#35e49a}
+.rank-change.down{color:#ff8191}
+.rank-change.neutral{color:#b5bdca}
+.tile{min-height:160px;padding:16px}
+.tile small{font-size:11px}
+.tile b{font-size:35px}
+.tile span{font-size:13px;line-height:1.45}
+.quick b{font-size:16px}
+table{font-size:14px}
+th{font-size:11px;padding:11px 9px}
+td{font-size:13px;padding:12px 9px}
+.fixture{font-size:15px;padding:15px 5px}
+.fixture span{font-size:12px}
+.fixture small{font-size:10px}
+.caption{font-size:11px}
+.leagues-page{margin-top:17px;padding:17px}
+.league-count{font-size:11px;color:#c9a6f8;letter-spacing:1px;font-weight:800}
+.league-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.league-card{padding:17px;border:1px solid #ffffff24;border-radius:7px;background:linear-gradient(135deg,#1b2940,#111b2c)}
+.league-type{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#c79cff;font-weight:800}
+.league-card h3{font-size:20px;margin:8px 0 15px;line-height:1.25}
+.league-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.league-meta span,.league-foot{font-size:10px;color:#aab6c8;letter-spacing:.7px}
+.league-meta b{display:block;font-size:18px;color:#fff;margin-top:5px;letter-spacing:0}
+.league-foot{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #ffffff1c;margin-top:15px;padding-top:11px;font-size:11px}
+.no-leagues{grid-column:1/-1;padding:22px;border:1px dashed #ffffff30;border-radius:7px;color:#b8c1d0;font-size:14px}
+@media(max-width:650px){
+ .welcome h1{font-size:43px}
+ .idbox{width:100%;flex-wrap:wrap;justify-content:space-between}
+ .idbox label{width:100%}
+ .idbox input{flex:1;width:auto;min-width:90px}
+ .player-name{font-size:10px;padding:3px 5px}
+ .pts{font-size:11px}
+ .tile b{font-size:28px}
+ .league-grid{grid-template-columns:1fr}
+ .league-card h3{font-size:18px}
+ nav a{font-size:11px}
+}
