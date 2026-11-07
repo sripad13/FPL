@@ -345,3 +345,11 @@ header{min-width:0;gap:12px}
  .live-dot{width:9px;height:9px}
  .opponent{font-size:8px;padding:2px 3px}
 }
+
+/* Final squad UI refinements */
+.squad.panel{border:1px solid #ffffff28!important;border-radius:9px!important;box-shadow:0 18px 48px #0008!important}
+.squad.panel:before,.squad-rank-heading:after{display:none!important}
+.xi-mark,.position-label{display:none!important}
+.squad-rank-heading{min-height:94px!important}
+.starting .pts,.benchrow .pts{color:#050b0a!important}
+.starting .opponent,.benchrow .opponent{background:#c8ffe0!important;color:#050b0a!important;border:1px solid #c8ffe0!important;box-shadow:0 2px 5px #00140d66!important}
