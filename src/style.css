@@ -1228,3 +1228,9 @@ nav a[href="/fpl-tips-transfer"].on{
  .welcome-score{gap:6px;padding:9px 8px}
  .welcome-score b{font-size:15px}
 }
+
+/* Place the live and overall squad metrics inside the main squad panel */
+#squad>.welcome-stats-row{margin:0 0 16px;width:100%}
+@media(max-width:700px){
+ #squad>.welcome-stats-row{margin-bottom:12px}
+}
