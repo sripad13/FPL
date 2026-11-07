@@ -522,3 +522,16 @@ header{min-width:0;gap:12px}
  .deadline-panel>div{align-items:center}
  .deadline-panel b{font-size:27px}
 }
+
+/* Final fixture, deadline and squad-pitch refinements */
+#fixtures .sectiontop h2{font-size:clamp(27px,3vw,36px)}
+.fixture-matrix-row>strong{font-size:14px!important;font-weight:800;line-height:1.25}
+.deadline-panel>div{display:grid;grid-template-columns:1fr;gap:5px;justify-items:center;text-align:center}
+.deadline-panel small{font-size:14px!important;letter-spacing:1.7px}
+.deadline-panel b{font-size:clamp(30px,3vw,40px)!important;line-height:1.05}
+.deadline-panel #deadline-date{font-size:11px;color:#aab6c8;letter-spacing:.5px}
+.squad .pitch{clip-path:none!important;border:0!important;outline:2px solid #8ce9b180!important;outline-offset:-2px!important;border-radius:0!important}
+.squad .pitch:before{display:none!important}
+.squad .pitchstage{border-top:0!important}
+.squad .squad-rank-heading:after,.squad.panel:before{display:none!important}
+@media(max-width:700px){.fixture-matrix-row>strong{font-size:13px!important}.deadline-panel small{font-size:13px!important}.deadline-panel b{font-size:34px!important}}
