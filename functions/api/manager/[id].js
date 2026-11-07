@@ -93,7 +93,7 @@ export async function onRequest({ params }) {
         news: player.news || "",
         opponent: opponentTeam?.short_name || null,
         venue: teamFixture ? (teamFixture.isHome ? "H" : "A") : null,
-        isPlaying: Boolean(fixture?.started && !fixture?.finished)
+        isPlaying: Boolean(fixture?.started && !fixture?.finished && Number(stats.minutes || 0) > 0 && Number(stats.minutes || 0) < 90)
       };
     });
 
