@@ -1,7 +1,7 @@
 const API="https://fantasy.premierleague.com/api/";
 async function onRequest({request,params}){
  const id=String(params.id||"").trim(),url=new URL(request.url),type=url.searchParams.get("type")==="h2h"?"h2h":"classic";
- if(!/^\\d{1,12}$/.test(id))return Response.json({error:"Invalid league ID."},{status:400});
+ if(!/^\d{1,12}$/.test(id))return Response.json({error:"Invalid league ID."},{status:400});
  const path=type==="h2h"?`leagues-h2h/${id}/standings/?page=1`:`leagues-classic/${id}/standings/?page_standings=1`;
  try{const response=await fetch(API+path,{headers:{"User-Agent":"TheSportzineFPL/0.1 (public FPL dashboard)"}});
  if(!response.ok)return Response.json({error:response.status===404?"League not found or standings unavailable.":"FPL standings are temporarily unavailable."},{status:response.status===404?404:502});
