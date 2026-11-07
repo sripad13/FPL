@@ -141,6 +141,10 @@ export async function onRequest({ params }) {
       const availability = p.chanceOfPlaying == null ? 1 : Math.max(0, Math.min(1, Number(p.chanceOfPlaying) / 100));
       return Math.max(0, (Number(element.form || p.form || 0) * .45 + Number(element.points_per_game || 0) * .35 + scorePlayer(p) * .2) * availability);
     };
+    const projectedCaptainOrder = [...idealXI].sort((a,b)=>projectedPoints(b)-projectedPoints(a));
+    idealXI.forEach(p=>{p.idealCaptain=false;p.idealViceCaptain=false;});
+    if(projectedCaptainOrder[0]) projectedCaptainOrder[0].idealCaptain=true;
+    if(projectedCaptainOrder[1]) projectedCaptainOrder[1].idealViceCaptain=true;
     const bank = Number(picksPayload.entry_history?.bank ?? 0) / 10;
     const squadClubCounts = new Map();
     for (const p of picks) squadClubCounts.set(p.clubId, (squadClubCounts.get(p.clubId) || 0) + 1);
