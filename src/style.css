@@ -1190,3 +1190,10 @@ nav a[href="/fpl-tips-transfer"].on{
 /* Keep numbered FPL ID guide steps while using simple text-only instructions */
 .fpl-help-card li:before{display:grid!important;content:"(" counter(guide) ")";width:25px;height:25px;border-radius:0;background:transparent;color:#fff000;font-size:12px;font-weight:900}
 .fpl-help-card li{padding-left:34px}
+
+
+/* Explicit step numbers in the FPL ID guide */
+.fpl-help-card li{display:grid!important;grid-template-columns:30px minmax(0,1fr);align-items:start;gap:7px;padding:0!important}
+.fpl-help-card li:before{display:none!important;content:none!important}
+.fpl-help-card li .fpl-step-number{display:block;color:#fff000;font-size:12px;font-weight:900;line-height:1.55}
+.fpl-help-card li span{display:block;font-size:12px;line-height:1.55;color:#d3dce8}
