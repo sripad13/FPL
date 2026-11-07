@@ -13,15 +13,15 @@ function renderLeagueList(){
  const type=window.fplLeagueType||"classic",list=window.fplLeagueData?.[type]||[];
  document.querySelectorAll("[data-league-tab]").forEach(b=>{const active=b.dataset.leagueTab===type;b.classList.toggle("active",active);b.setAttribute("aria-selected",String(active));});
  document.querySelector("#leaguecount").textContent=list.length+" LEAGUES";
- document.querySelector("#leaguecontent").innerHTML=list.length?'<div class="league-list">'+list.map(l=>'<div class="league-entry" data-league-id="'+esc(l.id)+'" data-league-type="'+type+'"><button class="league-entry-toggle" type="button" aria-expanded="false"><span class="league-entry-name"><b>'+esc(l.name)+'</b><small>YOUR RANK: '+(l.rank==null?"—":fmt(l.rank))+'</small></span><span class="league-entry-action">TOP 10 <i>＋</i></span></button><div class="league-top10" hidden></div></div>').join("")+'</div>':'<div class="no-leagues">No '+(type==="classic"?"classic":"head-to-head")+' leagues are listed for this manager ID.</div>';
+ document.querySelector("#leaguecontent").innerHTML=list.length?'<div class="league-list">'+list.map(l=>'<div class="league-entry" data-league-id="'+esc(l.id)+'" data-league-type="'+type+'"><button class="league-entry-toggle" type="button" aria-expanded="false"><span class="league-entry-name"><b>'+esc(l.name)+'</b><small>YOUR RANK: '+(l.rank==null?"—":fmt(l.rank))+'</small></span><span class="league-entry-action"><i class="league-swing '+(l.movement==="up"?"up":l.movement==="down"?"down":"neutral")+'" aria-label="'+(l.movement==="up"?"Rank improved":l.movement==="down"?"Rank declined":"No rank movement")+'">'+(l.movement==="up"?"▲":l.movement==="down"?"▼":"—")+'</i></span></button><div class="league-top10" hidden></div></div>').join("")+'</div>':'<div class="no-leagues">No '+(type==="classic"?"classic":"head-to-head")+' leagues are listed for this manager ID.</div>';
 }
 function leagueRows(rows){return '<div class="league-standings-table"><div class="league-standing-head"><span>RANK</span><span>MANAGER / TEAM</span><span>POINTS</span></div>'+rows.slice(0,10).map((r,i)=>'<div class="league-standing-row"><b>'+(r.rank??i+1)+'</b><span><strong>'+esc(r.entry_name||"Team")+'</strong><small>'+esc(r.player_name||"")+'</small></span><b>'+fmt(r.total??r.event_total??0)+'</b></div>').join("")+'</div>';}
 document.addEventListener("click",async e=>{
  const tab=e.target.closest("[data-league-tab]");if(tab){window.fplLeagueType=tab.dataset.leagueTab;renderLeagueList();return;}
  const toggle=e.target.closest(".league-entry-toggle");if(!toggle)return;
  const item=toggle.closest(".league-entry"),panel=item.querySelector(".league-top10"),opened=toggle.getAttribute("aria-expanded")==="true";
- if(opened){toggle.setAttribute("aria-expanded","false");panel.hidden=true;toggle.querySelector(".league-entry-action i").textContent="＋";return;}
- toggle.setAttribute("aria-expanded","true");panel.hidden=false;toggle.querySelector(".league-entry-action i").textContent="−";
+ if(opened){toggle.setAttribute("aria-expanded","false");panel.hidden=true;return;}
+ toggle.setAttribute("aria-expanded","true");panel.hidden=false;
  if(panel.dataset.loaded==="true")return;
  panel.innerHTML='<div class="league-loading">Loading top 10…</div>';
  try{const response=await fetch('/api/league/'+encodeURIComponent(item.dataset.leagueId)+'?type='+encodeURIComponent(item.dataset.leagueType));const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not load league standings");panel.innerHTML=leagueRows(data.results||[]);panel.dataset.loaded="true";}
