@@ -4,7 +4,7 @@
 
 ## Main application
 
-- [FPL Dashboard](https://thesportzine-fpl.pages.dev/): Open the dashboard and enter an FPL manager ID to view public Fantasy Premier League data.
+- [FPL Dashboard](https://fpl.thesportzine.com/): Open the dashboard and enter an FPL manager ID to view public Fantasy Premier League data.
 
 ## Data and privacy
 
