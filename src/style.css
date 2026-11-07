@@ -484,3 +484,12 @@ header{min-width:0;gap:12px}
  .ideal-starting .opponent{font-size:clamp(8px,2.2vw,10px);padding:3px 4px}
 }
 @media(max-width:380px){.ideal-pitch{height:475px}.ideal-starting .shirt-wrap{width:39px;height:40px}.ideal-starting .shirt-wrap .shirt{width:35px;height:34px}.ideal-starting .player-name,.ideal-starting .opponent{font-size:8px;padding:2px 3px}}
+
+/* Price swing and Ideal XI heading refinements */
+.momentum-row{grid-template-columns:minmax(0,1fr) minmax(110px,1fr) auto!important;align-items:center}
+.momentum-meta{display:flex;justify-content:center;align-items:center;gap:16px;text-align:center;color:#aebbd0}
+.momentum-meta strong{font-size:11px;color:#cbd5e1;font-weight:700;white-space:nowrap}
+.momentum-row em{justify-self:end;text-align:right}
+.ideal-sectiontop>div{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ideal-sectiontop .ideal-next-label{font-size:9px;letter-spacing:1.5px;color:#bd91f5;font-weight:800;white-space:nowrap}
+@media(max-width:700px){.momentum-row{grid-template-columns:minmax(0,1fr) minmax(90px,1fr) auto!important;gap:5px}.momentum-meta{gap:7px}.momentum-meta strong{font-size:9px}.momentum-row em{font-size:9px}}
