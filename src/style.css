@@ -860,3 +860,6 @@ nav a[href="/fpl-tips-transfer"].on{
  .improve-page .ideal-bench .pts{font-size:10px;padding:2px 7px}
  .improve-page .ideal-move-arrow{width:19px;height:19px;font-size:13px}
 }
+
+
+.improve-page .ideal-starting .player,.improve-page .ideal-bench .player{position:relative}
