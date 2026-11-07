@@ -196,6 +196,7 @@ export async function onRequest({ params }) {
         average: picksEvent.average_entry_score ?? null,
         highest: picksEvent.highest_score ?? null,
         deadline: picksEvent.deadline_time,
+        nextDeadline: events.filter(e => e.deadline_time && new Date(e.deadline_time).getTime() > Date.now()).sort((a,b) => new Date(a.deadline_time)-new Date(b.deadline_time))[0]?.deadline_time || picksEvent.deadline_time,
         finished: Boolean(picksEvent.finished)
       },
       history: (history.current || []).map(x => ({
