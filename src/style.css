@@ -576,3 +576,10 @@ nav a:hover,nav a.on{border-color:var(--brand-yellow)!important}
 .league-standing-row small{color:#aab6c8;font-size:10px}
 .league-standing-row>b:first-child{color:#fff000}
 @media(max-width:700px){.league-sectiontop>div{gap:12px}.league-tabs button{padding:8px 9px;font-size:9px}.league-list{padding:0 9px 12px}.league-entry-toggle{padding:12px 10px}.league-top10{padding:0 8px 10px}}
+
+/* League rank movement indicators */
+.league-entry-action{min-width:22px;justify-content:center}
+.league-entry-action .league-swing{font-style:normal;font-size:19px;font-weight:900;line-height:1}
+.league-entry-action .league-swing.up{color:#39d98a}
+.league-entry-action .league-swing.down{color:#ff5964}
+.league-entry-action .league-swing.neutral{color:#8b98aa;font-size:17px}
