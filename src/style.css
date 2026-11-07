@@ -604,3 +604,9 @@ nav a:hover,nav a.on{border-color:var(--brand-yellow)!important}
 .league-sectiontop>div:first-child{display:block;min-width:0}
 .league-sectiontop>.league-tabs{margin-left:auto;flex-shrink:0}
 @media(max-width:700px){.league-sectiontop{gap:8px}.league-sectiontop>.league-tabs{margin-left:auto}.league-tabs button{padding:7px 8px}}
+
+
+/* Let the My Leagues list span the full panel width */
+#leaguecontent>.league-list{grid-column:1/-1;width:100%;min-width:0}
+#leaguecontent>.no-leagues{grid-column:1/-1}
+#leaguecontent .league-entry{width:100%;min-width:0}
