@@ -814,3 +814,49 @@ nav a[href="/fpl-tips-transfer"].on{
 
 /* Remove position labels beside the Ideal XI pitch rows */
 .ideal-edit-row>.ideal-pos{display:none}
+
+
+/* Match the Improve Your Squad lineup to the main FPL pitch */
+.improve-page .ideal-pitchstage{padding:17px 0 0;background:radial-gradient(ellipse at 50% 55%,#2df3a122,transparent 52%),linear-gradient(#111d30,#0b1825 68%,#09251f);overflow:visible}
+.improve-page .ideal-pitch{width:100%;max-width:100%;height:clamp(560px,90vw,690px);margin:0;transform:none;transform-origin:center;background:repeating-linear-gradient(0deg,#ffffff08 0 47px,#001b1420 47px 94px),linear-gradient(90deg,#08703f,#0a8d4e 50%,#08703f);border:0;outline:2px solid #8ce9b180;outline-offset:-2px;border-radius:0;box-shadow:inset 0 0 30px #d4ffe01a;overflow:hidden}
+.improve-page .ideal-pitch .markings{inset:3.5% 4%}
+.improve-page .ideal-starting{inset:2.5% 2%;justify-content:space-around}
+.improve-page .ideal-starting .pitch-row{position:relative;display:flex;align-items:center;justify-content:center;flex:0 0 24%;height:24%;min-height:0;width:100%;padding:13px 0 2px}
+.improve-page .ideal-starting .position-players{width:100%;display:flex;align-items:center;justify-content:space-around;gap:4px}
+.improve-page .ideal-starting .player{width:24%;max-width:130px;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.improve-page .ideal-starting .shirt-wrap{width:59px;height:56px;position:relative;margin-bottom:5px;display:grid;place-items:center}
+.improve-page .ideal-starting .shirt{width:59px;height:56px;margin:0;filter:drop-shadow(0 5px 5px #00150eaa)}
+.improve-page .ideal-starting .shirt span{font-size:9px}
+.improve-page .ideal-starting .player-name{font-size:clamp(11px,1.1vw,14px);padding:5px 8px;max-width:100%;border:1px solid #ffffff80;box-shadow:0 3px 7px #00140d88}
+.improve-page .ideal-starting .opponent{margin-top:4px;padding:4px 7px;font-size:clamp(10px,1vw,13px);box-shadow:0 3px 7px #00140d88}
+.improve-page .ideal-starting .pts{margin-top:3px;padding:4px 11px;font-size:13px;box-shadow:0 2px 5px #00140d66}
+.improve-page .ideal-starting .pts small{font-size:10px}
+.improve-page .ideal-bench{position:relative;display:block;margin:0;padding:15px 10px 17px;text-align:center;background:linear-gradient(110deg,#101923,#091e19);border-top:2px solid #e52b3b}
+.improve-page .ideal-bench>small{display:block;font-size:10px;letter-spacing:2px;color:#e7f5ed}
+.improve-page .ideal-bench .benchrow{display:flex;justify-content:space-around;gap:5px;margin-top:8px}
+.improve-page .ideal-bench .player{position:relative;width:24%;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.improve-page .ideal-bench .shirt-wrap{position:relative;width:43px;height:41px;margin-bottom:4px;display:grid;place-items:center}
+.improve-page .ideal-bench .shirt{width:43px;height:41px;margin:0}
+.improve-page .ideal-bench .player-name{font-size:11px;padding:4px 7px}
+.improve-page .ideal-bench .pts{font-size:12px;padding:3px 9px}
+.improve-page .ideal-edit-player .ideal-swap-menu{top:100%;right:0}
+.improve-page .ideal-bench .ideal-swap-menu{top:40px;right:0}
+.improve-page .ideal-move-arrow{top:0;right:0;width:21px;height:21px;font-size:14px}
+.improve-page .ideal-bench .ideal-move-arrow{top:0;right:0}
+@media(max-width:700px){
+ .improve-page .ideal-pitchstage{padding:16px 0 0}
+ .improve-page .ideal-pitch{height:560px}
+ .improve-page .ideal-starting{inset:2% 2%}
+ .improve-page .ideal-starting .pitch-row{flex-basis:24%;height:24%;padding-top:14px}
+ .improve-page .ideal-starting .shirt-wrap{width:48px;height:47px}
+ .improve-page .ideal-starting .shirt{width:43px;height:41px}
+ .improve-page .ideal-starting .player-name{font-size:clamp(9px,2.6vw,12px);padding:4px 5px}
+ .improve-page .ideal-starting .opponent{font-size:clamp(8px,2.2vw,10px);padding:3px 4px}
+ .improve-page .ideal-starting .pts{font-size:11px;padding:3px 7px}
+ .improve-page .ideal-bench{padding:13px 5px 15px}
+ .improve-page .ideal-bench .shirt-wrap{width:35px;height:34px}
+ .improve-page .ideal-bench .shirt{width:35px;height:34px}
+ .improve-page .ideal-bench .player-name{font-size:10px;padding:3px 5px}
+ .improve-page .ideal-bench .pts{font-size:10px;padding:2px 7px}
+ .improve-page .ideal-move-arrow{width:19px;height:19px;font-size:13px}
+}
