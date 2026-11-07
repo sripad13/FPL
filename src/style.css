@@ -1390,3 +1390,35 @@ nav a[href="/fpl-tips-transfer"].on{
   .player>.injury-ambulance{animation:none!important;left:calc(50% + 29px)!important;top:57px!important;offset-path:none!important}
   .bench.bench-dugout .player>.injury-ambulance{top:57px!important}
 }
+
+
+/* Injured-player stamp: a single press onto the shirt once per minute */
+.player>.injury-stamp,
+.player .shirt-wrap>.injury-stamp{
+  position:absolute!important;
+  left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  z-index:30!important;
+  display:block!important;
+  width:104px!important;height:auto!important;
+  max-width:none!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  opacity:0;
+  transform:translate(-50%,-155%) rotate(-8deg) scale(1.35);
+  transform-origin:50% 80%;
+  animation:injury-stamp-stomp 60s linear infinite!important;
+  pointer-events:none;
+  filter:drop-shadow(0 3px 2px #0008);
+}
+@keyframes injury-stamp-stomp{
+  0%,1.2%{opacity:0;transform:translate(-50%,-155%) rotate(-8deg) scale(1.35)}
+  1.6%{opacity:1;transform:translate(-50%,-48%) rotate(-3deg) scale(1.08)}
+  1.9%{opacity:1;transform:translate(-50%,-48%) rotate(-3deg) scale(.88,.78)}
+  2.3%,4%{opacity:1;transform:translate(-50%,-48%) rotate(-3deg) scale(1)}
+  5.2%{opacity:0;transform:translate(-50%,-48%) rotate(-3deg) scale(1.02)}
+  100%{opacity:0;transform:translate(-50%,-155%) rotate(-8deg) scale(1.35)}
+}
+@media(prefers-reduced-motion:reduce){
+  .player>.injury-stamp,.player .shirt-wrap>.injury-stamp{animation:none!important;opacity:1!important;transform:translate(-50%,-50%) rotate(-3deg) scale(1)!important}
+}
