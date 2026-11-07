@@ -149,26 +149,45 @@ export async function onRequest({ params }) {
     const squadClubCounts = new Map();
     for (const p of picks) squadClubCounts.set(p.clubId, (squadClubCounts.get(p.clubId) || 0) + 1);
     const ownedIds = new Set(picks.map(p => p.id));
-    const transferOptions = [];
-    for (const outgoing of picks) {
-      const saleValue = outgoing.sellingPrice ?? outgoing.price;
-      const budget = saleValue + bank;
-      const options = (bootstrap.elements || []).filter(candidate => {
-        if (ownedIds.has(candidate.id) || candidate.element_type !== elements.get(outgoing.id)?.element_type) return false;
-        if ((candidate.now_cost || 0) / 10 > budget + .0001) return false;
-        if (candidate.team !== outgoing.clubId && (squadClubCounts.get(candidate.team) || 0) >= 3) return false;
-        return candidate.status === "a" || (candidate.status === "d" && Number(candidate.chance_of_playing_next_round ?? 50) >= 75);
-      }).map(candidate => {
-        const club = teams.get(candidate.team) || {};
-        const f = nextGw.get(candidate.team);
-        const projected = Number(candidate.ep_next) > 0 ? Number(candidate.ep_next) : Math.max(0, (Number(candidate.form || 0) * .45 + Number(candidate.points_per_game || 0) * .35) * (candidate.chance_of_playing_next_round == null ? 1 : Math.max(0, Math.min(1, Number(candidate.chance_of_playing_next_round) / 100))));
-        return {id:candidate.id,webName:candidate.web_name,club:club.short_name||"",position:outgoing.position,price:(candidate.now_cost||0)/10,projectedPoints:roundFplPoints(projected),outId:outgoing.id,outName:outgoing.webName,outPrice:saleValue,bank,netCost:Number(((candidate.now_cost||0)/10-saleValue).toFixed(1)),gain:roundFplPoints(projected)-roundFplPoints(projectedPoints(outgoing)),opponent:f?.opponent||null,venue:f?.venue||null,status:candidate.status,news:candidate.news||""};
-      }).filter(candidate => candidate.gain > 0).sort((a,b)=>b.gain-a.gain);
-      if (options[0]) transferOptions.push(options[0]);
+    const horizonProjection = (player, horizon) => {
+      const schedule = (teamFixtures.get(player.team || player.clubId) || []).filter(f => f.event < nextEvent + horizon);
+      const base = Number(player.ep_next) > 0 ? Number(player.ep_next) : Math.max(0, Number(player.form || 0) * .45 + Number(player.points_per_game || 0) * .55);
+      const availability = player.chance_of_playing_next_round == null ? 1 : Math.max(0, Math.min(1, Number(player.chance_of_playing_next_round) / 100));
+      let total = 0;
+      for (let offset=0; offset<horizon; offset++) {
+        const event=nextEvent+offset, fixturesForEvent=schedule.filter(f=>f.event===event);
+        const fixtureFactor = fixturesForEvent.length ? fixturesForEvent.reduce((sum,f)=>sum*Math.max(.55,Math.min(1.35,1+(3-Number(f.difficulty||3))*.105))*(f.venue==="H"?1.06:.96),1) : .85;
+        const baseForEvent = offset===0 && Number(player.ep_next)>0 ? Number(player.ep_next) : Math.max(0,Number(player.form||0)*.45+Number(player.points_per_game||0)*.55);
+        total += baseForEvent * fixtureFactor * (offset===0?availability:1);
+      }
+      return roundFplPoints(total);
+    };
+    const bestTransfersByHorizon = {};
+    for (const horizon of [1,3,5]) {
+      const transferOptions = [];
+      for (const outgoing of picks) {
+        const outgoingElement = elements.get(outgoing.id) || {};
+        const saleValue = outgoing.sellingPrice ?? outgoing.price;
+        const budget = saleValue + bank;
+        const options = (bootstrap.elements || []).filter(candidate => {
+          if (ownedIds.has(candidate.id) || candidate.element_type !== outgoingElement.element_type) return false;
+          if ((candidate.now_cost || 0) / 10 > budget + .0001) return false;
+          if (candidate.team !== outgoing.clubId && (squadClubCounts.get(candidate.team) || 0) >= 3) return false;
+          return candidate.status === "a" || (candidate.status === "d" && Number(candidate.chance_of_playing_next_round ?? 50) >= 75);
+        }).map(candidate => {
+          const club = teams.get(candidate.team) || {};
+          const f = nextGw.get(candidate.team);
+          const projected = horizonProjection(candidate,horizon);
+          const outgoingProjected = horizonProjection({...outgoingElement,team:outgoing.clubId,form:outgoing.form,points_per_game:outgoingElement.points_per_game,ep_next:outgoingElement.ep_next,chance_of_playing_next_round:outgoing.chanceOfPlaying},horizon);
+          const fixtures = (teamFixtures.get(candidate.team)||[]).filter(x=>x.event<nextEvent+horizon);
+          return {id:candidate.id,webName:candidate.web_name,club:club.short_name||"",position:outgoing.position,price:(candidate.now_cost||0)/10,projectedPoints:projected,outId:outgoing.id,outName:outgoing.webName,outPrice:saleValue,bank,horizon,gain:projected-outgoingProjected,opponent:f?.opponent||null,venue:f?.venue||null,fixtures,status:candidate.status,news:candidate.news||""};
+        }).filter(candidate=>candidate.gain>0).sort((a,b)=>b.gain-a.gain);
+        if(options[0])transferOptions.push(options[0]);
+      }
+      const seen=new Set();
+      bestTransfersByHorizon[horizon]=transferOptions.sort((a,b)=>b.gain-a.gain).filter(option=>{if(seen.has(option.id))return false;seen.add(option.id);return true;}).slice(0,5);
     }
-    transferOptions.sort((a,b)=>b.gain-a.gain);
-    const seenTransferTargets = new Set();
-    const bestTransfers = transferOptions.sort((a,b)=>b.gain-a.gain).filter(option=>{if(seenTransferTargets.has(option.id))return false;seenTransferTargets.add(option.id);return true;}).slice(0,5);
+    const bestTransfers = bestTransfersByHorizon[1];
     for (const p of picks) { const byEvent = new Map(); for (const f of (teamFixtures.get(p.clubId)||[]).filter(x=>x.event<=nextEvent+4)) { const entry=byEvent.get(f.event)||{event:f.event,opponents:[],difficulty:f.difficulty}; entry.opponents.push(f.opponent+" ("+f.venue+")"); entry.difficulty=Math.max(entry.difficulty,f.difficulty); byEvent.set(f.event,entry); } p.nextFixtures=[...byEvent.values()].sort((x,y)=>x.event-y.event); }
     const starting = picks.filter(p => p.positionOrder <= 11).sort((a,b) => a.positionOrder-b.positionOrder);
     const bench = picks.filter(p => p.positionOrder > 11).sort((a,b) => (a.position==="GKP"?0:1)-(b.position==="GKP"?0:1) || a.positionOrder-b.positionOrder);
@@ -216,7 +235,7 @@ export async function onRequest({ params }) {
         eventName: picksEvent.name
       },
       squad: { starting, bench },
-      analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event===nextEvent).map(x=>({opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:roundFplPoints(projectedPoints(p)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).sort((a,b)=>(a.position==="GKP"?0:1)-(b.position==="GKP"?0:1)||a.positionOrder-b.positionOrder).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:roundFplPoints(projectedPoints(p)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null})), bestTransfers, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
+      analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event===nextEvent).map(x=>({opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:roundFplPoints(projectedPoints(p)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain)}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).sort((a,b)=>(a.position==="GKP"?0:1)-(b.position==="GKP"?0:1)||a.positionOrder-b.positionOrder).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:roundFplPoints(projectedPoints(p)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null})), bestTransfers, bestTransfersByHorizon, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
           id: l.id, name: l.name, rank: l.entry_rank,
