@@ -315,7 +315,7 @@ export async function onRequest({ params }) {
       }
       const squad=simulated.map(player=>{
         const fixtureList=(teamFixtures.get(player.clubId)||[]).filter(f=>f.event===eventId);
-        return {id:player.id,name:player.webName,club:player.club,position:player.position,projectedPoints:Number(projection(player).toFixed(1)),fixtures:fixtureList};
+        return {id:player.id,name:player.webName,club:player.club,position:player.position,role:Number(player.positionOrder||0)<=11?"XI":"BENCH",projectedPoints:Number(projection(player).toFixed(1)),fixtures:fixtureList};
       }).sort((a,b)=>["GKP","DEF","MID","FWD"].indexOf(a.position)-["GKP","DEF","MID","FWD"].indexOf(b.position)||b.projectedPoints-a.projectedPoints);
       return {squad,prepTransfers,freeTransfers};
     };
