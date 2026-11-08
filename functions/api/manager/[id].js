@@ -214,7 +214,8 @@ export async function onRequest({ params }) {
       const outfieldBench = bench.filter(p => p.position !== "GKP" && p.minutes > 0);
       for (const substitute of outfieldBench) {
         const absentOutfield = starting.filter(p => p.position !== "GKP" && p.minutes === 0);
-        const counts = { DEF: starting.filter(p => p.position === "DEF").length, MID: starting.filter(p => p.position === "MID").length, FWD: starting.filter(p => p.position === "FWD").length };
+        const activeOutfield = starting.filter(p => p.position !== "GKP" && (p.minutes > 0 || p.autoSubbed));
+        const counts = { DEF: activeOutfield.filter(p => p.position === "DEF").length, MID: activeOutfield.filter(p => p.position === "MID").length, FWD: activeOutfield.filter(p => p.position === "FWD").length };
         const replaceable = absentOutfield.find(player => {
           const next = { ...counts, [player.position]: counts[player.position] - 1, [substitute.position]: counts[substitute.position] + 1 };
           return next.DEF >= 3 && next.MID >= 3 && next.FWD >= 1;
