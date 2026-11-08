@@ -1848,3 +1848,6 @@ nav a[href="/fpl-tips-transfer"].on{
  .chip-squad-row>em{font-size:7px}
  .chip-prep-transfer{grid-template-columns:20px minmax(0,1fr) auto;gap:5px;padding:7px 6px}
 }
+
+.chip-plan-card.expanded{grid-column:1/-1}
+.chip-plan-card.expanded .chip-plan-details{width:100%}
