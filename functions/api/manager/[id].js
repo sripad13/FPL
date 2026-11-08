@@ -213,7 +213,7 @@ export async function onRequest({ params }) {
     const chipHistory = history.chips || [];
     const chipNames = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))];
     const chipDisplay = name => chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase());
-    const firstHalfChipNames = chipNames.filter(name => name !== "assistant_manager");
+    const firstHalfChipNames = chipNames;
     const planningEvents = events.filter(event => event.id >= nextEvent && event.id <= 19);
     // Reconstruct the free-transfer bank from event transfer history. Wildcard and Free Hit preserve the bank.
     const freeTransferByEvent = new Map();
@@ -260,7 +260,7 @@ export async function onRequest({ params }) {
       return {...best,bench,captain};
     };
     const buildChipSquadAndTransfers = eventId => {
-      const simulated = picks.map(player => ({...player}));
+      let simulated = picks.map(player => ({...player}));
       const projection = player => {
         const schedule = teamFixtures.get(player.clubId || player.team) || [];
         const eventFixtures = schedule.filter(f => f.event === eventId);
