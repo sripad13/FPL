@@ -1803,3 +1803,48 @@ nav a[href="/fpl-tips-transfer"].on{
 .chip-status-group>em{color:#78879a;font-size:9px;font-style:normal}
 .chip-status-pill{display:inline-flex;align-items:center;padding:4px 7px;border:1px solid #28c77b;border-radius:4px;background:#0d6d42;color:#eafff4;font-size:8px;font-weight:900}
 .chip-status-pill.used{border-color:#596170;background:#343943;color:#c1c5cc}
+
+
+/* First-set chip planner: free-transfer bank, transfer preparation and expandable squads */
+.chip-ft-summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;padding:12px 14px;background:#0b1727;border:1px solid #ffffff20;border-radius:7px}
+.chip-ft-summary>span{color:#aab8ca;font-size:9px;font-weight:900;letter-spacing:1px}
+.chip-ft-summary>strong{color:#36dfa0;font-family:'Barlow Condensed',sans-serif;font-size:24px}
+.chip-ft-summary>small{flex-basis:100%;color:#9eacc0;font-size:9px}
+.chip-plan-toggle{display:flex;width:100%;align-items:center;gap:9px;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.chip-plan-toggle .chip-plan-title{flex:1;min-width:0}
+.chip-plan-chevron{color:#fff000;font-size:21px;transition:transform .18s ease}
+.chip-plan-card.expanded .chip-plan-chevron{transform:rotate(180deg)}
+.chip-plan-toggle:focus-visible{outline:2px solid #fff000;outline-offset:4px;border-radius:4px}
+.chip-plan-details{margin-top:14px;padding-top:13px;border-top:1px solid #ffffff20}
+.chip-plan-details[hidden]{display:none!important}
+.chip-prep-section h4,.chip-squad-section h4{margin:0 0 9px;color:#fff000;font-size:10px;font-weight:900;letter-spacing:1px}
+.chip-prep-note{margin:0 0 9px!important;color:#9eacc0!important;font-size:9px!important}
+.chip-prep-list{display:flex;flex-direction:column;gap:6px}
+.chip-prep-transfer{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:7px;padding:8px;background:#0b1727;border-radius:5px}
+.chip-prep-transfer>span{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#fff000;color:#101827;font-size:9px;font-weight:900}
+.chip-prep-transfer>div{display:flex;min-width:0;flex-direction:column;gap:2px}
+.chip-prep-transfer>div b{color:#f4f6fa;font-size:10px}
+.chip-prep-transfer>div small,.chip-prep-transfer>em{color:#9eacc0;font-size:8px;font-style:normal}
+.chip-prep-transfer>strong{color:#36dfa0;font-size:10px;white-space:nowrap}
+.chip-prep-transfer>em{grid-column:2/-1;margin-top:-3px}
+.chip-squad-section{margin-top:16px}
+.chip-squad-total{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 8px;padding:8px 10px;background:#0b1727;border-radius:5px}
+.chip-squad-total span{color:#9eacc0;font-size:8px;font-weight:900;letter-spacing:.7px}
+.chip-squad-total b{color:#36dfa0;font-family:'Barlow Condensed',sans-serif;font-size:18px}
+.chip-squad-list{display:flex;flex-direction:column;gap:4px}
+.chip-squad-row{display:grid;grid-template-columns:32px minmax(0,1fr) 48px 62px;align-items:center;gap:6px;padding:7px 8px;background:#111e30;border-radius:4px}
+.chip-squad-row>span{color:#fff000;font-size:8px;font-weight:900}
+.chip-squad-row>b{overflow:hidden;color:#f3f5f8;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.chip-squad-row>small{color:#9eacc0;font-size:8px}
+.chip-squad-row>strong{color:#36dfa0;font-size:9px;text-align:right;white-space:nowrap}
+.chip-squad-row>em{grid-column:2/-1;color:#aab8ca;font-size:8px;font-style:normal;line-height:1.4}
+@media(max-width:600px){
+ .chip-plan-grid{grid-template-columns:minmax(0,1fr)}
+ .chip-plan-toggle{gap:7px}
+ .chip-squad-row{grid-template-columns:30px minmax(0,1fr) 40px 56px;gap:4px;padding:7px 5px}
+ .chip-squad-row>b{font-size:8px}
+ .chip-squad-row>small{font-size:7px}
+ .chip-squad-row>strong{font-size:8px}
+ .chip-squad-row>em{font-size:7px}
+ .chip-prep-transfer{grid-template-columns:20px minmax(0,1fr) auto;gap:5px;padding:7px 6px}
+}
