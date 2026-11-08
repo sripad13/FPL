@@ -19,13 +19,28 @@ function idealPitchRows(ps){return [["GKP","GK"],["DEF","DEF"],["MID","MID"],["F
 function renderChipStrategy(strategy){
  const target=document.querySelector("#chip-strategy-content");
  if(!target)return;
- if(!strategy?.windows?.length){target.innerHTML='<p class="chip-strategy-empty">Chip planning data is not available yet. Try again after your FPL team data loads.</p>';return;}
+ if(!strategy?.windows?.length){target.innerHTML='<p class="chip-strategy-empty">First-set chip planning data is not available yet. Try again after your FPL team data loads.</p>';return;}
  const windows=strategy.windows.map(window=>{
-  const cards=(window.recommendations||[]).map((item,index)=>'<article class="chip-plan-card"><div class="chip-plan-top"><span class="chip-plan-index">'+(index+1)+'</span><div class="chip-plan-title"><b>'+esc(item.chip)+'</b><small>RECOMMENDED GAMEWEEK</small></div><strong class="chip-plan-gw">GW'+item.event+'</strong></div><p>'+esc(item.reason)+'</p><div class="chip-plan-score"><span>STRATEGIC VALUE</span><b>'+Math.round(item.score)+'</b></div></article>').join("");
+  const cards=(window.recommendations||[]).map((item,index)=>{
+   const transfers=(item.prepTransfers||[]).map((move,i)=>'<div class="chip-prep-transfer"><span>'+(i+1)+'</span><div><b>'+esc(move.inName)+'</b><small>IN · '+esc(move.club)+' · '+esc(move.position)+'</small></div><strong>+'+Number(move.projectedGain||0).toFixed(1)+' pts</strong><em>for '+esc(move.outName)+'</em></div>').join("");
+   const squad=(item.squad||[]).map(player=>{
+    const fixtureText=(player.fixtures||[]).length?player.fixtures.map(f=>esc(f.opponent)+' ('+esc(f.venue)+') · FDR '+Number(f.difficulty||3)).join('<br>'):'BLANK GW';
+    return '<div class="chip-squad-row"><span>'+esc(player.position)+'</span><b>'+esc(player.name)+'</b><small>'+esc(player.club)+'</small><strong>'+Number(player.projectedPoints||0).toFixed(1)+' pts</strong><em>'+fixtureText+'</em></div>';
+   }).join("");
+   return '<article class="chip-plan-card"><button type="button" class="chip-plan-toggle" data-chip-plan-toggle="'+index+'" aria-expanded="false"><span class="chip-plan-index">'+(index+1)+'</span><span class="chip-plan-title"><b>'+esc(item.chip)+'</b><small>RECOMMENDED GAMEWEEK</small></span><strong class="chip-plan-gw">GW'+item.event+'</strong><span class="chip-plan-chevron">⌄</span></button><p>'+esc(item.reason)+'</p><div class="chip-plan-score"><span>STRATEGIC VALUE</span><b>'+Math.round(item.score)+'</b></div><div class="chip-plan-details" data-chip-plan-details="'+index+'" hidden><section class="chip-prep-section"><h4>TRANSFERS TO CONSIDER BEFORE THIS CHIP</h4><p class="chip-prep-note">You have '+Number(item.freeTransfers||0)+' free transfer'+(Number(item.freeTransfers||0)===1?'':'s')+' available. Suggestions below stay within your free-transfer bank—no hits.</p>'+(transfers?'<div class="chip-prep-list">'+transfers+'</div>':'<p class="chip-strategy-empty">No positive, budget-compliant transfers improve this squad for the selected gameweek.</p>')+'</section><section class="chip-squad-section"><h4>PROJECTED SQUAD · GW'+item.event+'</h4><div class="chip-squad-total"><span>15-PLAYER PROJECTED POINTS</span><b>'+Number((item.squad||[]).reduce((sum,p)=>sum+Number(p.projectedPoints||0),0)).toFixed(1)+' pts</b></div><div class="chip-squad-list">'+squad+'</div></section></div></article>';
+  }).join("");
   const chipPills=(items,state)=>'<div class="chip-status-group"><small>'+state+'</small>'+(items?.length?items.map(chip=>'<span class="chip-status-pill '+(state==="USED"?"used":"available")+'">'+esc(chip)+'</span>').join(""):'<em>None</em>')+'</div>';
   return '<section class="chip-plan-window"><div class="chip-plan-window-head"><h3>'+esc(window.label)+'</h3><span>GW'+window.start+'–GW'+window.end+'</span></div><div class="chip-status-strip">'+chipPills(window.availableChips,"AVAILABLE")+chipPills(window.usedChips,"USED")+'</div>'+(cards?'<div class="chip-plan-grid">'+cards+'</div>':'<p class="chip-strategy-empty">'+esc(window.note||"No unused chips are available in this window.")+'</p>')+'</section>';
  }).join("");
- target.innerHTML=windows+'<p class="chip-strategy-method">'+esc(strategy.methodology||"Recommendations are estimates based on available FPL data.")+'</p>';
+ target.innerHTML='<div class="chip-ft-summary"><span>FREE TRANSFERS AVAILABLE</span><strong>'+Number(strategy.freeTransfers||1)+' / '+Number(strategy.maxFreeTransfers||5)+'</strong><small>+1 each gameweek · carry over unused transfers · maximum bank of 5</small></div>'+windows+'<p class="chip-strategy-method">'+esc(strategy.methodology||"Recommendations are estimates based on available FPL data.")+'</p>';
+ target.querySelectorAll("[data-chip-plan-toggle]").forEach(button=>button.addEventListener("click",()=>{
+  const index=button.dataset.chipPlanToggle;
+  const details=target.querySelector('[data-chip-plan-details="'+index+'"]');
+  const open=button.getAttribute("aria-expanded")==="true";
+  button.setAttribute("aria-expanded",String(!open));
+  details.hidden=open;
+  button.closest(".chip-plan-card").classList.toggle("expanded",!open);
+ }));
 }
 function renderIdealBuilder(analytics){
  const initial=[...(analytics.idealXI||[]),...(analytics.idealBench||[])];
