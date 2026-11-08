@@ -87,7 +87,7 @@ export async function onRequest({ params }) {
         buyingPrice: Number(pick.purchase_price ?? player.now_cost ?? 0) / 10,
         points: Number(stats.total_points || 0),
         minutes: Number(stats.minutes || 0),
-        multiplier: Number(pick.multiplier || 0),
+        multiplier: pick.is_captain ? 2 : Number(pick.multiplier ?? (pick.is_vice_captain ? 1 : 0)),
         isCaptain: Boolean(pick.is_captain),
         isViceCaptain: Boolean(pick.is_vice_captain),
         positionOrder: Number(pick.position || 0),
