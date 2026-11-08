@@ -241,12 +241,12 @@ export async function onRequest({ params }) {
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
           id: l.id, name: l.name, rank: l.entry_rank,
-          lastRank: l.entry_last_rank, movement: l.entry_movement,
+          lastRank: l.entry_last_rank, movement: l.entry_rank != null && l.entry_last_rank != null ? (Number(l.entry_rank) < Number(l.entry_last_rank) ? "up" : Number(l.entry_rank) > Number(l.entry_last_rank) ? "down" : "neutral") : "neutral",
           created: l.created, closed: l.closed, scoring: l.scoring
         })),
         h2h: (manager.leagues?.h2h || []).map(l => ({
           id: l.id, name: l.name, rank: l.entry_rank,
-          lastRank: l.entry_last_rank, movement: l.entry_movement,
+          lastRank: l.entry_last_rank, movement: l.entry_rank != null && l.entry_last_rank != null ? (Number(l.entry_rank) < Number(l.entry_last_rank) ? "up" : Number(l.entry_rank) > Number(l.entry_last_rank) ? "down" : "neutral") : "neutral",
           created: l.created, closed: l.closed, scoring: l.scoring
         }))
       },
