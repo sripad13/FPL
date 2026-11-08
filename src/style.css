@@ -1896,3 +1896,20 @@ nav a[href="/fpl-tips-transfer"].on{
  .chip-bench .pts{font-size:8px;padding:2px 4px}
  .chip-bench .opponent{font-size:7px}
 }
+
+/* Chip strategy pitch: keep shirts and names on separate, non-overlapping rows. */
+.chip-pitch .player{position:relative!important;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;min-width:0;overflow:visible}
+.chip-pitch .shirt-wrap{position:relative;display:flex;flex:0 0 58px;align-items:center;justify-content:center;margin:0 auto 2px}
+.chip-pitch .shirt-wrap .shirt{position:relative;display:block;flex:0 0 auto;object-fit:contain}
+.chip-pitch .player-name{position:relative;display:block;z-index:2;max-width:100%;min-height:22px;line-height:1.15;white-space:normal;overflow-wrap:anywhere;text-align:center}
+.chip-pitch .pts,.chip-pitch .opponent{position:relative;z-index:1;max-width:100%;white-space:normal;text-align:center}
+.chip-bench .player{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.chip-bench .shirt-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.chip-bench .player-name{position:relative;display:block;max-width:100%;line-height:1.15;white-space:normal;overflow-wrap:anywhere;text-align:center}
+.chip-captain-picks{margin:0 0 9px!important;color:#c5d0df!important;font-size:10px!important}
+.chip-captain-picks b{color:#36dfa0}
+@media(min-width:701px){
+ .all-leagues-page{width:100%;max-width:none!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}
+ .all-leagues-page .league-list{width:100%!important;max-width:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px 14px!important}
+}
+@media(max-width:700px){.all-leagues-page .league-list{grid-template-columns:minmax(0,1fr)!important}}
