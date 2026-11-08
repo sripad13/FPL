@@ -259,7 +259,7 @@ export async function onRequest({ params }) {
       const captain = [...best.xi].sort((a,b)=>b.points-a.points)[0] || null;
       return {...best,bench,captain};
     };
-    const buildChipSquadAndTransfers = eventId => {
+    const buildChipSquadAndTransfers = (eventId, allowTransfers = true) => {
       let simulated = picks.map(player => ({...player}));
       const projection = player => {
         const schedule = teamFixtures.get(player.clubId || player.team) || [];
@@ -277,7 +277,7 @@ export async function onRequest({ params }) {
       const prepTransfers=[];
       const usedCandidates=new Set();
       const clubCounts=()=>{const counts=new Map();for(const p of simulated)counts.set(p.clubId,(counts.get(p.clubId)||0)+1);return counts;};
-      for(let slot=0;slot<freeTransfers;slot++){
+      for(let slot=0;allowTransfers && slot<freeTransfers;slot++){
         const counts=clubCounts();
         let best=null;
         for(const outgoing of simulated){
@@ -368,8 +368,10 @@ export async function onRequest({ params }) {
         reason="Based on your squad's projected points, fixture volume and availability.";
         evidence={benchProjection:Number(benchPoints.toFixed(1)),captainProjection:Number(captainPoints.toFixed(1)),doubleGameweekSquadPlayers:doubleSquad,blankSquadPlayers:blankSquad};
       }
-      const preparation=buildChipSquadAndTransfers(eventId);
-      return {score:Number(score.toFixed(2)),reason,evidence,...preparation};
+      const transferPreparationAllowed=!["wildcard","freehit"].includes(name);
+      const preparation=buildChipSquadAndTransfers(eventId,transferPreparationAllowed);
+      const prepNote=name==="wildcard"?"Wildcard already gives you a squad reset with unlimited transfers; save your free transfers rather than making pre-chip moves.":name==="freehit"?"Avoid pre-chip transfers: Free Hit creates a one-week squad and your original team returns afterwards.": "Suggested moves use only your banked free transfers and are selected for this chip's target gameweek.";
+      return {score:Number(score.toFixed(2)),reason,evidence,...preparation,prepNote};
     };
     const optimiseChipWindow = (windowStart,windowEnd,label) => {
       const start=Math.max(nextEvent,windowStart), end=windowEnd;
