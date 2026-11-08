@@ -2026,3 +2026,30 @@ nav a[href="/fpl-tips-transfer"].on{
  .chip-pitch .starting .pts{font-size:8px!important;min-height:18px!important;padding:2px 3px!important}
  .chip-pitch .starting .opponent{font-size:7px!important;min-height:20px!important;padding:2px 2px!important}
 }
+
+
+/* Chip strategy pitch: center the entire player group within each formation row. */
+.chip-pitch .starting .pitch-row{
+  display:flex!important;
+  width:100%!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+}
+.chip-pitch .starting .position-players{
+  display:flex!important;
+  width:100%!important;
+  max-width:100%!important;
+  flex:1 1 100%!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  margin-inline:auto!important;
+  padding-inline:0!important;
+}
+.chip-pitch .starting .player{
+  flex:0 1 138px!important;
+  margin-inline:0!important;
+}
+@media(max-width:700px){
+ .chip-pitch .starting .position-players{justify-content:center!important}
+ .chip-pitch .starting .player{flex:0 1 25%!important}
+}
