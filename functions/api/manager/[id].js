@@ -205,10 +205,8 @@ export async function onRequest({ params }) {
     const score = entryHistory.points ?? starting.reduce((sum, p) => sum + p.points * p.multiplier, 0);
     const usedChipNames = new Set((history.chips || []).map(chip => String(chip.name || "").toLowerCase()));
     const chipLabels = { wildcard:"Wildcard", freehit:"Free Hit", bboost:"Bench Boost", "3xc":"Triple Captain", assistant_manager:"Assistant Manager" };
-    const availableChips = (bootstrap.chips || [])
-      .map(chip => String(chip.name || "").toLowerCase())
-      .filter(name => name && !usedChipNames.has(name))
-      .map(name => chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase()));
+    const allChips = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))]
+      .map(name => ({ name: chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase()), used: usedChipNames.has(name) }));
 
     const leagueLists = {
       classic: manager.leagues?.classic || [],
@@ -244,7 +242,7 @@ export async function onRequest({ params }) {
         eventName: picksEvent.name
       },
       squad: { starting, bench },
-      chips: availableChips,
+      chips: allChips,
       analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event<nextEvent+5).map(x=>({event:x.event,opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,lastFivePoints:p.lastFivePoints,lastFiveMinutes:p.lastFiveMinutes,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:roundFplPoints(projectedPoints(p)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain),status:p.status||"a",news:p.news||"",chanceOfPlaying:p.chanceOfPlaying}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).sort((a,b)=>(a.position==="GKP"?0:1)-(b.position==="GKP"?0:1)||a.positionOrder-b.positionOrder).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:roundFplPoints(projectedPoints(p)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null,status:p.status||"a",news:p.news||"",chanceOfPlaying:p.chanceOfPlaying})), bestTransfers, bestTransfersByHorizon, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
