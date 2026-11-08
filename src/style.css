@@ -1560,3 +1560,18 @@ nav a[href="/fpl-tips-transfer"].on{
 .all-leagues-page{width:min(1180px,calc(100% - 32px));margin:24px auto 48px!important}
 .all-leagues-page[hidden]{display:none!important}
 @media(max-width:640px){.all-leagues-page{width:calc(100% - 20px);margin:16px auto 32px!important}}
+
+/* Keep the dedicated leagues index page free of dashboard sections */
+.route-leagues main > :not(#all-leagues-page){display:none!important}
+.route-leagues main{min-height:0!important}
+.league-table-page{width:min(1180px,calc(100% - 32px));margin:24px auto 48px;position:relative;z-index:1}
+.league-table-page .panel{padding:clamp(16px,3vw,30px)}
+.league-table-page .league-standings-table{margin-top:12px}
+@media(max-width:640px){.league-table-page{width:calc(100% - 20px);margin:16px auto 32px}}
+/* Manager squad pitch uses the same pitch sizing and bench presentation as the dashboard */
+.manager-profile-page #squad{padding:18px!important}
+.manager-profile-page #squad .pitchstage{margin-top:0;padding:17px 5% 0}
+.manager-profile-page #squad .pitch{height:385px;max-width:720px;margin:auto}
+.manager-profile-page #squad .starting{inset:5% 3%}
+.manager-profile-page #squad .benchrow{gap:5px}
+@media(max-width:700px){.manager-profile-page #squad{padding:11px!important}.manager-profile-page #squad .pitch{height:clamp(280px,92vw,385px)}.manager-profile-page #squad .pitchstage{padding:12px 2% 0}}
