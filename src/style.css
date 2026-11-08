@@ -1767,3 +1767,32 @@ nav a[href="/fpl-tips-transfer"].on{
 @media(max-width:700px){
  .all-leagues-page .league-list{grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* Personalised chip strategy planner */
+.chip-strategy-section{margin-top:24px;padding:20px 0 4px;border-top:1px solid #ffffff25}
+.chip-strategy-heading{margin-bottom:14px}
+.chip-strategy-heading .ideal-next-label{display:block;margin-top:6px}
+.chip-plan-window{margin:0 0 20px;padding:15px;background:#0d1929;border:1px solid #ffffff1c;border-radius:9px}
+.chip-plan-window-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.chip-plan-window-head h3{margin:0;color:#fff000;font-size:12px;font-weight:900;letter-spacing:1px}
+.chip-plan-window-head>span{color:#9eacc0;font-size:10px;font-weight:800;white-space:nowrap}
+.chip-plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.chip-plan-card{min-width:0;padding:13px;background:#142238;border:1px solid #ffffff18;border-radius:7px}
+.chip-plan-top{display:flex;align-items:center;gap:9px}
+.chip-plan-index{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:50%;background:#fff000;color:#09111e;font-size:11px;font-weight:900}
+.chip-plan-title{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.chip-plan-title b{color:#f7f9fc;font-size:13px;font-weight:900}
+.chip-plan-title small,.chip-plan-score span{color:#9eacc0;font-size:8px;font-weight:900;letter-spacing:1px}
+.chip-plan-gw{color:#36dfa0;font-family:'Barlow Condensed',sans-serif;font-size:25px;white-space:nowrap}
+.chip-plan-card p{margin:12px 0;color:#c1ccda;font-size:11px;line-height:1.55}
+.chip-plan-score{display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid #ffffff15}
+.chip-plan-score b{color:#fff000;font-family:'Barlow Condensed',sans-serif;font-size:18px}
+.chip-strategy-method,.chip-strategy-empty,.chip-strategy-loading{margin:10px 4px 14px;color:#9eacc0;font-size:10px;line-height:1.6}
+@media(max-width:600px){
+ .chip-strategy-section{margin-top:18px;padding-top:15px}
+ .chip-plan-window{padding:11px}
+ .chip-plan-grid{grid-template-columns:minmax(0,1fr)}
+ .chip-plan-card{padding:12px}
+ .chip-plan-card p{font-size:10px}
+}
