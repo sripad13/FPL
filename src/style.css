@@ -1913,3 +1913,116 @@ nav a[href="/fpl-tips-transfer"].on{
  .all-leagues-page .league-list{width:100%!important;max-width:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px 14px!important}
 }
 @media(max-width:700px){.all-leagues-page .league-list{grid-template-columns:minmax(0,1fr)!important}}
+
+
+/* Chip pitch hard fix: each player is a vertically stacked grid, with a fixed shirt row.
+   Give every formation row enough height so shirts/names cannot collide with adjacent rows. */
+.chip-pitch{
+  height:660px!important;
+  min-height:660px!important;
+}
+.chip-pitch .starting{
+  inset:2% 2%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  gap:0!important;
+}
+.chip-pitch .starting .pitch-row{
+  flex:0 0 24%!important;
+  height:24%!important;
+  min-height:0!important;
+  padding:8px 0 4px!important;
+  overflow:visible!important;
+}
+.chip-pitch .starting .position-players{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-around!important;
+  gap:4px!important;
+  height:100%!important;
+}
+.chip-pitch .starting .player{
+  display:grid!important;
+  grid-template-rows:54px minmax(22px,auto) 20px minmax(22px,auto)!important;
+  align-content:start!important;
+  justify-items:center!important;
+  align-items:start!important;
+  justify-content:start!important;
+  gap:3px!important;
+  width:24%!important;
+  max-width:138px!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0 2px!important;
+  overflow:visible!important;
+  text-align:center!important;
+}
+.chip-pitch .starting .shirt-wrap{
+  display:flex!important;
+  position:relative!important;
+  width:58px!important;
+  height:54px!important;
+  min-height:54px!important;
+  flex:0 0 54px!important;
+  margin:0 auto!important;
+  align-self:start!important;
+}
+.chip-pitch .starting .shirt-wrap .shirt{
+  display:block!important;
+  width:52px!important;
+  height:50px!important;
+  max-width:100%!important;
+  margin:0!important;
+  object-fit:contain!important;
+}
+.chip-pitch .starting .player-name{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:22px!important;
+  margin:0!important;
+  padding:3px 4px!important;
+  line-height:1.15!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  text-align:center!important;
+  z-index:2!important;
+}
+.chip-pitch .starting .pts{
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  min-height:20px!important;
+  margin:0!important;
+  padding:2px 5px!important;
+  line-height:1.2!important;
+}
+.chip-pitch .starting .opponent{
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  min-height:22px!important;
+  margin:0!important;
+  padding:3px 3px!important;
+  line-height:1.2!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+@media(max-width:700px){
+ .chip-pitch{height:590px!important;min-height:590px!important}
+ .chip-pitch .starting .pitch-row{padding:5px 0 3px!important}
+ .chip-pitch .starting .player{width:25%!important;grid-template-rows:45px minmax(20px,auto) 18px minmax(20px,auto)!important;gap:2px!important;padding:0 1px!important}
+ .chip-pitch .starting .shirt-wrap{width:46px!important;height:45px!important;min-height:45px!important;flex-basis:45px!important}
+ .chip-pitch .starting .shirt-wrap .shirt{width:42px!important;height:40px!important}
+ .chip-pitch .starting .player-name{font-size:9px!important;min-height:20px!important;padding:2px 2px!important}
+ .chip-pitch .starting .pts{font-size:8px!important;min-height:18px!important;padding:2px 3px!important}
+ .chip-pitch .starting .opponent{font-size:7px!important;min-height:20px!important;padding:2px 2px!important}
+}
