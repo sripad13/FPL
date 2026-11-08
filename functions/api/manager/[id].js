@@ -208,7 +208,7 @@ export async function onRequest({ params }) {
     const availableChips = (bootstrap.chips || [])
       .map(chip => String(chip.name || "").toLowerCase())
       .filter(name => name && !usedChipNames.has(name))
-      .map(name => chipLabels[name] || name.replace(/_/g, " ").replace(/\\b\\w/g, letter => letter.toUpperCase()));
+      .map(name => chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase()));
 
     const leagueLists = {
       classic: manager.leagues?.classic || [],
