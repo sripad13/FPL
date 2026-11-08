@@ -1555,3 +1555,8 @@ nav a[href="/fpl-tips-transfer"].on{
  .tsz-mobile-banner{display:block;min-height:50px;margin:8px 0 14px;padding:0}
  .tsz-mobile-banner ins.adsbygoogle{min-height:50px;max-width:100%;margin:0 auto}
 }
+
+/* Dedicated leagues route */
+.all-leagues-page{width:min(1180px,calc(100% - 32px));margin:24px auto 48px!important}
+.all-leagues-page[hidden]{display:none!important}
+@media(max-width:640px){.all-leagues-page{width:calc(100% - 20px);margin:16px auto 32px!important}}
