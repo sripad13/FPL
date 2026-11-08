@@ -192,7 +192,50 @@ export async function onRequest({ params }) {
     const bestTransfers = bestTransfersByHorizon[1];
     for (const p of picks) { const byEvent = new Map(); for (const f of (teamFixtures.get(p.clubId)||[]).filter(x=>x.event<=nextEvent+4)) { const entry=byEvent.get(f.event)||{event:f.event,opponents:[],difficulty:f.difficulty}; entry.opponents.push(f.opponent+" ("+f.venue+")"); entry.difficulty=Math.max(entry.difficulty,f.difficulty); byEvent.set(f.event,entry); } p.nextFixtures=[...byEvent.values()].sort((x,y)=>x.event-y.event); }
     const starting = picks.filter(p => p.positionOrder <= 11).sort((a,b) => a.positionOrder-b.positionOrder);
-    const bench = picks.filter(p => p.positionOrder > 11).sort((a,b) => (a.position==="GKP"?0:1)-(b.position==="GKP"?0:1) || a.positionOrder-b.positionOrder);
+    const bench = picks.filter(p => p.positionOrder > 11).sort((a,b) => a.positionOrder-b.positionOrder);
+    // Apply FPL automatic substitutions only once the entire gameweek is final.
+    // Bench order is preserved; a goalkeeper can only replace the starting goalkeeper.
+    const autoSubs = [];
+    if (picksEvent.finished) {
+      const absent = starting.filter(p => p.minutes === 0);
+      const startingGoalkeeper = starting.find(p => p.position === "GKP");
+      const absentGoalkeeper = startingGoalkeeper?.minutes === 0 ? startingGoalkeeper : null;
+      const benchGoalkeeper = bench.find(p => p.position === "GKP");
+      if (absentGoalkeeper && benchGoalkeeper && benchGoalkeeper.minutes > 0) {
+        const index = starting.indexOf(absentGoalkeeper);
+        starting[index] = { ...benchGoalkeeper, autoSubbed: true, autoSubFor: absentGoalkeeper.webName };
+        benchGoalkeeper.autoSubbed = true;
+        benchGoalkeeper.autoSubFor = absentGoalkeeper.webName;
+        benchGoalkeeper.multiplier = 1;
+        absentGoalkeeper.didNotPlay = true;
+        absentGoalkeeper.autoSubbedOff = true;
+        autoSubs.push({ in: benchGoalkeeper.webName, out: absentGoalkeeper.webName });
+      }
+      const outfieldBench = bench.filter(p => p.position !== "GKP" && p.minutes > 0);
+      for (const substitute of outfieldBench) {
+        const absentOutfield = starting.filter(p => p.position !== "GKP" && p.minutes === 0);
+        const counts = { DEF: starting.filter(p => p.position === "DEF").length, MID: starting.filter(p => p.position === "MID").length, FWD: starting.filter(p => p.position === "FWD").length };
+        const replaceable = absentOutfield.find(player => {
+          const next = { ...counts, [player.position]: counts[player.position] - 1, [substitute.position]: counts[substitute.position] + 1 };
+          return next.DEF >= 3 && next.MID >= 3 && next.FWD >= 1;
+        });
+        if (!replaceable) continue;
+        const index = starting.indexOf(replaceable);
+        starting[index] = { ...substitute, autoSubbed: true, autoSubFor: replaceable.webName, multiplier: 1 };
+        substitute.autoSubbed = true;
+        substitute.autoSubFor = replaceable.webName;
+        replaceable.didNotPlay = true;
+        replaceable.autoSubbedOff = true;
+        autoSubs.push({ in: substitute.webName, out: replaceable.webName });
+      }
+      // FPL captaincy passes to the vice-captain only when the captain does not play.
+      const captain = picks.find(p => p.isCaptain);
+      const viceCaptain = picks.find(p => p.isViceCaptain);
+      if (captain?.minutes === 0 && viceCaptain && viceCaptain.minutes > 0) {
+        const activeVice = starting.find(p => p.id === viceCaptain.id) || bench.find(p => p.id === viceCaptain.id && p.autoSubbed);
+        if (activeVice) activeVice.multiplier = 2;
+      }
+    }
     const entryHistory = picksPayload.entry_history || {};
     const currentRank = Number(manager.summary_overall_rank || 0);
     const previousGw = (history.current || [])
@@ -377,7 +420,7 @@ export async function onRequest({ params }) {
         event: picksEvent.id,
         eventName: picksEvent.name
       },
-      squad: { starting, bench },
+      squad: { starting, bench, autoSubs, autoSubsApplied: Boolean(picksEvent.finished) },
       chips: allChips,
       chipStrategy,
       analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event<nextEvent+5).map(x=>({event:x.event,opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,lastFivePoints:p.lastFivePoints,lastFiveMinutes:p.lastFiveMinutes,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:roundFplPoints(projectedPoints(p)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain),status:p.status||"a",news:p.news||"",chanceOfPlaying:p.chanceOfPlaying}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).sort((a,b)=>(a.position==="GKP"?0:1)-(b.position==="GKP"?0:1)||a.positionOrder-b.positionOrder).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:roundFplPoints(projectedPoints(p)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null,status:p.status||"a",news:p.news||"",chanceOfPlaying:p.chanceOfPlaying})), bestTransfers, bestTransfersByHorizon, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
