@@ -1545,8 +1545,8 @@ nav a[href="/fpl-tips-transfer"].on{
 #idealxi .tsz-ad-slot{margin:20px 0 4px}
 #transfers>.tsz-ad-slot{margin:20px 0 8px}
 @media(max-width:700px){
- .tsz-ad-slot{min-height:100px;margin:14px 0;padding:6px 0}
- .tsz-ad-slot ins.adsbygoogle{min-height:100px}
+ .tsz-ad-slot{min-height:250px;margin:14px 0;padding:6px 0}
+ .tsz-ad-slot ins.adsbygoogle{min-height:250px}
 }
 
 /* Mobile banner placement remains mobile-only; AdSense controls the responsive creative size. */
