@@ -368,10 +368,7 @@ export async function onRequest({ params }) {
         reason="Based on your squad's projected points, fixture volume and availability.";
         evidence={benchProjection:Number(benchPoints.toFixed(1)),captainProjection:Number(captainPoints.toFixed(1)),doubleGameweekSquadPlayers:doubleSquad,blankSquadPlayers:blankSquad};
       }
-      const transferPreparationAllowed=!["wildcard","freehit"].includes(name);
-      const preparation=buildChipSquadAndTransfers(eventId,transferPreparationAllowed);
-      const prepNote=name==="wildcard"?"Wildcard already gives you a squad reset with unlimited transfers; save your free transfers rather than making pre-chip moves.":name==="freehit"?"Avoid pre-chip transfers: Free Hit creates a one-week squad and your original team returns afterwards.": "Suggested moves use only your banked free transfers and are selected for this chip's target gameweek.";
-      return {score:Number(score.toFixed(2)),reason,evidence,...preparation,prepNote};
+      return {score:Number(score.toFixed(2)),reason,evidence};
     };
     const optimiseChipWindow = (windowStart,windowEnd,label) => {
       const start=Math.max(nextEvent,windowStart), end=windowEnd;
@@ -393,7 +390,13 @@ export async function onRequest({ params }) {
         search(index+1,used,plan,total);
       };
       search(0,new Set(),[],0);
-      return {label,start,end,availableChips:available.map(chipDisplay),usedChips:used.map(chipDisplay),recommendations:bestPlan.sort((a,b)=>a.event-b.event).map(item=>({...item,chip:chipDisplay(item.name)})),note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
+      const recommendations=bestPlan.sort((a,b)=>a.event-b.event).map(item=>{
+        const transferPreparationAllowed=!["wildcard","freehit"].includes(item.name);
+        const preparation=buildChipSquadAndTransfers(item.event,transferPreparationAllowed);
+        const prepNote=item.name==="wildcard"?"Wildcard already gives you a squad reset with unlimited transfers; save your free transfers rather than making pre-chip moves.":item.name==="freehit"?"Avoid pre-chip transfers: Free Hit creates a one-week squad and your original team returns afterwards.":"Suggested moves use only your banked free transfers and are selected for this chip's target gameweek.";
+        return {...item,chip:chipDisplay(item.name),...preparation,prepNote};
+      });
+      return {label,start,end,availableChips:available.map(chipDisplay),usedChips:used.map(chipDisplay),recommendations,note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
     };
     const chipStrategy = {
       currentEvent: nextEvent,
