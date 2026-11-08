@@ -372,7 +372,7 @@ export async function onRequest({ params }) {
     };
     const optimiseChipWindow = (windowStart,windowEnd,label) => {
       const start=Math.max(nextEvent,windowStart), end=windowEnd;
-      if(start>end)return null;
+      if(start>end)return {label,start:windowStart,end:windowEnd,availableChips:[],usedChips:chipNames.filter(name=>chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd)).map(chipDisplay),recommendations:[],note:"The first-set chip window closed after GW19. These chips cannot be used from GW20 onwards."};
       const used=chipNames.filter(name=>chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd));
       const available=firstHalfChipNames.filter(name=>!used.includes(name));
       if(!available.length)return {label,start,end,availableChips:[],usedChips:used.map(chipDisplay),recommendations:[],note:"All chips in this window have already been used."};
