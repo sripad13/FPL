@@ -280,7 +280,7 @@ export async function onRequest({ params }) {
         reason=blankSquad+" of your 15 players have no fixture"+(doubleLeagueTeams?" while "+doubleLeagueTeams+" clubs have a double gameweek":"")+". Free Hit is most valuable when your current squad is poorly placed for this one-week fixture slate.";
         evidence={blankSquadPlayers:blankSquad,doubleGameweekTeams:doubleLeagueTeams,doubleGameweekSquadPlayers:doubleSquad};
       }else if(isWildcard){
-        score=weakSquad*7 + nextThree.reduce((sum,x)=>sum+x.xi.reduce((n,p)=>n+p.points,0),0)*.12;
+        score=weakSquad*12 + nextThree.reduce((sum,x)=>sum+x.xi.filter(p=>p.points<3).length,0)*2;
         reason="Across the next three gameweeks, "+weakSquad+" starting-player slots project below 2 points. This is a useful reset window if your current squad needs several changes; reassess once team news and fixtures are confirmed.";
         evidence={lowProjectionSlotsNextThree:weakSquad};
       }else if(isAssistant){
