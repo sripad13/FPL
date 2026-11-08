@@ -154,7 +154,19 @@ const fixtureRows=analytics.fixtureRatings||[];
 document.querySelector("#fixturelist").innerHTML='<div class="fixture-matrix"><div class="fixture-matrix-head"><span>PLAYER</span>'+[0,1,2,3,4].map(i=>'<b>GW'+(d.manager.event+i+1)+'</b>').join("")+'</div>'+fixtureRows.map(p=>'<div class="fixture-matrix-row"><strong>'+esc(p.webName)+'</strong>'+[0,1,2,3,4].map(i=>{const f=p.fixtures?.find(x=>x.event===d.manager.event+i+1);return f?'<span class="difficulty d'+f.difficulty+'">'+esc(f.opponents.join(", "))+'<small>FDR '+f.difficulty+'</small></span>':'<span class="difficulty blank">—</span>'}).join("")+'</div>').join("")+'</div>';}
 async function load(id){window.currentManagerId=String(id);window.idealLineupState=null;let btn=document.querySelector("#load");btn.disabled=true;btn.textContent="LOADING…";document.querySelector("#starting").textContent="Fetching your FPL squad…";try{let r=await fetch("/api/manager/"+encodeURIComponent(id)),d=await r.json();if(!r.ok)throw Error(d.error||"Could not load FPL data");document.querySelector("#fpl-help").hidden=true;document.querySelector("#fplid").value=String(id);render(d);document.querySelector(".header-manager").classList.add("team-loaded");document.querySelector(".loaded-fpl-id strong").textContent=String(id);localStorage.setItem("thesportzine-fpl-id",String(id))}catch(e){document.querySelector("#starting").innerHTML=`<div class="error">${esc(e.message)}<br>Check your FPL ID and retry.</div>`}finally{btn.disabled=false;btn.textContent="LOAD TEAM";}}
 function setPageTitle(title){document.title=title;}
-setPageTitle("FPL Tips by The Sportzine");
+function syncPageTitle(){
+ const path=location.pathname.replace(/\\/$/,"")||"/";
+ if(/^\\/manager\\/\\d+$/.test(path))return;
+ if(/^\\/leagues\\/\\d+$/.test(path))return;
+ if(path==="/fpl-tips-transfer"){setPageTitle("FPL Transfer Tips | The Sportzine");return;}
+ if(path==="/leagues"){setPageTitle("Your FPL Leagues | The Sportzine");return;}
+ const section=location.hash.replace(/^#/,"");
+ const titles={squad:"Your FPL Squad | The Sportzine",momentum:"FPL Price Changes | The Sportzine",fixtures:"FPL Fixture Ratings | The Sportzine"};
+ setPageTitle(titles[section]||"FPL Tips by The Sportzine");
+}
+syncPageTitle();
+window.addEventListener("hashchange",syncPageTitle);
+window.addEventListener("popstate",syncPageTitle);
 document.addEventListener("click",event=>{
  const link=event.target.closest("nav a");
  if(!link)return;
