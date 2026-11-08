@@ -378,7 +378,7 @@ export async function onRequest({ params }) {
             isCaptain:Boolean(p.isCaptain),isViceCaptain:Boolean(p.isViceCaptain),projectedPoints:Number(p.projectedPoints.toFixed(1)),
             fixtures:(teamFixtures.get(p.clubId)||[]).filter(f=>f.event===item.event)}));
         }
-        return {...item,chip:chipDisplay(item.name),squad,prepTransfers,
+        return {...item,chip:chipDisplay(item.name),captain,vice,squad,prepTransfers,
           prepNote:item.name==="wildcard"?"Wildcard offers unlimited transfers for a full squad rebuild; this squad is selected across the next three gameweeks.":
             item.name==="freehit"?"Free Hit offers unlimited transfers for this gameweek only; your original squad returns afterwards.":
             "No transfer is assumed. Any suggested preparation move must use an available free transfer."};
