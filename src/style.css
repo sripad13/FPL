@@ -1663,3 +1663,109 @@ nav a[href="/fpl-tips-transfer"].on{
 .manager-profile-page .profile-chip.used:before{transform:translateY(-50%) rotate(19deg)}
 .manager-profile-page .profile-chip.used:after{transform:translateY(-50%) rotate(-19deg)}
 .manager-profile-page .profile-chips-empty{color:#9eacc0;font-size:10px;font-weight:800;letter-spacing:.05em}
+
+
+/* Manager squad pitch: reserve enough vertical room for shirt, name and fixture */
+.manager-profile-page #squad .pitch{
+  height:560px!important;
+  min-height:560px!important;
+  max-width:820px;
+  box-sizing:border-box;
+}
+.manager-profile-page #squad .starting{
+  inset:3% 2%!important;
+  justify-content:space-between!important;
+  overflow:visible!important;
+}
+.manager-profile-page #squad .starting .pitch-row{
+  flex:0 0 24%!important;
+  height:24%!important;
+  min-height:0!important;
+  padding:5px 0 0!important;
+  overflow:visible!important;
+}
+.manager-profile-page #squad .starting .position-players{
+  height:100%;
+  align-items:flex-start!important;
+  justify-content:space-around!important;
+  overflow:visible!important;
+}
+.manager-profile-page #squad .starting .player{
+  height:100%;
+  min-height:0!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  overflow:visible!important;
+}
+.manager-profile-page #squad .starting .shirt-wrap{
+  position:relative!important;
+  flex:0 0 62px!important;
+  width:64px!important;
+  height:62px!important;
+  margin:0 0 2px!important;
+  overflow:visible!important;
+}
+.manager-profile-page #squad .starting .shirt-svg{
+  width:58px!important;height:55px!important;margin:0!important;
+}
+.manager-profile-page #squad .starting .player-name{
+  position:relative!important;z-index:3!important;
+  flex:0 0 auto;line-height:1.15!important;
+  max-width:100%;white-space:nowrap;
+}
+.manager-profile-page #squad .starting .opponent,
+.manager-profile-page #squad .starting .pts{
+  position:relative!important;z-index:3!important;
+  margin-top:1px!important;flex:0 0 auto;
+}
+.manager-profile-page .player:has(.shirt-wrap>.injury-stamp)>.player-name{
+  background:#b42335!important;border-color:#ff6677!important;color:#fff!important;
+}
+.manager-profile-page .shirt-wrap>.injury-stamp{
+  left:50%!important;top:50%!important;
+  width:66px!important;height:auto!important;
+  transform:translate(-50%,-50%) rotate(-8deg) scale(1.15)!important;
+  z-index:8!important;
+}
+@keyframes injury-stamp-stomp{
+  0%,1.2%{opacity:0;transform:translate(-50%,-135%) rotate(-8deg) scale(1.15)}
+  1.6%{opacity:1;transform:translate(-50%,-50%) rotate(-3deg) scale(1.02)}
+  1.9%{opacity:1;transform:translate(-50%,-50%) rotate(-3deg) scale(.88,.78)}
+  2.3%,4%{opacity:1;transform:translate(-50%,-50%) rotate(-3deg) scale(1)}
+  5.2%{opacity:0;transform:translate(-50%,-50%) rotate(-3deg) scale(1.02)}
+  100%{opacity:0;transform:translate(-50%,-135%) rotate(-8deg) scale(1.15)}
+}
+@media(prefers-reduced-motion:reduce){
+ .manager-profile-page .shirt-wrap>.injury-stamp{animation:none!important;opacity:1!important;transform:translate(-50%,-50%) rotate(-3deg) scale(1)!important}
+}
+@media(max-width:700px){
+ .manager-profile-page #squad .pitch{height:570px!important;min-height:570px!important}
+ .manager-profile-page #squad .starting .pitch-row{flex-basis:24%!important;height:24%!important;padding-top:4px!important}
+ .manager-profile-page #squad .starting .player{width:24%!important;gap:5px!important}
+ .manager-profile-page #squad .starting .shirt-wrap{width:48px!important;height:48px!important;flex-basis:48px!important}
+ .manager-profile-page #squad .starting .shirt-svg{width:44px!important;height:42px!important}
+ .manager-profile-page #squad .starting .player-name{font-size:10px!important;padding:4px 4px!important}
+ .manager-profile-page #squad .starting .opponent{font-size:9px!important;padding:3px 4px!important;white-space:normal;max-width:100%}
+ .manager-profile-page .shirt-wrap>.injury-stamp{width:58px!important}
+}
+@media(max-width:390px){
+ .manager-profile-page #squad .pitch{height:550px!important;min-height:550px!important}
+ .manager-profile-page #squad .starting .shirt-wrap{width:41px!important;height:42px!important;flex-basis:42px!important}
+ .manager-profile-page #squad .starting .shirt-svg{width:38px!important;height:36px!important}
+ .manager-profile-page #squad .starting .player-name{font-size:9px!important}
+}
+
+/* All leagues: use the available desktop width in two columns, stack on phones */
+@media(min-width:701px){
+ .all-leagues-page .league-list{
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   align-items:start;
+   gap:8px 12px!important;
+   padding:0!important;
+ }
+ .all-leagues-page .league-entry{min-width:0}
+}
+@media(max-width:700px){
+ .all-leagues-page .league-list{grid-template-columns:minmax(0,1fr)!important}
+}
