@@ -189,4 +189,4 @@ document.querySelector("#leaguecontent").textContent="Enter your FPL ID to view 
 
 
 // Dedicated FPL Pro landing and subscription preview route.
-if ((location.pathname.replace(/\\/$/, "") || "/") === "/fpl-pro") mountFplProPage(document.querySelector("#app"));
+if ((location.pathname.replace(/\/$/, "") || "/") === "/fpl-pro") mountFplProPage(document.querySelector("#app"));
