@@ -344,7 +344,7 @@ export async function onRequest({ params }) {
       const currentLineup=chooseBestXI(picks.map(p=>({...p,team:p.clubId})),eventId,1);
       if(name==="wildcard"){const s=selectBudgetedSquad(3,false);return {score:s?.score||0,reason:s?"A budget-compliant 15-player rebuild targets the strongest combined projections across the next three gameweeks.":"A complete 15-player squad could not be assembled within the available budget."};}
       if(name==="freehit"){const s=selectBudgetedSquad(1,true);return {score:s?.score||0,reason:s?"Unlimited one-week transfers select the highest-projected legal XI within your squad budget and club limits.":"A valid best XI could not be assembled within the available budget."};}
-      if(name==="3xc")return {score:(currentLineup.captain?.projectedPoints||0)*7,reason:currentLineup.captain?"Best projected captain: "+currentLineup.captain.webName+".":"No reliable captain projection is available."};
+      if(name==="3xc")return {score:currentLineup.total+2*(currentLineup.captain?.projectedPoints||0),reason:currentLineup.captain?"Triple Captain target: "+currentLineup.captain.webName+" ("+roundFplPoints((currentLineup.captain.projectedPoints||0)*3)+" projected captain points at 3×).":"No reliable captain projection is available."};
       if(name==="bboost")return {score:currentLineup.bench.reduce((n,p)=>n+p.projectedPoints,0)*8,reason:"Your four substitutes project "+currentLineup.bench.reduce((n,p)=>n+p.projectedPoints,0).toFixed(1)+" combined points."};
       return {score:currentLineup.total||0,reason:"Based on projected points, player availability and upcoming fixtures."};
     };
@@ -354,7 +354,8 @@ export async function onRequest({ params }) {
       const available=chipNames.filter(name=>!used.includes(name));
       if(start>end)return {label,start:windowStart,end:windowEnd,availableChips:[],usedChips:used.map(chipDisplay),recommendations:[],note:"The first-set chip window closed after GW19."};
       if(!available.length)return {label,start,end,availableChips:[],usedChips:used.map(chipDisplay),recommendations:[],note:"All chips in this window have already been used."};
-      const candidates=available.map(name=>({name,options:planningEvents.filter(e=>e.id>=start&&e.id<=end).map(e=>({event:e.id,...chipScoreForEvent(name,e.id)})).sort((a,b)=>b.score-a.score).slice(0,8)}));
+      const alreadyActivatedEvents=new Set(chipHistory.map(chip=>Number(chip.event)).filter(Number.isFinite));
+      const candidates=available.map(name=>({name,options:planningEvents.filter(e=>e.id>=start&&e.id<=end&&!alreadyActivatedEvents.has(e.id)).map(e=>({event:e.id,...chipScoreForEvent(name,e.id)})).sort((a,b)=>b.score-a.score).slice(0,8)}));
       let bestScore=-Infinity,bestPlan=[];
       const search=(index,usedEvents,plan,total)=>{
         if(index>=candidates.length){if(total>bestScore){bestScore=total;bestPlan=plan.slice();}return;}
