@@ -23,7 +23,7 @@ function renderChipPitchPlayer(p){
 function renderChipPitch(players){
  const positions=[["GKP","GK"],["DEF","DEF"],["MID","MID"],["FWD","FWD"]];
  const starters=players.filter(p=>p.role==="XI");
- const bench=players.filter(p=>p.role!=="XI");
+ const bench=players.filter(p=>p.role!=="XI").sort((a,b)=>(a.position==="GKP"?0:1)-(b.position==="GKP"?0:1));
  const pitchRows=positions.map(([pos,label])=>{
   const group=starters.filter(p=>p.position===pos);
   return group.length?'<div class="pitch-row position-'+label.toLowerCase()+'"><span class="position-label">'+label+'</span><div class="position-players">'+group.map(renderChipPitchPlayer).join("")+'</div></div>':'';
