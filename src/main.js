@@ -157,9 +157,9 @@ document.querySelector("#fixturelist").innerHTML='<div class="fixture-matrix"><d
 async function load(id){window.currentManagerId=String(id);window.idealLineupState=null;let btn=document.querySelector("#load");btn.disabled=true;btn.textContent="LOADING…";document.querySelector("#starting").textContent="Fetching your FPL squad…";try{let r=await fetch("/api/manager/"+encodeURIComponent(id)),d=await r.json();if(!r.ok)throw Error(d.error||"Could not load FPL data");document.querySelector("#fpl-help").hidden=true;document.querySelector("#fplid").value=String(id);render(d);document.querySelector(".header-manager").classList.add("team-loaded");document.querySelector(".loaded-fpl-id strong").textContent=String(id);localStorage.setItem("thesportzine-fpl-id",String(id))}catch(e){document.querySelector("#starting").innerHTML=`<div class="error">${esc(e.message)}<br>Check your FPL ID and retry.</div>`}finally{btn.disabled=false;btn.textContent="LOAD TEAM";}}
 function setPageTitle(title){document.title=title;}
 function syncPageTitle(){
- const path=location.pathname.replace(/\\/$/,"")||"/";
- if(/^\\/manager\\/\\d+$/.test(path))return;
- if(/^\\/leagues\\/\\d+$/.test(path))return;
+ const path=location.pathname.replace(/\/$/,"")||"/";
+ if(/^\/manager\/\d+$/.test(path))return;
+ if(/^\/leagues\/\d+$/.test(path))return;
  if(path==="/fpl-tips-transfer"){setPageTitle("FPL Transfer Tips | The Sportzine");return;}
  if(path==="/leagues"){setPageTitle("Your FPL Leagues | The Sportzine");return;}
  const section=location.hash.replace(/^#/,"");
