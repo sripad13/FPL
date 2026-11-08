@@ -322,7 +322,7 @@ export async function onRequest({ params }) {
       }
       const squad=simulated.map(player=>{
         const fixtureList=(teamFixtures.get(player.clubId)||[]).filter(f=>f.event===eventId);
-        return {id:player.id,name:player.webName,club:player.club,position:player.position,role:Number(player.positionOrder||0)<=11?"XI":"BENCH",projectedPoints:Number(projection(player).toFixed(1)),fixtures:fixtureList};
+        return {id:player.id,name:player.webName,club:player.club,position:player.position,role:Number(player.positionOrder||0)<=11?"XI":"BENCH",status:(elements.get(player.id)||{}).status||player.status||"a",projectedPoints:Number(projection(player).toFixed(1)),fixtures:fixtureList};
       }).sort((a,b)=>["GKP","DEF","MID","FWD"].indexOf(a.position)-["GKP","DEF","MID","FWD"].indexOf(b.position)||b.projectedPoints-a.projectedPoints);
       return {squad,prepTransfers};
     };
@@ -400,7 +400,7 @@ export async function onRequest({ params }) {
       const recommendations=bestPlan.sort((a,b)=>a.event-b.event).map(item=>{
         const transferPreparationAllowed=!["wildcard","freehit"].includes(item.name);
         const preparation=buildChipSquadAndTransfers(item.event,transferPreparationAllowed);
-        const prepNote=item.name==="wildcard"?"Wildcard already gives you a squad reset with unlimited transfers; save your free transfers rather than making pre-chip moves.":item.name==="freehit"?"Avoid pre-chip transfers: Free Hit creates a one-week squad and your original team returns afterwards.":"Suggested moves use only your banked free transfers and are selected for this chip's target gameweek.";
+        const prepNote=item.name==="wildcard"?"Wildcard already gives you a squad reset with unlimited transfers; save your free transfers rather than making pre-chip moves.":item.name==="freehit"?"Avoid pre-chip transfers: Free Hit creates a one-week squad and your original team returns afterwards.":"Consider this potential move only if you have a free transfer available. Do not take a points hit solely for this recommendation.";
         return {...item,chip:chipDisplay(item.name),...preparation,prepNote};
       });
       return {label,start,end,availableChips:available.map(chipDisplay),usedChips:used.map(chipDisplay),recommendations,note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
