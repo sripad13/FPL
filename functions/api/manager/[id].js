@@ -212,7 +212,7 @@ export async function onRequest({ params }) {
     // The two chip windows are independent: GW1-19 and GW20-38.
     const chipHistory = history.chips || [];
     const chipNames = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))];
-    const chipDisplay = name => chipLabels[name] || name.replace(/_/g, " ").replace(/\\b\\w/g, letter => letter.toUpperCase());
+    const chipDisplay = name => chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase());
     const planningEvents = events.filter(event => event.id >= nextEvent && event.id <= 38);
     const playerProjection = (player, eventId) => {
       const element = elements.get(player.id) || {};
