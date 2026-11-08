@@ -300,8 +300,9 @@ export async function onRequest({ params }) {
     const optimiseChipWindow = (windowStart,windowEnd,label) => {
       const start=Math.max(nextEvent,windowStart), end=windowEnd;
       if(start>end)return null;
-      const available=chipNames.filter(name=>!chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd));
-      if(!available.length)return {label,start,end,recommendations:[],note:"All chips in this window have already been used."};
+      const used=chipNames.filter(name=>chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd));
+      const available=chipNames.filter(name=>!used.includes(name));
+      if(!available.length)return {label,start,end,availableChips:[],usedChips:used.map(chipDisplay),recommendations:[],note:"All chips in this window have already been used."};
       const candidates=available.map(name=>({name,options:planningEvents.filter(event=>event.id>=start&&event.id<=end).map(event=>({event:event.id,...chipScoreForEvent(name,event.id)})).sort((a,b)=>b.score-a.score).slice(0,8)}));
       let bestScore=-Infinity,bestPlan=[];
       const search=(index,used,plan,total)=>{
@@ -316,7 +317,7 @@ export async function onRequest({ params }) {
         search(index+1,used,plan,total);
       };
       search(0,new Set(),[],0);
-      return {label,start,end,recommendations:bestPlan.sort((a,b)=>a.event-b.event).map(item=>({...item,chip:chipDisplay(item.name)})),note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
+      return {label,start,end,availableChips:available.map(chipDisplay),usedChips:used.map(chipDisplay),recommendations:bestPlan.sort((a,b)=>a.event-b.event).map(item=>({...item,chip:chipDisplay(item.name)})),note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
     };
     const chipStrategy = {
       currentEvent: nextEvent,
