@@ -1796,3 +1796,10 @@ nav a[href="/fpl-tips-transfer"].on{
  .chip-plan-card{padding:12px}
  .chip-plan-card p{font-size:10px}
 }
+
+.chip-status-strip{display:flex;flex-wrap:wrap;gap:9px 18px;margin:0 0 13px;padding:9px 10px;background:#091321;border-radius:6px}
+.chip-status-group{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+.chip-status-group>small{margin-right:3px;color:#9eacc0;font-size:8px;font-weight:900;letter-spacing:.8px}
+.chip-status-group>em{color:#78879a;font-size:9px;font-style:normal}
+.chip-status-pill{display:inline-flex;align-items:center;padding:4px 7px;border:1px solid #28c77b;border-radius:4px;background:#0d6d42;color:#eafff4;font-size:8px;font-weight:900}
+.chip-status-pill.used{border-color:#596170;background:#343943;color:#c1c5cc}
