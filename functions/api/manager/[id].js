@@ -208,6 +208,126 @@ export async function onRequest({ params }) {
     const allChips = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))]
       .map(name => ({ name: chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase()), used: usedChipNames.has(name) }));
 
+    // Deterministic chip planner: evaluate future gameweeks from FPL fixtures and the manager's own squad.
+    // The two chip windows are independent: GW1-19 and GW20-38.
+    const chipHistory = history.chips || [];
+    const chipNames = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))];
+    const chipDisplay = name => chipLabels[name] || name.replace(/_/g, " ").replace(/\\b\\w/g, letter => letter.toUpperCase());
+    const planningEvents = events.filter(event => event.id >= nextEvent && event.id <= 38);
+    const playerProjection = (player, eventId) => {
+      const element = elements.get(player.id) || {};
+      const schedule = teamFixtures.get(player.clubId) || [];
+      const fixturesForEvent = schedule.filter(f => f.event === eventId);
+      if (!fixturesForEvent.length) return 0;
+      const base = Number(element.ep_next) > 0 && eventId === nextEvent
+        ? Number(element.ep_next)
+        : Math.max(0, Number(element.form || player.form || 0) * .45 + Number(element.points_per_game || 0) * .55);
+      const availability = eventId === nextEvent && player.chanceOfPlaying != null
+        ? Math.max(0, Math.min(1, Number(player.chanceOfPlaying) / 100)) : 1;
+      const fixtureMultiplier = fixturesForEvent.reduce((sum, fixture) =>
+        sum + Math.max(.55, Math.min(1.35, 1 + (3 - Number(fixture.difficulty || 3)) * .105)) * (fixture.venue === "H" ? 1.06 : .96), 0);
+      return base * fixtureMultiplier * availability;
+    };
+    const bestSquadLineup = eventId => {
+      const ranked = picks.map(player => ({ player, points: playerProjection(player, eventId) }));
+      let best = null;
+      for (let def = 3; def <= 5; def++) for (let mid = 3; mid <= 5; mid++) {
+        const fwd = 10 - def - mid;
+        if (fwd < 1 || fwd > 3) continue;
+        const take = (position, count) => ranked.filter(x => x.player.position === position).sort((a,b) => b.points-a.points).slice(0,count);
+        const xi = [...take("GKP",1), ...take("DEF",def), ...take("MID",mid), ...take("FWD",fwd)];
+        if (xi.length !== 11) continue;
+        const total = xi.reduce((sum,x)=>sum+x.points,0);
+        if (!best || total > best.total) best = {xi,total};
+      }
+      if (!best) return {xi:[],bench:[],total:0,captain:null};
+      const selected = new Set(best.xi.map(x=>x.player.id));
+      const bench = ranked.filter(x=>!selected.has(x.player.id)).sort((a,b)=>b.points-a.points);
+      const captain = [...best.xi].sort((a,b)=>b.points-a.points)[0] || null;
+      return {...best,bench,captain};
+    };
+    const chipScoreForEvent = (name, eventId) => {
+      const lineup = bestSquadLineup(eventId);
+      const all = picks.map(player=>({player,points:playerProjection(player,eventId)}));
+      const doubleSquad = all.filter(x=>(teamFixtures.get(x.player.clubId)||[]).filter(f=>f.event===eventId).length>1).length;
+      const blankSquad = all.filter(x=>(teamFixtures.get(x.player.clubId)||[]).filter(f=>f.event===eventId).length===0).length;
+      const doubleLeagueTeams = new Set((fixtures||[]).filter(f=>f.event===eventId&&!f.finished).flatMap(f=>[
+        (teamFixtures.get(f.team_h)||[]).filter(x=>x.event===eventId).length>1?f.team_h:null,
+        (teamFixtures.get(f.team_a)||[]).filter(x=>x.event===eventId).length>1?f.team_a:null
+      ].filter(Boolean))).size;
+      const captainPoints = lineup.captain?.points || 0;
+      const benchPoints = lineup.bench.reduce((sum,x)=>sum+x.points,0);
+      const nextThree = [eventId,eventId+1,eventId+2].map(gw=>bestSquadLineup(gw));
+      const weakSquad = nextThree.reduce((sum,x)=>sum+x.xi.filter(p=>p.points<2).length,0);
+      const isWildcard = name==="wildcard";
+      const isFreeHit = name==="freehit";
+      const isBenchBoost = name==="bboost";
+      const isTripleCaptain = name==="3xc";
+      const isAssistant = name==="assistant_manager";
+      let score=0, reason="", evidence={};
+      if(isTripleCaptain){
+        score=captainPoints*7 + (lineup.captain && (teamFixtures.get(lineup.captain.player.clubId)||[]).filter(f=>f.event===eventId).length>1?28:0);
+        reason=lineup.captain
+          ? lineup.captain.player.webName+" is your best projected captain at "+captainPoints.toFixed(1)+" points"+(((teamFixtures.get(lineup.captain.player.clubId)||[]).filter(f=>f.event===eventId).length>1)?" across a double gameweek":"")+". Triple Captain adds the captain's points a second time."
+          : "No reliable captain projection is available for this gameweek.";
+        evidence={captain:lineup.captain?.player.webName||null,captainProjection:Number(captainPoints.toFixed(1))};
+      }else if(isBenchBoost){
+        score=benchPoints*8 + doubleSquad*5;
+        reason="Your four substitutes project "+benchPoints.toFixed(1)+" combined points"+(doubleSquad?" and "+doubleSquad+" squad players have multiple fixtures":"")+". Bench Boost adds all four bench scores to your total.";
+        evidence={benchProjection:Number(benchPoints.toFixed(1)),doubleGameweekSquadPlayers:doubleSquad};
+      }else if(isFreeHit){
+        score=blankSquad*13 + doubleLeagueTeams*2 + doubleSquad*3;
+        reason=blankSquad+" of your 15 players have no fixture"+(doubleLeagueTeams?" while "+doubleLeagueTeams+" clubs have a double gameweek":"")+". Free Hit is most valuable when your current squad is poorly placed for this one-week fixture slate.";
+        evidence={blankSquadPlayers:blankSquad,doubleGameweekTeams:doubleLeagueTeams,doubleGameweekSquadPlayers:doubleSquad};
+      }else if(isWildcard){
+        score=weakSquad*7 + nextThree.reduce((sum,x)=>sum+x.xi.reduce((n,p)=>n+p.points,0),0)*.12;
+        reason="Across the next three gameweeks, "+weakSquad+" starting-player slots project below 2 points. This is a useful reset window if your current squad needs several changes; reassess once team news and fixtures are confirmed.";
+        evidence={lowProjectionSlotsNextThree:weakSquad};
+      }else if(isAssistant){
+        const teamIds=[...new Set(picks.map(p=>p.clubId))];
+        const teamOutlook=teamIds.map(teamId=>({teamId,fixtures:(teamFixtures.get(teamId)||[]).filter(f=>f.event===eventId)}));
+        const favourable=teamOutlook.filter(x=>x.fixtures.length>0&&x.fixtures.every(f=>f.difficulty<=2)).length;
+        score=favourable*12+doubleSquad*4;
+        reason=favourable+" of the clubs represented in your squad have favourable FDR 1–2 fixtures"+(doubleSquad?", with "+doubleSquad+" of your players in double-gameweek teams":"")+".";
+        evidence={favourableSquadClubs:favourable,doubleGameweekSquadPlayers:doubleSquad};
+      }else{
+        score=benchPoints*3+captainPoints*3+doubleSquad*3-blankSquad*2;
+        reason="Based on your squad's projected points, fixture volume and availability.";
+        evidence={benchProjection:Number(benchPoints.toFixed(1)),captainProjection:Number(captainPoints.toFixed(1)),doubleGameweekSquadPlayers:doubleSquad,blankSquadPlayers:blankSquad};
+      }
+      return {score:Number(score.toFixed(2)),reason,evidence};
+    };
+    const optimiseChipWindow = (windowStart,windowEnd,label) => {
+      const start=Math.max(nextEvent,windowStart), end=windowEnd;
+      if(start>end)return null;
+      const available=chipNames.filter(name=>!chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd));
+      if(!available.length)return {label,start,end,recommendations:[],note:"All chips in this window have already been used."};
+      const candidates=available.map(name=>({name,options:planningEvents.filter(event=>event.id>=start&&event.id<=end).map(event=>({event:event.id,...chipScoreForEvent(name,event.id)})).sort((a,b)=>b.score-a.score).slice(0,8)}));
+      let bestScore=-Infinity,bestPlan=[];
+      const search=(index,used,plan,total)=>{
+        if(index>=candidates.length){if(total>bestScore){bestScore=total;bestPlan=plan.slice();}return;}
+        const item=candidates[index];
+        for(const option of item.options){
+          if(used.has(option.event))continue;
+          used.add(option.event);plan.push({name:item.name,...option});
+          search(index+1,used,plan,total+option.score);
+          plan.pop();used.delete(option.event);
+        }
+        search(index+1,used,plan,total);
+      };
+      search(0,new Set(),[],0);
+      return {label,start,end,recommendations:bestPlan.sort((a,b)=>a.event-b.event).map(item=>({...item,chip:chipDisplay(item.name)})),note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
+    };
+    const chipStrategy = {
+      currentEvent: nextEvent,
+      resetEvent: 20,
+      windows: [
+        optimiseChipWindow(1,19,"FIRST HALF · GW1–GW19"),
+        optimiseChipWindow(20,38,"SECOND HALF · GW20–GW38")
+      ].filter(Boolean),
+      methodology:"Deterministic optimisation using your FPL squad, official player projections where available, recent form, fixture difficulty, blank/double gameweeks and chip history. It is a planning estimate, not a guarantee."
+    };
+
     const leagueLists = {
       classic: manager.leagues?.classic || [],
       h2h: manager.leagues?.h2h || []
@@ -243,6 +363,7 @@ export async function onRequest({ params }) {
       },
       squad: { starting, bench },
       chips: allChips,
+      chipStrategy,
       analytics: { idealXI: idealXI.map(p=>{const f=nextGw.get(p.clubId);return {id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,opponent:f?.opponent||null,venue:f?.venue||null,fixtures:(teamFixtures.get(p.clubId)||[]).filter(x=>x.event<nextEvent+5).map(x=>({event:x.event,opponent:x.opponent,venue:x.venue,difficulty:x.difficulty})),lastFiveForm:p.lastFiveForm,lastFivePoints:p.lastFivePoints,lastFiveMinutes:p.lastFiveMinutes,score:Number(scorePlayer(p).toFixed(2)),projectedPoints:roundFplPoints(projectedPoints(p)),idealCaptain:Boolean(p.idealCaptain),idealViceCaptain:Boolean(p.idealViceCaptain),status:p.status||"a",news:p.news||"",chanceOfPlaying:p.chanceOfPlaying}}), idealBench:picks.filter(p=>!idealXI.some(x=>x.id===p.id)).sort((a,b)=>(a.position==="GKP"?0:1)-(b.position==="GKP"?0:1)||a.positionOrder-b.positionOrder).map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,price:p.price,projectedPoints:roundFplPoints(projectedPoints(p)),opponent:nextGw.get(p.clubId)?.opponent||null,venue:nextGw.get(p.clubId)?.venue||null,status:p.status||"a",news:p.news||"",chanceOfPlaying:p.chanceOfPlaying})), bestTransfers, bestTransfersByHorizon, priceMomentum:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,price:p.price,eventChange:p.costChangeEvent,seasonChange:p.costChangeSeason,transfersIn:p.transfersInEvent,transfersOut:p.transfersOutEvent})), fixtureRatings:picks.map(p=>({id:p.id,webName:p.webName,club:p.club,position:p.position,fixtures:p.nextFixtures})) },
       leagues: {
         classic: (manager.leagues?.classic || []).map(l => ({
