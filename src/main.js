@@ -22,7 +22,8 @@ function renderChipStrategy(strategy){
  if(!strategy?.windows?.length){target.innerHTML='<p class="chip-strategy-empty">Chip planning data is not available yet. Try again after your FPL team data loads.</p>';return;}
  const windows=strategy.windows.map(window=>{
   const cards=(window.recommendations||[]).map((item,index)=>'<article class="chip-plan-card"><div class="chip-plan-top"><span class="chip-plan-index">'+(index+1)+'</span><div class="chip-plan-title"><b>'+esc(item.chip)+'</b><small>RECOMMENDED GAMEWEEK</small></div><strong class="chip-plan-gw">GW'+item.event+'</strong></div><p>'+esc(item.reason)+'</p><div class="chip-plan-score"><span>STRATEGIC VALUE</span><b>'+Math.round(item.score)+'</b></div></article>').join("");
-  return '<section class="chip-plan-window"><div class="chip-plan-window-head"><h3>'+esc(window.label)+'</h3><span>GW'+window.start+'–GW'+window.end+'</span></div>'+(cards?'<div class="chip-plan-grid">'+cards+'</div>':'<p class="chip-strategy-empty">'+esc(window.note||"No unused chips are available in this window.")+'</p>')+'</section>';
+  const chipPills=(items,state)=>'<div class="chip-status-group"><small>'+state+'</small>'+(items?.length?items.map(chip=>'<span class="chip-status-pill '+(state==="USED"?"used":"available")+'">'+esc(chip)+'</span>').join(""):'<em>None</em>')+'</div>';
+  return '<section class="chip-plan-window"><div class="chip-plan-window-head"><h3>'+esc(window.label)+'</h3><span>GW'+window.start+'–GW'+window.end+'</span></div><div class="chip-status-strip">'+chipPills(window.availableChips,"AVAILABLE")+chipPills(window.usedChips,"USED")+'</div>'+(cards?'<div class="chip-plan-grid">'+cards+'</div>':'<p class="chip-strategy-empty">'+esc(window.note||"No unused chips are available in this window.")+'</p>')+'</section>';
  }).join("");
  target.innerHTML=windows+'<p class="chip-strategy-method">'+esc(strategy.methodology||"Recommendations are estimates based on available FPL data.")+'</p>';
 }
