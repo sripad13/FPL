@@ -1,3 +1,5 @@
+import "./fpl-pro.css";
+
 export const FPL_PRO_PLANS = Object.freeze({
   monthly: { id: "monthly", name: "Monthly", price: 99, cadence: "month", description: "Flexible access, billed monthly." },
   season: { id: "season", name: "Season Pass", price: 499, cadence: "season", description: "One payment for the full FPL season.", featured: true }
@@ -54,7 +56,7 @@ export function mountFplProPage(root) {
           <div class="pro-section-heading centered"><div><span class="pro-eyebrow">SIMPLE PRICING</span><h2 id="pro-plans-title">Choose your FPL edge.</h2><p>No complicated tiers. All Pro features in either plan.</p></div></div>
           <div class="pro-plan-grid">
             <article class="pro-plan" data-plan="monthly"><div class="pro-plan-name">MONTHLY</div><div class="pro-price"><strong>₹99</strong><span>/ month</span></div><p>Flexible access with monthly billing.</p><ul><li>All FPL Pro tools</li><li>Cancel before your next renewal</li><li>Linked FPL team analysis</li></ul><button type="button" class="pro-plan-button" data-select-plan="monthly">Choose Monthly</button></article>
-            <article class="pro-plan featured" data-plan="season"><div class="pro-popular">BEST VALUE</div><div class="pro-plan-name">SEASON PASS</div><div class="pro-price"><strong>₹499</strong><span>/ season</span></div><p>One payment for the full FPL season.</p><ul><li>Everything in Monthly</li><li>One full-season pass</li><li>Save ₹689 vs 12 monthly payments</li></ul><button type="button" class="pro-plan-button" data-select-plan="season">Choose Season Pass</button></article>
+            <article class="pro-plan featured" data-plan="season"><div class="pro-popular">BEST VALUE</div><div class="pro-plan-name">SEASON PASS</div><div class="pro-price"><strong>₹499</strong><span>/ season</span></div><p>One payment for the full FPL season.</p><ul><li>Everything in Monthly</li><li>One full-season pass</li><li>One payment for the full season</li></ul><button type="button" class="pro-plan-button" data-select-plan="season">Choose Season Pass</button></article>
           </div>
           <p class="pro-billing-note">Prices shown in INR. The final checkout provider and applicable taxes will be confirmed before payments are enabled.</p>
         </section>
