@@ -256,13 +256,13 @@ export async function onRequest({ params }) {
       for(const formation of formations){
         const required=freeHit?{GKP:1,DEF:formation[0],MID:formation[1],FWD:formation[2]}:{GKP:2,DEF:5,MID:5,FWD:3};
         const chosen=[],clubCounts=new Map();let spend=0,valid=true;
-        const minCostForRemaining=(afterPos,afterCount)=>{
+        const minCostForRemaining=(afterPos,afterCount,excludedId)=>{
           let reserve=0;
           for(const pos of ["GKP","DEF","MID","FWD"]){
             const already=chosen.filter(p=>p.position===pos).length+(pos===afterPos?afterCount:0);
             const need=Math.max(0,required[pos]-already);
             if(!need)continue;
-            const prices=reliablePool.filter(p=>p.position===pos&&!chosen.some(x=>x.id===p.id)).map(p=>p.price).sort((x,y)=>x-y);
+            const prices=reliablePool.filter(p=>p.position===pos&&p.id!==excludedId&&!chosen.some(x=>x.id===p.id)).map(p=>p.price).sort((x,y)=>x-y);
             if(prices.length<need)return Infinity;
             reserve+=prices.slice(0,need).reduce((x,y)=>x+y,0);
           }
@@ -274,7 +274,7 @@ export async function onRequest({ params }) {
           while(chosen.filter(p=>p.position===pos).length<required[pos]){
             const pick=candidates.find(p=>{
               if(chosen.some(x=>x.id===p.id)||(clubCounts.get(p.team)||0)>=3)return false;
-              const reserve=minCostForRemaining(pos,chosen.filter(x=>x.position===pos).length+1);
+              const reserve=minCostForRemaining(pos,chosen.filter(x=>x.position===pos).length+1,p.id);
               return spend+p.price+reserve<=totalBudget+.001;
             });
             if(!pick){valid=false;break;}
