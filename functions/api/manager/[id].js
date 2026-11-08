@@ -208,199 +208,141 @@ export async function onRequest({ params }) {
     const allChips = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))]
       .map(name => ({ name: chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase()), used: usedChipNames.has(name) }));
 
-    // Deterministic chip planner: evaluate future gameweeks from FPL fixtures and the manager's own squad.
-    // The two chip windows are independent: GW1-19 and GW20-38.
+    // Deterministic chip planner: Wildcard is a three-GW squad build; Free Hit is a one-GW XI.
     const chipHistory = history.chips || [];
     const chipNames = [...new Set((bootstrap.chips || []).map(chip => String(chip.name || "").toLowerCase()).filter(Boolean))];
     const chipDisplay = name => chipLabels[name] || name.replace(/_/g, " ").replace(/\b\w/g, letter => letter.toUpperCase());
-    const firstHalfChipNames = chipNames;
     const planningEvents = events.filter(event => event.id >= nextEvent && event.id <= 19);
-    // Reconstruct the free-transfer bank from event transfer history. Wildcard and Free Hit preserve the bank.
-    const playerProjection = (player, eventId) => {
-      const element = elements.get(player.id) || {};
-      const schedule = teamFixtures.get(player.clubId) || [];
+    const playerProjectionForEvent = (player, eventId) => {
+      const element = elements.get(player.id) || player;
+      const schedule = teamFixtures.get(player.team || player.clubId) || [];
       const fixturesForEvent = schedule.filter(f => f.event === eventId);
       if (!fixturesForEvent.length) return 0;
-      const base = Number(element.ep_next) > 0 && eventId === nextEvent
-        ? Number(element.ep_next)
-        : Math.max(0, Number(element.form || player.form || 0) * .45 + Number(element.points_per_game || 0) * .55);
-      const availability = eventId === nextEvent && player.chanceOfPlaying != null
-        ? Math.max(0, Math.min(1, Number(player.chanceOfPlaying) / 100)) : 1;
-      const fixtureMultiplier = fixturesForEvent.reduce((sum, fixture) =>
-        sum + Math.max(.55, Math.min(1.35, 1 + (3 - Number(fixture.difficulty || 3)) * .105)) * (fixture.venue === "H" ? 1.06 : .96), 0);
-      return base * fixtureMultiplier * availability;
+      const base = eventId === nextEvent && Number(element.ep_next) > 0 ? Number(element.ep_next) :
+        Math.max(0, Number(element.form || player.form || 0) * .45 + Number(element.points_per_game || 0) * .55);
+      const chance = element.chance_of_playing_next_round ?? player.chanceOfPlaying;
+      const availability = eventId === nextEvent && chance != null ? Math.max(0, Math.min(1, Number(chance) / 100)) : 1;
+      const factor = fixturesForEvent.reduce((sum,f)=>sum+Math.max(.55,Math.min(1.35,1+(3-Number(f.difficulty||3))*.105))*(f.venue==="H"?1.06:.96),0);
+      return base * factor * availability;
     };
-    const bestSquadLineup = eventId => {
-      const ranked = picks.map(player => ({ player, points: playerProjection(player, eventId) }));
-      let best = null;
-      for (let def = 3; def <= 5; def++) for (let mid = 3; mid <= 5; mid++) {
-        const fwd = 10 - def - mid;
-        if (fwd < 1 || fwd > 3) continue;
-        const take = (position, count) => ranked.filter(x => x.player.position === position).sort((a,b) => b.points-a.points).slice(0,count);
-        const xi = [...take("GKP",1), ...take("DEF",def), ...take("MID",mid), ...take("FWD",fwd)];
-        if (xi.length !== 11) continue;
-        const total = xi.reduce((sum,x)=>sum+x.points,0);
-        if (!best || total > best.total) best = {xi,total};
+    const multiweekProjection = (player,horizon) => Array.from({length:horizon},(_,i)=>playerProjectionForEvent(player,nextEvent+i)).reduce((a,b)=>a+b,0);
+    const reliablePool = (bootstrap.elements || []).filter(p => p.status==="a" &&
+      (p.chance_of_playing_next_round==null || Number(p.chance_of_playing_next_round)>=75) &&
+      !(Number(p.minutes||0)<90 && Number(p.starts||0)===0)).map(p=>({
+        ...p,id:p.id,team:p.team,clubId:p.team,club:teams.get(p.team)?.short_name||"",name:p.web_name,webName:p.web_name,
+        position:(bootstrap.element_types||[]).find(t=>t.id===p.element_type)?.singular_name_short||"",
+        price:Number(p.now_cost||0)/10,status:p.status||"a"
+      }));
+    const totalBudget = Number(picksPayload.entry_history?.value ?? 0)/10 + bank;
+    const chooseBestXI = (players,eventId,horizon=1) => {
+      const scored=players.map(p=>({...p,projectedPoints:horizon===1?playerProjectionForEvent(p,eventId):multiweekProjection(p,horizon)}));
+      let best=null;
+      for(let def=3;def<=5;def++)for(let mid=3;mid<=5;mid++){
+        const fwd=10-def-mid;if(fwd<1||fwd>3)continue;
+        const take=(pos,n)=>scored.filter(p=>p.position===pos).sort((a,b)=>b.projectedPoints-a.projectedPoints).slice(0,n);
+        const xi=[...take("GKP",1),...take("DEF",def),...take("MID",mid),...take("FWD",fwd)];
+        if(xi.length!==11)continue;
+        const total=xi.reduce((n,p)=>n+p.projectedPoints,0);
+        if(!best||total>best.total)best={xi,total};
       }
-      if (!best) return {xi:[],bench:[],total:0,captain:null};
-      const selected = new Set(best.xi.map(x=>x.player.id));
-      const bench = ranked.filter(x=>!selected.has(x.player.id)).sort((a,b)=>b.points-a.points);
-      const captain = [...best.xi].sort((a,b)=>b.points-a.points)[0] || null;
-      return {...best,bench,captain};
+      if(!best)return {xi:[],bench:[],captain:null,vice:null,total:0};
+      const ids=new Set(best.xi.map(p=>p.id)),bench=scored.filter(p=>!ids.has(p.id)).sort((a,b)=>b.projectedPoints-a.projectedPoints);
+      const ranked=[...best.xi].sort((a,b)=>b.projectedPoints-a.projectedPoints);
+      return {xi:best.xi,bench,captain:ranked[0],vice:ranked[1],total:best.total};
     };
-    const buildChipSquadAndTransfers = (eventId, allowTransfers = true) => {
-      let simulated = picks.map(player => ({...player}));
-      const projection = player => {
-        const schedule = teamFixtures.get(player.clubId || player.team) || [];
-        const eventFixtures = schedule.filter(f => f.event === eventId);
-        if (!eventFixtures.length) return 0;
-        const element = elements.get(player.id) || player;
-        const base = Number(element.ep_next) > 0 && eventId === nextEvent
-          ? Number(element.ep_next)
-          : Math.max(0, Number(element.form || player.form || 0) * .45 + Number(element.points_per_game || 0) * .55);
-        const availability = eventId === nextEvent && player.chanceOfPlaying != null
-          ? Math.max(0, Math.min(1, Number(player.chanceOfPlaying) / 100)) : 1;
-        const multiplier = eventFixtures.reduce((sum,f)=>sum+Math.max(.55,Math.min(1.35,1+(3-Number(f.difficulty||3))*.105))*(f.venue==="H"?1.06:.96),0);
-        return base * multiplier * availability;
-      };
-      const prepTransfers=[];
-      const usedCandidates=new Set();
-      const clubCounts=()=>{const counts=new Map();for(const p of simulated)counts.set(p.clubId,(counts.get(p.clubId)||0)+1);return counts;};
-      for(let slot=0;allowTransfers && slot<1;slot++){
-        const counts=clubCounts();
-        let best=null;
-        for(const outgoing of simulated){
-          const outgoingElement=elements.get(outgoing.id)||{};
-          const budget=Number(outgoing.sellingPrice??outgoing.price)+bank;
-          const outgoingProjection=projection(outgoing);
-          for(const candidate of bootstrap.elements||[]){
-            if(usedCandidates.has(candidate.id)||simulated.some(p=>p.id===candidate.id))continue;
-            if(candidate.element_type!==outgoingElement.element_type||(candidate.now_cost||0)/10>budget+.0001)continue;
-            const currentCount=counts.get(candidate.team)||0;
-            const removedFromTeam=candidate.team===outgoing.clubId?1:0;
-            if(currentCount-removedFromTeam>=3)continue;
-            if(candidate.status!=="a")continue;
-            if(candidate.chance_of_playing_next_round!=null&&Number(candidate.chance_of_playing_next_round)<75)continue;
-            // Require evidence of regular involvement; an available status alone is not enough.
-            const recentStarts=Number(candidate.starts||0);
-            const recentMinutes=Number(candidate.minutes||0);
-            const startsRate=Number(candidate.starts_per_90||0);
-            const hasReliableRole=(recentStarts>=3&&recentMinutes>=270)||(recentMinutes>=180&&startsRate>=0.55);
-            if(!hasReliableRole||Number(candidate.ep_next||0)<2)continue;
-            const incoming={id:candidate.id,clubId:candidate.team,team:candidate.team,form:Number(candidate.form||0),chanceOfPlaying:candidate.chance_of_playing_next_round,price:(candidate.now_cost||0)/10};
-            const incomingProjection=projection(incoming);
-            const gain=incomingProjection-outgoingProjection;
-            if(gain>0&&(!best||gain>best.gain))best={outgoing,incoming:candidate,gain,incomingProjection,outgoingProjection};
+    const selectBudgetedSquad = (horizon,freeHit=false) => {
+      const formations=freeHit?[[3,5,2],[3,4,3],[4,5,1],[4,4,2],[4,3,3],[5,3,2],[5,4,1]]:[[5,5,3]];
+      let best=null;
+      for(const formation of formations){
+        const required=freeHit?{GKP:1,DEF:formation[0],MID:formation[1],FWD:formation[2]}:{GKP:2,DEF:5,MID:5,FWD:3};
+        const chosen=[],clubCounts=new Map();let spend=0,valid=true;
+        const minCostForRemaining=(afterPos,afterCount)=>{
+          let reserve=0;
+          for(const pos of ["GKP","DEF","MID","FWD"]){
+            const already=chosen.filter(p=>p.position===pos).length+(pos===afterPos?afterCount:0);
+            const need=Math.max(0,required[pos]-already);
+            if(!need)continue;
+            const prices=reliablePool.filter(p=>p.position===pos&&!chosen.some(x=>x.id===p.id)).map(p=>p.price).sort((x,y)=>x-y);
+            if(prices.length<need)return Infinity;
+            reserve+=prices.slice(0,need).reduce((x,y)=>x+y,0);
           }
+          return reserve;
+        };
+        for(const pos of ["GKP","DEF","MID","FWD"]){
+          const candidates=reliablePool.filter(p=>p.position===pos).map(p=>({...p,projectedPoints:multiweekProjection(p,horizon)}))
+            .sort((a,b)=>(b.projectedPoints/Math.max(.1,b.price))-(a.projectedPoints/Math.max(.1,a.price)));
+          while(chosen.filter(p=>p.position===pos).length<required[pos]){
+            const pick=candidates.find(p=>{
+              if(chosen.some(x=>x.id===p.id)||(clubCounts.get(p.team)||0)>=3)return false;
+              const reserve=minCostForRemaining(pos,chosen.filter(x=>x.position===pos).length+1);
+              return spend+p.price+reserve<=totalBudget+.001;
+            });
+            if(!pick){valid=false;break;}
+            chosen.push(pick);spend+=pick.price;clubCounts.set(pick.team,(clubCounts.get(pick.team)||0)+1);
+          }
+          if(!valid)break;
         }
-        if(!best)break;
-        usedCandidates.add(best.incoming.id);
-        simulated=simulated.filter(p=>p.id!==best.outgoing.id);
-        const club=teams.get(best.incoming.team)||{};
-        const fixtureList=(teamFixtures.get(best.incoming.team)||[]).filter(f=>f.event===eventId);
-        prepTransfers.push({
-          outId:best.outgoing.id,outName:best.outgoing.webName,
-          inId:best.incoming.id,inName:best.incoming.web_name,
-          club:club.short_name||"",position:best.outgoing.position,
-          price:(best.incoming.now_cost||0)/10,
-          projectedGain:Number(best.gain.toFixed(1)),
-          projectedPoints:Number(best.incomingProjection.toFixed(1)),
-          fixtures:fixtureList
-        });
-        simulated.push({...best.outgoing,id:best.incoming.id,webName:best.incoming.web_name,club:club.short_name||"",clubId:best.incoming.team,price:(best.incoming.now_cost||0)/10,sellingPrice:(best.incoming.now_cost||0)/10,form:Number(best.incoming.form||0),chanceOfPlaying:best.incoming.chance_of_playing_next_round});
+        if(!valid||chosen.length!==(freeHit?11:15)||spend>totalBudget+.001)continue;
+        const lineup=chooseBestXI(chosen,nextEvent,horizon);
+        const score=freeHit?lineup.total:chosen.reduce((n,p)=>n+multiweekProjection(p,horizon),0);
+        if(!best||score>best.score)best={players:chosen,lineup,score,spend};
       }
-      const squad=simulated.map(player=>{
-        const fixtureList=(teamFixtures.get(player.clubId)||[]).filter(f=>f.event===eventId);
-        return {id:player.id,name:player.webName,club:player.club,position:player.position,role:Number(player.positionOrder||0)<=11?"XI":"BENCH",status:(elements.get(player.id)||{}).status||player.status||"a",projectedPoints:Number(projection(player).toFixed(1)),fixtures:fixtureList};
-      }).sort((a,b)=>["GKP","DEF","MID","FWD"].indexOf(a.position)-["GKP","DEF","MID","FWD"].indexOf(b.position)||b.projectedPoints-a.projectedPoints);
-      return {squad,prepTransfers};
+      return best;
     };
-    const chipScoreForEvent = (name, eventId) => {
-      const lineup = bestSquadLineup(eventId);
-      const all = picks.map(player=>({player,points:playerProjection(player,eventId)}));
-      const doubleSquad = all.filter(x=>(teamFixtures.get(x.player.clubId)||[]).filter(f=>f.event===eventId).length>1).length;
-      const blankSquad = all.filter(x=>(teamFixtures.get(x.player.clubId)||[]).filter(f=>f.event===eventId).length===0).length;
-      const doubleLeagueTeams = new Set((fixtures||[]).filter(f=>f.event===eventId&&!f.finished).flatMap(f=>[
-        (teamFixtures.get(f.team_h)||[]).filter(x=>x.event===eventId).length>1?f.team_h:null,
-        (teamFixtures.get(f.team_a)||[]).filter(x=>x.event===eventId).length>1?f.team_a:null
-      ].filter(Boolean))).size;
-      const captainPoints = lineup.captain?.points || 0;
-      const benchPoints = lineup.bench.reduce((sum,x)=>sum+x.points,0);
-      const nextThree = [eventId,eventId+1,eventId+2].map(gw=>bestSquadLineup(gw));
-      const weakSquad = nextThree.reduce((sum,x)=>sum+x.xi.filter(p=>p.points<2).length,0);
-      const isWildcard = name==="wildcard";
-      const isFreeHit = name==="freehit";
-      const isBenchBoost = name==="bboost";
-      const isTripleCaptain = name==="3xc";
-      const isAssistant = name==="assistant_manager";
-      let score=0, reason="", evidence={};
-      if(isTripleCaptain){
-        score=captainPoints*7 + (lineup.captain && (teamFixtures.get(lineup.captain.player.clubId)||[]).filter(f=>f.event===eventId).length>1?28:0);
-        reason=lineup.captain
-          ? lineup.captain.player.webName+" is your best projected captain at "+captainPoints.toFixed(1)+" points"+(((teamFixtures.get(lineup.captain.player.clubId)||[]).filter(f=>f.event===eventId).length>1)?" across a double gameweek":"")+". Triple Captain adds the captain's points a second time."
-          : "No reliable captain projection is available for this gameweek.";
-        evidence={captain:lineup.captain?.player.webName||null,captainProjection:Number(captainPoints.toFixed(1))};
-      }else if(isBenchBoost){
-        score=benchPoints*8 + doubleSquad*5;
-        reason="Your four substitutes project "+benchPoints.toFixed(1)+" combined points"+(doubleSquad?" and "+doubleSquad+" squad players have multiple fixtures":"")+". Bench Boost adds all four bench scores to your total.";
-        evidence={benchProjection:Number(benchPoints.toFixed(1)),doubleGameweekSquadPlayers:doubleSquad};
-      }else if(isFreeHit){
-        score=blankSquad*13 + doubleLeagueTeams*2 + doubleSquad*3;
-        reason=blankSquad+" of your 15 players have no fixture"+(doubleLeagueTeams?" while "+doubleLeagueTeams+" clubs have a double gameweek":"")+". Free Hit is most valuable when your current squad is poorly placed for this one-week fixture slate.";
-        evidence={blankSquadPlayers:blankSquad,doubleGameweekTeams:doubleLeagueTeams,doubleGameweekSquadPlayers:doubleSquad};
-      }else if(isWildcard){
-        score=weakSquad*12 + nextThree.reduce((sum,x)=>sum+x.xi.filter(p=>p.points<3).length,0)*2;
-        reason="Across the next three gameweeks, "+weakSquad+" starting-player slots project below 2 points. This is a useful reset window if your current squad needs several changes; reassess once team news and fixtures are confirmed.";
-        evidence={lowProjectionSlotsNextThree:weakSquad};
-      }else if(isAssistant){
-        const teamIds=[...new Set(picks.map(p=>p.clubId))];
-        const teamOutlook=teamIds.map(teamId=>({teamId,fixtures:(teamFixtures.get(teamId)||[]).filter(f=>f.event===eventId)}));
-        const favourable=teamOutlook.filter(x=>x.fixtures.length>0&&x.fixtures.every(f=>f.difficulty<=2)).length;
-        score=favourable*12+doubleSquad*4;
-        reason=favourable+" of the clubs represented in your squad have favourable FDR 1–2 fixtures"+(doubleSquad?", with "+doubleSquad+" of your players in double-gameweek teams":"")+".";
-        evidence={favourableSquadClubs:favourable,doubleGameweekSquadPlayers:doubleSquad};
-      }else{
-        score=benchPoints*3+captainPoints*3+doubleSquad*3-blankSquad*2;
-        reason="Based on your squad's projected points, fixture volume and availability.";
-        evidence={benchProjection:Number(benchPoints.toFixed(1)),captainProjection:Number(captainPoints.toFixed(1)),doubleGameweekSquadPlayers:doubleSquad,blankSquadPlayers:blankSquad};
-      }
-      return {score:Number(score.toFixed(2)),reason,evidence};
+    const formatChipSquad = (players,lineup,freeHit=false) => {
+      const starters=lineup.xi.map(p=>({...p,role:"XI",isCaptain:p.id===lineup.captain?.id,isViceCaptain:p.id===lineup.vice?.id}));
+      const bench=freeHit?[]:lineup.bench.map(p=>({...p,role:"BENCH"}));
+      return [...starters,...bench].map(p=>({id:p.id,name:p.webName,club:p.club,position:p.position,role:p.role,status:p.status||"a",
+        isCaptain:Boolean(p.isCaptain),isViceCaptain:Boolean(p.isViceCaptain),projectedPoints:Number(p.projectedPoints.toFixed(1)),
+        fixtures:(teamFixtures.get(p.team||p.clubId)||[]).filter(f=>f.event>=nextEvent&&f.event<nextEvent+(freeHit?1:3))}));
+    };
+    const chipScoreForEvent = (name,eventId) => {
+      const currentLineup=chooseBestXI(picks.map(p=>({...p,team:p.clubId})),eventId,1);
+      if(name==="wildcard"){const s=selectBudgetedSquad(3,false);return {score:s?.score||0,reason:s?"A budget-compliant 15-player rebuild targets the strongest combined projections across the next three gameweeks.":"A complete 15-player squad could not be assembled within the available budget."};}
+      if(name==="freehit"){const s=selectBudgetedSquad(1,true);return {score:s?.score||0,reason:s?"Unlimited one-week transfers select the highest-projected legal XI within your squad budget and club limits.":"A valid best XI could not be assembled within the available budget."};}
+      if(name==="3xc")return {score:(currentLineup.captain?.projectedPoints||0)*7,reason:currentLineup.captain?"Best projected captain: "+currentLineup.captain.webName+".":"No reliable captain projection is available."};
+      if(name==="bboost")return {score:currentLineup.bench.reduce((n,p)=>n+p.projectedPoints,0)*8,reason:"Your four substitutes project "+currentLineup.bench.reduce((n,p)=>n+p.projectedPoints,0).toFixed(1)+" combined points."};
+      return {score:currentLineup.total||0,reason:"Based on projected points, player availability and upcoming fixtures."};
     };
     const optimiseChipWindow = (windowStart,windowEnd,label) => {
-      const start=Math.max(nextEvent,windowStart), end=windowEnd;
-      if(start>end)return {label,start:windowStart,end:windowEnd,availableChips:[],usedChips:chipNames.filter(name=>chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd)).map(chipDisplay),recommendations:[],note:"The first-set chip window closed after GW19. These chips cannot be used from GW20 onwards."};
+      const start=Math.max(nextEvent,windowStart),end=windowEnd;
       const used=chipNames.filter(name=>chipHistory.some(chip=>String(chip.name||"").toLowerCase()===name&&Number(chip.event)>=windowStart&&Number(chip.event)<=windowEnd));
-      const available=firstHalfChipNames.filter(name=>!used.includes(name));
+      const available=chipNames.filter(name=>!used.includes(name));
+      if(start>end)return {label,start:windowStart,end:windowEnd,availableChips:[],usedChips:used.map(chipDisplay),recommendations:[],note:"The first-set chip window closed after GW19."};
       if(!available.length)return {label,start,end,availableChips:[],usedChips:used.map(chipDisplay),recommendations:[],note:"All chips in this window have already been used."};
-      const candidates=available.map(name=>({name,options:planningEvents.filter(event=>event.id>=start&&event.id<=end).map(event=>({event:event.id,...chipScoreForEvent(name,event.id)})).sort((a,b)=>b.score-a.score).slice(0,8)}));
+      const candidates=available.map(name=>({name,options:planningEvents.filter(e=>e.id>=start&&e.id<=end).map(e=>({event:e.id,...chipScoreForEvent(name,e.id)})).sort((a,b)=>b.score-a.score).slice(0,8)}));
       let bestScore=-Infinity,bestPlan=[];
-      const search=(index,used,plan,total)=>{
+      const search=(index,usedEvents,plan,total)=>{
         if(index>=candidates.length){if(total>bestScore){bestScore=total;bestPlan=plan.slice();}return;}
         const item=candidates[index];
-        for(const option of item.options){
-          if(used.has(option.event))continue;
-          used.add(option.event);plan.push({name:item.name,...option});
-          search(index+1,used,plan,total+option.score);
-          plan.pop();used.delete(option.event);
-        }
-        search(index+1,used,plan,total);
+        for(const option of item.options){if(usedEvents.has(option.event))continue;usedEvents.add(option.event);plan.push({name:item.name,...option});search(index+1,usedEvents,plan,total+option.score);plan.pop();usedEvents.delete(option.event);}
+        search(index+1,usedEvents,plan,total);
       };
       search(0,new Set(),[],0);
       const recommendations=bestPlan.sort((a,b)=>a.event-b.event).map(item=>{
-        const transferPreparationAllowed=!["wildcard","freehit"].includes(item.name);
-        const preparation=buildChipSquadAndTransfers(item.event,transferPreparationAllowed);
-        const prepNote=item.name==="wildcard"?"Wildcard already gives you a squad reset with unlimited transfers; save your free transfers rather than making pre-chip moves.":item.name==="freehit"?"Avoid pre-chip transfers: Free Hit creates a one-week squad and your original team returns afterwards.":"Consider this potential move only if you have a free transfer available. Do not take a points hit solely for this recommendation.";
-        return {...item,chip:chipDisplay(item.name),...preparation,prepNote};
+        let squad=[],prepTransfers=[],captain=null,vice=null;
+        if(item.name==="wildcard"||item.name==="freehit"){
+          const optimized=selectBudgetedSquad(item.name==="wildcard"?3:1,item.name==="freehit");
+          if(optimized){squad=formatChipSquad(optimized.players,optimized.lineup,item.name==="freehit");captain=optimized.lineup.captain?.webName||null;vice=optimized.lineup.vice?.webName||null;}
+        }else{
+          const lineup=chooseBestXI(picks.map(p=>({...p,team:p.clubId})),item.event,1);
+          captain=lineup.captain?.webName||null;vice=lineup.vice?.webName||null;
+          const starters=lineup.xi.map(p=>({...p,role:"XI",isCaptain:p.id===lineup.captain?.id,isViceCaptain:p.id===lineup.vice?.id}));
+          const bench=lineup.bench.map(p=>({...p,role:"BENCH"}));
+          squad=[...starters,...bench].map(p=>({id:p.id,name:p.webName,club:p.club,position:p.position,role:p.role,status:p.status,
+            isCaptain:Boolean(p.isCaptain),isViceCaptain:Boolean(p.isViceCaptain),projectedPoints:Number(p.projectedPoints.toFixed(1)),
+            fixtures:(teamFixtures.get(p.clubId)||[]).filter(f=>f.event===item.event)}));
+        }
+        return {...item,chip:chipDisplay(item.name),squad,prepTransfers,
+          prepNote:item.name==="wildcard"?"Wildcard offers unlimited transfers for a full squad rebuild; this squad is selected across the next three gameweeks.":
+            item.name==="freehit"?"Free Hit offers unlimited transfers for this gameweek only; your original squad returns afterwards.":
+            "No transfer is assumed. Any suggested preparation move must use an available free transfer."};
       });
-      return {label,start,end,availableChips:available.map(chipDisplay),usedChips:used.map(chipDisplay),recommendations,note:"The planner compares candidate gameweeks for every available chip and selects the highest-scoring non-overlapping schedule."};
+      return {label,start,end,availableChips:available.map(chipDisplay),usedChips:used.map(chipDisplay),recommendations,
+        note:"Wildcard uses a three-gameweek squad projection; Free Hit uses a one-gameweek best XI."};
     };
-    const chipStrategy = {
-      currentEvent: nextEvent,
-      windows: [
-        optimiseChipWindow(1,19,"FIRST SET · GW1–GW19")
-      ].filter(Boolean),
-      methodology:"First-set chips only (GW1–GW19). Transfer preparation prioritises players with evidence of regular starts, availability and positive projected gains. Treat each move as an option and only make it when you have a free transfer; avoid taking a hit. Player and fixture projections are estimates, not guarantees."
-    };
+    const chipStrategy={currentEvent:nextEvent,windows:[optimiseChipWindow(1,19,"FIRST SET · GW1–GW19")],
+      methodology:"Wildcard: best-value 15-player squad across the next three gameweeks. Free Hit: highest-projected XI for one gameweek. Both obey the squad budget and club limit. Captain and vice-captain are selected for every chip recommendation. Projections are estimates, not guarantees."};
 
     const leagueLists = {
       classic: manager.leagues?.classic || [],
