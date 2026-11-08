@@ -1548,3 +1548,10 @@ nav a[href="/fpl-tips-transfer"].on{
  .tsz-ad-slot{min-height:90px;margin:14px 0;padding:6px 0}
  .tsz-ad-slot ins.adsbygoogle{min-height:90px}
 }
+
+/* Mobile-only banner placements above the team name and Ideal XI */
+.tsz-mobile-banner{display:none}
+@media(max-width:700px){
+ .tsz-mobile-banner{display:block;min-height:50px;margin:8px 0 14px;padding:0}
+ .tsz-mobile-banner ins.adsbygoogle{min-height:50px;max-width:100%;margin:0 auto}
+}
