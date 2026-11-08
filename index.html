@@ -2,14 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5258499980991150" crossorigin="anonymous"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S4YVGSWV6"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-      gtag("config", "G-7S4YVGSWV6");
-    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#090713" />
     <link rel="preload" href="/assets/thesportzine-header.png" as="image" fetchpriority="high" />
@@ -17,12 +9,54 @@
     <link rel="ard" type="application/ard+json" href="/.well-known/ard.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" /></noscript>
     <title>FPL by The Sportzine</title>
     <meta name="description" content="Your FPL team, live points and player analytics." />
     <link rel="canonical" href="https://fpl.thesportzine.com/" />
     <meta property="og:url" content="https://fpl.thesportzine.com/" />
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+      window.gtag("js", new Date());
+      window.gtag("config", "G-7S4YVGSWV6");
+      (function () {
+        var analyticsLoaded = false, adsLoaded = false;
+        function loadScript(src, attrs) {
+          var script = document.createElement("script");
+          script.src = src;
+          script.async = true;
+          if (attrs) Object.keys(attrs).forEach(function(key){script.setAttribute(key, attrs[key]);});
+          document.head.appendChild(script);
+        }
+        function loadAnalytics() {
+          if (analyticsLoaded) return;
+          analyticsLoaded = true;
+          loadScript("https://www.googletagmanager.com/gtag/js?id=G-7S4YVGSWV6");
+        }
+        function loadAds() {
+          if (adsLoaded) return;
+          adsLoaded = true;
+          loadScript("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5258499980991150", {crossorigin:"anonymous"});
+        }
+        function idle(callback, timeout) {
+          if ("requestIdleCallback" in window) window.requestIdleCallback(callback, {timeout:timeout});
+          else window.setTimeout(callback, timeout);
+        }
+        window.addEventListener("load", function(){
+          idle(loadAnalytics, 1800);
+          idle(loadAds, 3000);
+        }, {once:true});
+        ["pointerdown","touchstart","keydown","scroll"].forEach(function(eventName){
+          window.addEventListener(eventName, function(){
+            idle(loadAnalytics, 500);
+            idle(loadAds, 1200);
+          }, {once:true,passive:true});
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>
