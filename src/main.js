@@ -1,4 +1,5 @@
 import "./style.css";
+import { mountFplProPage } from "./fpl-pro.js";
 const app=document.querySelector("#app"),defaultId="";
 const colors={ARS:"#e52b38",AVL:"#8b1e55",BOU:"#c83c3c",BRE:"#c62828",BHA:"#1674c8",BUR:"#7a263a",CHE:"#1766c2",CRY:"#1b4e9b",EVE:"#1763bf",FUL:"#eee",LEE:"#f1d638",LIV:"#d71920",MCI:"#65b9e9",MUN:"#d71920",NEW:"#ddd",NFO:"#d71920",SUN:"#d71920",TOT:"#fff",WHU:"#7b263a",WOL:"#e6a900"};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -185,3 +186,7 @@ document.querySelector("#pricemomentum").textContent="Enter your FPL ID to view 
 document.querySelector("#idealxi").textContent="Enter your FPL ID to generate your Ideal XI.";
 document.querySelector("#fixturelist").textContent="Enter your FPL ID to view fixture ratings.";
 document.querySelector("#leaguecontent").textContent="Enter your FPL ID to view your leagues.";
+
+
+// Dedicated FPL Pro landing and subscription preview route.
+if ((location.pathname.replace(/\\/$/, "") || "/") === "/fpl-pro") mountFplProPage(document.querySelector("#app"));
