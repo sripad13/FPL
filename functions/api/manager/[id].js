@@ -277,7 +277,7 @@ export async function onRequest({ params }) {
       const prepTransfers=[];
       const usedCandidates=new Set();
       const clubCounts=()=>{const counts=new Map();for(const p of simulated)counts.set(p.clubId,(counts.get(p.clubId)||0)+1);return counts;};
-      for(let slot=0;allowTransfers && slot<freeTransfers;slot++){
+      for(let slot=0;allowTransfers && slot<1;slot++){
         const counts=clubCounts();
         let best=null;
         for(const outgoing of simulated){
@@ -290,7 +290,14 @@ export async function onRequest({ params }) {
             const currentCount=counts.get(candidate.team)||0;
             const removedFromTeam=candidate.team===outgoing.clubId?1:0;
             if(currentCount-removedFromTeam>=3)continue;
-            if(candidate.status!=="a"&&!(candidate.status==="d"&&Number(candidate.chance_of_playing_next_round??50)>=75))continue;
+            if(candidate.status!=="a")continue;
+            if(candidate.chance_of_playing_next_round!=null&&Number(candidate.chance_of_playing_next_round)<75)continue;
+            // Require evidence of regular involvement; an available status alone is not enough.
+            const recentStarts=Number(candidate.starts||0);
+            const recentMinutes=Number(candidate.minutes||0);
+            const startsRate=Number(candidate.starts_per_90||0);
+            const hasReliableRole=(recentStarts>=3&&recentMinutes>=270)||(recentMinutes>=180&&startsRate>=0.55);
+            if(!hasReliableRole)continue;
             const incoming={id:candidate.id,clubId:candidate.team,team:candidate.team,form:Number(candidate.form||0),chanceOfPlaying:candidate.chance_of_playing_next_round,price:(candidate.now_cost||0)/10};
             const incomingProjection=projection(incoming);
             const gain=incomingProjection-outgoingProjection;
@@ -317,7 +324,7 @@ export async function onRequest({ params }) {
         const fixtureList=(teamFixtures.get(player.clubId)||[]).filter(f=>f.event===eventId);
         return {id:player.id,name:player.webName,club:player.club,position:player.position,role:Number(player.positionOrder||0)<=11?"XI":"BENCH",projectedPoints:Number(projection(player).toFixed(1)),fixtures:fixtureList};
       }).sort((a,b)=>["GKP","DEF","MID","FWD"].indexOf(a.position)-["GKP","DEF","MID","FWD"].indexOf(b.position)||b.projectedPoints-a.projectedPoints);
-      return {squad,prepTransfers,freeTransfers};
+      return {squad,prepTransfers};
     };
     const chipScoreForEvent = (name, eventId) => {
       const lineup = bestSquadLineup(eventId);
@@ -400,12 +407,10 @@ export async function onRequest({ params }) {
     };
     const chipStrategy = {
       currentEvent: nextEvent,
-      freeTransfers,
-      maxFreeTransfers: 5,
       windows: [
         optimiseChipWindow(1,19,"FIRST SET · GW1–GW19")
       ].filter(Boolean),
-      methodology:"First-set chips only (GW1–GW19). Transfer preparation uses your reconstructed free-transfer bank (one per gameweek, maximum five) and suggests only positive-projection moves within that bank. Player and fixture projections are estimates, not guarantees."
+      methodology:"First-set chips only (GW1–GW19). Transfer preparation prioritises players with evidence of regular starts, availability and positive projected gains. Treat each move as an option and only make it when you have a free transfer; avoid taking a hit. Player and fixture projections are estimates, not guarantees."
     };
 
     const leagueLists = {
