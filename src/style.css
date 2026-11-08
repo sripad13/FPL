@@ -1577,3 +1577,31 @@ nav a[href="/fpl-tips-transfer"].on{
 .manager-profile-page #squad .starting{inset:5% 3%}
 .manager-profile-page #squad .benchrow{gap:5px}
 @media(max-width:700px){.manager-profile-page #squad{padding:11px!important}.manager-profile-page #squad .pitch{height:clamp(280px,92vw,385px)}.manager-profile-page #squad .pitchstage{padding:12px 2% 0}}
+
+
+/* Manager profile: keep shirts, names and points in distinct vertical lanes */
+.manager-profile-page .starting .pitch-row{overflow:visible;padding:8px 0 12px}
+.manager-profile-page .starting .player{position:relative;z-index:2;gap:7px;min-width:0}
+.manager-profile-page .starting .shirt-wrap{flex:0 0 auto;margin:0}
+.manager-profile-page .starting .player-name{position:relative;z-index:3;display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.manager-profile-page .starting .pts,
+.manager-profile-page .starting .opponent{position:relative;z-index:3;margin-top:0}
+.manager-profile-page .pitch{transform:none!important}
+.manager-profile-page .profile-heading>div{min-width:0}
+.profile-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.profile-chip,.profile-chips-empty{display:inline-flex;align-items:center;min-height:24px;padding:4px 9px;border:1px solid #fff00055;border-radius:4px;background:#fff00012;color:#fff000;font-size:10px;font-weight:900;letter-spacing:.04em}
+.profile-chips-empty{border-color:#ffffff24;background:#ffffff08;color:#aab6c7}
+.league-table-page{width:min(1180px,calc(100% - 32px));margin:18px auto 48px!important;padding-top:0!important;position:relative;z-index:1}
+.shell:has(+ .league-table-page){padding-top:0!important;min-height:0!important;height:0!important;overflow:visible!important}
+.league-table-page .panel{padding:clamp(16px,3vw,30px)}
+.league-table-page .sectiontop{margin-top:0}
+@media(max-width:700px){
+ .manager-profile-page .pitch{height:650px!important}
+ .manager-profile-page .starting{inset:2% 2%!important}
+ .manager-profile-page .starting .pitch-row{flex-basis:24.5%;height:24.5%;padding:6px 0 12px}
+ .manager-profile-page .starting .player{gap:6px}
+ .manager-profile-page .starting .shirt-wrap{width:48px;height:47px}
+ .manager-profile-page .starting .shirt-wrap .shirt{width:43px;height:41px}
+ .manager-profile-page .starting .player-name{font-size:clamp(8px,2.4vw,11px);padding:4px 5px}
+ .league-table-page{width:calc(100% - 20px);margin:10px auto 32px!important}
+}
