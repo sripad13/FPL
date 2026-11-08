@@ -216,17 +216,6 @@ export async function onRequest({ params }) {
     const firstHalfChipNames = chipNames;
     const planningEvents = events.filter(event => event.id >= nextEvent && event.id <= 19);
     // Reconstruct the free-transfer bank from event transfer history. Wildcard and Free Hit preserve the bank.
-    const freeTransferByEvent = new Map();
-    for (const record of (history.current || [])) freeTransferByEvent.set(Number(record.event), Number(record.event_transfers || 0));
-    if (!freeTransferByEvent.has(picksEvent.id)) freeTransferByEvent.set(picksEvent.id, Number(entryHistory.event_transfers || 0));
-    let freeTransfers = 1;
-    const chipsByEvent = new Set(chipHistory.filter(chip => ["wildcard","freehit"].includes(String(chip.name || "").toLowerCase())).map(chip => Number(chip.event)));
-    for (let gw = 1; gw <= picksEvent.id; gw++) {
-      const made = freeTransferByEvent.get(gw);
-      if (made != null && !chipsByEvent.has(gw)) freeTransfers = Math.max(0, freeTransfers - made);
-      freeTransfers = Math.min(5, freeTransfers + 1);
-    }
-    freeTransfers = Math.max(1, Math.min(5, freeTransfers));
     const playerProjection = (player, eventId) => {
       const element = elements.get(player.id) || {};
       const schedule = teamFixtures.get(player.clubId) || [];
@@ -297,7 +286,7 @@ export async function onRequest({ params }) {
             const recentMinutes=Number(candidate.minutes||0);
             const startsRate=Number(candidate.starts_per_90||0);
             const hasReliableRole=(recentStarts>=3&&recentMinutes>=270)||(recentMinutes>=180&&startsRate>=0.55);
-            if(!hasReliableRole)continue;
+            if(!hasReliableRole||Number(candidate.ep_next||0)<2)continue;
             const incoming={id:candidate.id,clubId:candidate.team,team:candidate.team,form:Number(candidate.form||0),chanceOfPlaying:candidate.chance_of_playing_next_round,price:(candidate.now_cost||0)/10};
             const incomingProjection=projection(incoming);
             const gain=incomingProjection-outgoingProjection;
