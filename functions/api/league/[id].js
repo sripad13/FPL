@@ -6,7 +6,7 @@ async function onRequest({request,params}){
  try{const response=await fetch(API+path,{headers:{"User-Agent":"TheSportzineFPL/0.1 (public FPL dashboard)"}});
  if(!response.ok)return Response.json({error:response.status===404?"League not found or standings unavailable.":"FPL standings are temporarily unavailable."},{status:response.status===404?404:502});
  const data=await response.json(),rows=data.standings?.results||[];
- return Response.json({results:rows.map(r=>({rank:r.rank,entry:r.entry,entry_name:r.entry_name,player_name:r.player_name,total:r.total,event_total:r.event_total})),hasMore:Boolean(data.standings?.has_next)},{headers:{"cache-control":"public, max-age=120, s-maxage=120"}});
+ return Response.json({league:data.league?{name:data.league.name}:null,results:rows.map(r=>({rank:r.rank,entry:r.entry,entry_name:r.entry_name,player_name:r.player_name,total:r.total,event_total:r.event_total})),hasMore:Boolean(data.standings?.has_next)},{headers:{"cache-control":"public, max-age=120, s-maxage=120"}});
  }catch{return Response.json({error:"Could not load league standings right now."},{status:502});}
 }
 export{onRequest};
