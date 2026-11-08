@@ -1549,13 +1549,11 @@ nav a[href="/fpl-tips-transfer"].on{
  .tsz-ad-slot ins.adsbygoogle{min-height:90px}
 }
 
-/* Mobile banners use a 320:100 (3.2:1) ratio, capped at 100px high.
-   AdSense may fill a shorter 320:50 creative within the same slot. */
+/* Mobile banner placement remains mobile-only; AdSense controls the responsive creative size. */
 .tsz-mobile-banner{display:none}
 @media(max-width:700px){
- .tsz-mobile-banner{display:block;box-sizing:border-box;width:320px;max-width:100%;height:auto;aspect-ratio:3.2/1;min-height:0;max-height:100px;margin:8px auto 14px;padding:0;overflow:hidden}
- .tsz-mobile-banner ins.adsbygoogle{display:block!important;box-sizing:border-box;width:100%!important;max-width:100%!important;height:100%!important;min-height:0!important;max-height:100px!important;margin:0 auto;overflow:hidden}
- .tsz-mobile-banner ins.adsbygoogle iframe{max-width:100%!important;max-height:100px!important}
+ .tsz-mobile-banner{display:block;width:100%;max-width:100%;margin:8px auto 14px;padding:0;overflow:visible}
+ .tsz-mobile-banner ins.adsbygoogle{display:block!important;width:100%!important;max-width:100%!important;margin:0 auto}
 }
 
 /* Dedicated leagues route */
