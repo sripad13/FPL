@@ -2082,3 +2082,38 @@ nav a[href="/fpl-tips-transfer"].on{
   .route-leagues #all-league-content,
   .route-leagues .all-leagues-page .league-list{grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* FPL deadline reminder controls */
+.deadline-panel{display:flex!important;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px!important;grid-template-columns:minmax(0,1fr) auto!important}
+.deadline-panel .deadline-copy{display:grid;gap:5px;min-width:0}
+.deadline-panel .deadline-copy>b{font-size:clamp(20px,2.2vw,29px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.deadline-panel .deadline-copy>span{font-size:10px;color:#aab7c8}
+.deadline-remind-button{flex:0 0 auto;border:1px solid #e4d500;background:#e4d500;color:#111827;border-radius:6px;padding:11px 14px;font-size:10px;font-weight:900;letter-spacing:.45px;cursor:pointer;white-space:nowrap}
+.deadline-remind-button:hover{background:#fff000}
+.deadline-reminder-backdrop[hidden]{display:none!important}
+.deadline-reminder-backdrop{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:#020711c9;backdrop-filter:blur(7px)}
+.deadline-reminder-card{position:relative;width:min(430px,100%);padding:26px;background:linear-gradient(145deg,#1a2940,#0b1422);border:1px solid #ffffff30;border-radius:12px;box-shadow:0 24px 80px #000b}
+.deadline-reminder-card>small{color:#dcd000;font-size:9px;font-weight:900;letter-spacing:1.4px}
+.deadline-reminder-card h2{margin:8px 0;font-family:'Barlow Condensed',sans-serif;font-size:29px;text-transform:uppercase}
+.deadline-reminder-card>p{color:#aebacc;font-size:12px;line-height:1.5}
+.deadline-reminder-close{position:absolute;right:13px;top:10px;border:0;background:transparent;color:#dce4ef;font-size:26px;cursor:pointer}
+.deadline-reminder-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0 15px}
+.deadline-reminder-options button{display:grid;gap:6px;min-width:0;padding:14px 7px;background:#101c2d;border:1px solid #ffffff2b;border-radius:7px;color:#fff;text-align:center;cursor:pointer}
+.deadline-reminder-options button b{font-size:12px}
+.deadline-reminder-options button span{font-size:9px;color:#aab7c8}
+.deadline-reminder-options button:hover,.deadline-reminder-options button.selected{border-color:#e4d500;background:#e4d50018}
+.deadline-reminder-card .deadline-reminder-status{margin:12px 0 0;padding-top:12px;border-top:1px solid #ffffff1c;font-size:10px}
+@media(max-width:700px){
+ .layout{display:flex!important;flex-direction:column}
+ .rail{display:contents!important}
+ .deadline-panel{order:-1;width:100%;min-height:88px;padding:12px!important}
+ .deadline-panel .deadline-copy>b{font-size:clamp(20px,6vw,27px)}
+ .deadline-remind-button{padding:10px 11px;font-size:9px}
+ .squad{order:0}
+ .momentum-panel{order:1}
+ .rail>.tsz-ad-slot{order:2}
+ .deadline-reminder-card{padding:23px 17px}
+ .deadline-reminder-options{gap:6px}
+ .deadline-reminder-options button{padding:13px 4px}
+}
