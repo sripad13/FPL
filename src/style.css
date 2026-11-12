@@ -2108,3 +2108,31 @@ nav a[href="/fpl-tips-transfer"].on{
 
 .mock-feedback{margin:0 0 10px;padding:10px 12px;border:1px solid #f0bd4a55;border-radius:6px;background:#f0bd4a12;color:#f4d58c;font-size:11px;line-height:1.45}
 .mock-player-action:disabled{opacity:.28;cursor:not-allowed}
+
+
+.mock-transfer-workspace{grid-template-columns:minmax(0,1.15fr) minmax(320px,.95fr);gap:18px}
+.mock-pitch-column>h3{margin:0 0 10px;font-family:'Barlow Condensed',sans-serif;font-size:22px;letter-spacing:.6px}
+.mock-pitchstage{margin:0}
+.mock-pitchstage .pitch{min-height:420px}
+.mock-pitchstage .starting{gap:8px}
+.mock-pitch-player{position:relative}
+.mock-pitch-remove{position:absolute;z-index:2;top:-7px;right:-7px;width:20px;height:20px;border:1px solid #fff7;border-radius:50%;background:#35102e;color:#fff;font-size:14px;line-height:1;cursor:pointer}
+.mock-pitch-remove:hover{background:#d92d72}
+.mock-market-sidebar{max-height:850px;overflow:auto}
+.mock-transfer-side-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mock-transfer-side-head small{color:#fff000;text-align:right}
+.mock-market-position{margin-top:12px;padding:10px;background:#0b1728;border:1px solid #ffffff20;border-radius:7px;transition:border-color .15s,opacity .15s}
+.mock-market-position.active{border-color:#fff000}
+.mock-market-position.locked{opacity:.78}
+.mock-market-position-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.mock-market-position-head>div{display:flex;align-items:baseline;gap:8px}
+.mock-market-position-head b{font-size:12px;color:#fff}
+.mock-market-position-head small,.mock-market-position-head>span{font-size:9px;color:#9eacc0}
+.mock-market-players .mock-player-row{grid-template-columns:minmax(0,1fr) 54px 28px;min-height:43px}
+.mock-market-players .mock-player-row.is-disabled{opacity:.42}
+.mock-market-players .mock-player-action:disabled{opacity:.24;cursor:not-allowed}
+.mock-load-more{width:100%;margin-top:7px;padding:8px;border:1px solid #ffffff2a;border-radius:5px;background:transparent;color:#dce4ef;font-size:9px;font-weight:800;letter-spacing:.4px;cursor:pointer}
+.mock-load-more:hover{border-color:#fff000;color:#fff000}
+.mock-market-sidebar .mock-side-stat:first-of-type{margin-top:12px}
+@media(max-width:900px){.mock-transfer-workspace{grid-template-columns:1fr}.mock-market-sidebar{position:static;max-height:none;overflow:visible}.mock-pitchstage .pitch{min-height:380px}}
+@media(max-width:700px){.mock-transfer-workspace{gap:14px}.mock-pitchstage .pitch{min-height:350px}.mock-market-sidebar{padding:12px}.mock-market-position{padding:8px}}
