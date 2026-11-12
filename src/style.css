@@ -2324,3 +2324,34 @@ nav a[href="/fpl-tips-transfer"].on{
   .mock-market-sidebar{padding:12px!important}
   .mock-market-sidebar .mock-market-position{display:block;width:100%;margin:10px 0 0!important}
 }
+
+
+/* Plan Your Squad: desktop editor composition with the club-kit pitch and action panel side by side. */
+.mock-transfer-workspace{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.22fr) minmax(320px,.78fr)!important;
+  gap:16px!important;
+  align-items:stretch!important;
+}
+.mock-pitch-column,.mock-market-sidebar{width:100%;min-width:0}
+.mock-pitchstage .pitch{height:560px!important;min-height:560px!important}
+.mock-market-sidebar{
+  align-self:stretch;
+  max-height:760px!important;
+  overflow-y:auto!important;
+  position:sticky!important;
+  top:12px!important;
+}
+.mock-pitch-column>h3{font-size:27px!important;letter-spacing:.3px!important}
+.mock-market-sidebar .mock-market-position{display:block;width:100%;margin:12px 0 0!important}
+.mock-market-sidebar .mock-market-position-head{min-height:32px}
+.mock-market-sidebar .mock-market-players .mock-player-row{min-height:48px}
+.mock-pitchstage .benchrow{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+@media(min-width:1100px){
+ .mock-pitchstage .benchrow{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+ .mock-transfer-workspace{grid-template-columns:minmax(0,1fr)!important}
+ .mock-market-sidebar{position:static!important;max-height:none!important;overflow:visible!important}
+ .mock-pitchstage .pitch{height:490px!important;min-height:490px!important}
+}
