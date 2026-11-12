@@ -101,7 +101,7 @@ document.addEventListener("click",e=>{
  const out=e.target.closest("[data-mock-out]");if(out){
   const removed=state.squad.find(p=>p.id===Number(out.dataset.mockOut));if(!removed)return;
   if(state.pendingPosition){state.message="Complete the "+state.pendingPosition+" replacement before removing another player.";renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
-  state.cash+=Number(removed.salePrice??removed.price??0);state.pendingPosition=removed.position;state.pendingStarter=Boolean(removed.mockStarter);state.squad=state.squad.filter(p=>p.id!==Number(out.dataset.mockOut));state.message="Select one "+removed.position+" to complete this transfer.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
+  state.cash+=Number(removed.salePrice??removed.price??0);state.pendingPosition=removed.position;state.pendingStarter=Boolean(removed.mockStarter);state.squad=state.squad.filter(p=>p.id!==Number(out.dataset.mockOut));state.message="Select one "+removed.position+" to complete this transfer.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
  }
  const add=e.target.closest("[data-mock-in]");if(add){
   const player=(window.fplPlayerPool||[]).find(p=>p.id===Number(add.dataset.mockIn));if(!player)return;
