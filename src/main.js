@@ -73,7 +73,7 @@ function renderIdealBuilder(analytics){
  const positions=["GKP","DEF","MID","FWD"],labels={GKP:"Goalkeepers",DEF:"Defenders",MID:"Midfielders",FWD:"Forwards"};
  const limits={GKP:2,DEF:5,MID:5,FWD:3};
  const counts=Object.fromEntries(positions.map(pos=>[pos,state.squad.filter(p=>p.position===pos&&!p.mockVacancy).length]));
- const spent=state.squad.reduce((n,p)=>n+Number(p.price||0),0),bank=Number(state.cash||0);
+ const spent=state.squad.reduce((n,p)=>n+(p.mockVacancy?0:Number(p.price||0)),0),bank=Number(state.cash||0);
  const projected=state.squad.reduce((n,p)=>n+(p.mockVacancy?0:Number(p.projectedPoints||0)),0);
  const row=(p,action,disabled=false,reason="")=>'<div class="mock-player-row '+(disabled?"is-disabled":"")+'"><div class="mock-player-name"><b>'+esc(p.webName)+'</b><small>'+esc(p.club)+'</small></div><strong>£'+Number(p.price||0).toFixed(1)+'m</strong><button type="button" class="mock-player-action '+(action==="OUT"?"out":"in")+'" data-mock-'+action.toLowerCase()+'="'+p.id+'" '+(disabled?'disabled title="'+esc(reason)+'"':'')+' aria-label="'+(action==="OUT"?"Remove ":"Add ")+esc(p.webName)+'">'+(action==="OUT"?"−":"+")+'</button></div>';
  const market=positions.map(pos=>{
