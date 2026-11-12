@@ -159,22 +159,6 @@ document.addEventListener("click",e=>{
   }
   const vacancy=state.squad.find(p=>p.mockVacancy&&p.position===player.position);if(!vacancy)return;state.cash-=Number(player.price);state.squad=state.squad.map(p=>p===vacancy?{...player,salePrice:Number(player.price),mockStarter:Boolean(vacancy.mockStarter),mockVacancy:false}:p);state.pendingPosition=null;state.pendingStarter=false;state.message="Transfer completed in your mock squad.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:null}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:state.playerPool||window.fplPlayerPool||[]});return;
  }
- const sub=e.target.closest("[data-mock-sub]");if(sub){
-  const player=state.squad.find(p=>p.id===Number(sub.dataset.mockSub)&&!p.mockVacancy);if(!player)return;
-  const limits={GKP:1,DEF:5,MID:5,FWD:3},minimums={GKP:1,DEF:3,MID:3,FWD:1};
-  const starters=state.squad.filter(p=>p.mockStarter&&!p.mockVacancy),count=starters.filter(p=>p.position===player.position).length;
-  if(!player.mockStarter){
-   if(starters.length>=11){state.message="Your pitch is full: FPL allows a maximum of 11 starters.";renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
-   if(count>=limits[player.position]){state.message="FPL formation limit: "+player.position+" allows a maximum of "+limits[player.position]+" player(s).";renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
-   player.mockStarter=true;
-  }else{
-   if(count<=minimums[player.position]){state.message="FPL formation requires at least "+minimums[player.position]+" "+player.position+" player(s) in your XI.";renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
-   player.mockStarter=false;
-  }
-  state.message=player.mockStarter?player.webName+" moved into the starting XI.":player.webName+" moved to the bench.";
-  localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));
-  renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;
- }
  const restore=e.target.closest("[data-mock-restore]");if(restore){const vacancy=state.squad.find(p=>p.mockVacancy&&p.id===Number(restore.dataset.mockRestore));if(!vacancy)return;const refund=Number(vacancy.salePrice??vacancy.price??0);if(state.cash+0.0001<refund){state.message="Not enough budget to restore "+vacancy.webName+".";renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}state.cash-=refund;state.squad=state.squad.map(p=>p===vacancy?({...p,mockVacancy:false}):p);if(state.pendingPosition===vacancy.position){state.pendingPosition=null;state.pendingStarter=false;}state.message=vacancy.webName+" restored to the squad.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
  if(e.target.closest("[data-mock-reset]")){
   state.squad=(window.fplOriginalMockSquad||[]).map(p=>({...p}));state.cash=Number(window.currentManagerBank||0);state.pendingPosition=null;state.pendingStarter=false;state.expanded={};state.message="";localStorage.removeItem("tsz-mock-"+state.managerId);renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});
