@@ -118,6 +118,16 @@ document.addEventListener("click",e=>{
  const state=window.mockTransferState;if(!state)return;
  const select=e.target.closest("[data-mock-select]");if(select&&!e.target.closest("[data-mock-out],[data-mock-sub]")){state.selectedPlayerId=Number(select.dataset.mockSelect);state.changeMode="bring";renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
  const mode=e.target.closest("[data-mock-mode]");if(mode){state.changeMode=mode.dataset.mockMode;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
+ const switchButton=e.target.closest("[data-mock-switch]");if(switchButton){
+  const incoming=state.squad.find(p=>p.id===Number(switchButton.dataset.mockSwitch)&&!p.mockVacancy);
+  const outgoing=state.squad.find(p=>p.id===Number(state.selectedPlayerId)&&!p.mockVacancy);
+  if(!incoming||!outgoing){state.message="Select a starting player before choosing a substitute.";renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
+  if(incoming.mockStarter||!outgoing.mockStarter||incoming.position!==outgoing.position){state.message="Choose a bench player in the same position as the selected starter.";renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
+  incoming.mockStarter=true;outgoing.mockStarter=false;
+  state.selectedPlayerId=incoming.id;state.changeMode="switch";state.message=incoming.webName+" replaces "+outgoing.webName+" in your starting XI.";
+  localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));
+  renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;
+ }
  const save=e.target.closest("[data-mock-save]");if(save){localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));state.message="Mock squad changes saved.";renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
  const more=e.target.closest("[data-mock-more]");if(more){const pos=more.dataset.mockMore;state.expanded[pos]=!state.expanded[pos];renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
  const out=e.target.closest("[data-mock-out]");if(out){
