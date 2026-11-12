@@ -2389,3 +2389,23 @@ nav a[href="/fpl-tips-transfer"].on{
  .mock-plan-value strong{font-size:17px}
  .mock-plan-save{padding:12px 14px;font-size:13px}
 }
+
+/* Contextual Change Player panel: replaces the legacy Bring In sidebar. */
+.mock-transfer-workspace{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(330px,.85fr)!important;gap:18px!important;align-items:stretch!important}
+.mock-change-panel{min-width:0;padding:18px;border:1px solid #304055;border-radius:16px;background:linear-gradient(160deg,#152338,#0d1726);color:#f5f7fb}
+.mock-change-heading h3{font-size:22px;margin:0 0 18px}
+.mock-selected-player{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #304055;border-radius:12px;background:#0c1727;margin-bottom:16px}
+.mock-selected-player b{font-size:17px}.mock-selected-player span{display:block;font-size:12px;color:#c2ccda;margin-top:4px}.mock-selected-player button{margin-left:auto;border:1px solid #718096;border-radius:8px;background:transparent;color:#fff;padding:9px 12px;cursor:pointer}
+.mock-select-prompt{padding:22px;border:1px dashed #526174;border-radius:12px;color:#b7c3d3;margin-bottom:16px}
+.mock-change-tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #39485b;border-radius:12px;overflow:hidden;margin-bottom:18px}
+.mock-change-tabs button{padding:13px 8px;background:transparent;color:#e7edf5;border:0;font-weight:800;cursor:pointer}
+.mock-change-tabs button.active{background:#ffe500;color:#101827}
+.mock-change-instruction{font-size:13px;line-height:1.5;color:#c2ccda}
+.mock-change-panel .mock-market-position{margin:12px 0!important;width:100%!important}
+.mock-switch-list{display:grid;gap:9px}
+.mock-switch-list button{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid #344357;border-radius:10px;background:#101d2e;color:#fff;text-align:left;cursor:pointer}
+.mock-switch-list button img{width:42px;height:42px;object-fit:contain}
+.mock-switch-list button small{margin-left:auto;color:#b7c3d3}
+.mock-pitch-player[data-mock-select]{cursor:pointer}
+.mock-pitch-player[data-mock-select]:hover{filter:drop-shadow(0 0 7px #ffe500)}
+@media(max-width:900px){.mock-transfer-workspace{grid-template-columns:1fr!important}.mock-change-panel{position:static}}
