@@ -63,7 +63,11 @@ function renderIdealBuilder(analytics){
  if(!window.mockTransferState||window.mockTransferState.managerId!==window.currentManagerId){
   const squad=initial.map(p=>({...p}));
   const cash=Number(window.currentManagerBank||0);
-  window.mockTransferState={managerId:window.currentManagerId,squad,cash,search:"",position:"ALL",sort:"points",modal:false};
+  let saved=null;
+  try{saved=JSON.parse(localStorage.getItem("tsz-mock-"+window.currentManagerId)||"null");}catch{}
+  window.mockTransferState=saved&&Array.isArray(saved.squad)&&Number.isFinite(Number(saved.cash))
+   ?{managerId:window.currentManagerId,squad:saved.squad,cash:Number(saved.cash),search:"",position:"ALL",sort:"points",modal:false,message:""}
+   :{managerId:window.currentManagerId,squad,cash,search:"",position:"ALL",sort:"points",modal:false,message:""};
  }
  const state=window.mockTransferState,pool=analytics.playerPool||[];
  const positions=["GKP","DEF","MID","FWD"],limits={GKP:2,DEF:5,MID:5,FWD:3};
@@ -72,7 +76,16 @@ function renderIdealBuilder(analytics){
  const projected=state.squad.reduce((n,p)=>n+Number(p.projectedPoints||0),0);
  const eligible=pool.filter(p=>!state.squad.some(s=>s.id===p.id)&&(!state.position||state.position==="ALL"||p.position===state.position)&&((p.webName+" "+p.club).toLowerCase().includes(state.search.toLowerCase())));
  const sorted=eligible.sort((a,b)=>state.sort==="price"?a.price-b.price:state.sort==="name"?a.webName.localeCompare(b.webName):b.projectedPoints-a.projectedPoints);
- const playerRow=(p,action)=>'<div class="mock-player-row"><div class="mock-player-name"><b>'+esc(p.webName)+'</b><small>'+esc(p.club)+'</small></div><strong>£'+Number(p.price||0).toFixed(1)+'m</strong><button type="button" class="mock-player-action '+(action==="OUT"?"out":"in")+'" data-mock-'+action.toLowerCase()+'="'+p.id+'" aria-label="'+(action==="OUT"?"Remove ":"Add ")+esc(p.webName)+'">'+(action==="OUT"?"−":"+")+'</button></div>';
+ const playerRow=(p,action)=>{
+  let reason="";
+  if(action==="IN"){
+   if(state.squad.length>=15)reason="Squad already has 15 players";
+   else if(counts[p.position]>=limits[p.position])reason="Position limit reached";
+   else if(state.squad.filter(x=>x.club===p.club).length>=3)reason="Maximum three players per club";
+   else if(Number(p.price)>bank+.0001)reason="Not enough budget";
+  }
+  return '<div class="mock-player-row"><div class="mock-player-name"><b>'+esc(p.webName)+'</b><small>'+esc(p.club)+'</small></div><strong>£'+Number(p.price||0).toFixed(1)+'m</strong><button type="button" class="mock-player-action '+(action==="OUT"?"out":"in")+'" data-mock-'+action.toLowerCase()+'="'+p.id+'" '+(reason?'disabled title="'+esc(reason)+'"':'')+' aria-label="'+(action==="OUT"?"Remove ":"Add ")+esc(p.webName)+'">'+(action==="OUT"?"−":"+")+'</button></div>';
+ };
  const squadGroups=positions.map(pos=>'<section class="mock-position-group"><div class="mock-position-heading"><b>'+pos+'</b><span>'+counts[pos]+'/'+limits[pos]+'</span></div>'+(state.squad.filter(p=>p.position===pos).map(p=>playerRow(p,"OUT")).join("")||'<p class="mock-empty-position">No '+pos+' selected</p>')+'</section>').join("");
  const modal='<div class="mock-player-modal" '+(state.modal?'':'hidden')+'><div class="mock-player-modal-card"><div class="mock-modal-head"><div><small>PLAYER MARKET</small><h3>Find a player</h3></div><button type="button" data-mock-close aria-label="Close">×</button></div><label class="mock-search"><span>⌕</span><input id="mock-player-search" type="search" placeholder="Search by name or club" value="'+esc(state.search)+'"></label><div class="mock-filters"><div class="mock-position-filters">'+["ALL",...positions].map(pos=>'<button type="button" data-mock-position="'+pos+'" class="'+(state.position===pos?'active':'')+'">'+pos+'</button>').join("")+'</div><select id="mock-player-sort" aria-label="Sort players"><option value="points" '+(state.sort==="points"?"selected":"")+'>Predicted points</option><option value="price" '+(state.sort==="price"?"selected":"")+'>Price: low to high</option><option value="name" '+(state.sort==="name"?"selected":"")+'>Name</option></select></div><div class="mock-market-meta">'+sorted.length+' players available</div><div class="mock-market-list">'+(sorted.map(p=>playerRow(p,"IN")).join("")||'<p class="mock-empty-position">No players match your search.</p>')+'</div></div></div>';
  document.querySelector("#idealxi").innerHTML='<div class="mock-summary"><div><small>PREDICTED POINTS</small><strong>'+Math.round(projected)+' <em>pts</em></strong></div><div><small>REMAINING BUDGET</small><strong>£'+bank.toFixed(1)+'m</strong></div><button type="button" class="mock-add-player" data-mock-open '+(state.squad.length>=15?'disabled':'')+'>＋ ADD PLAYER</button></div><div class="mock-squad-chips">'+positions.map(pos=>'<span class="mock-squad-chip">'+pos+' <b>'+counts[pos]+'</b></span>').join("")+'<span class="mock-squad-chip total">'+state.squad.length+'/15 PLAYERS</span></div><div class="mock-transfer-layout"><div class="mock-squad-list">'+squadGroups+'</div><aside class="mock-transfer-sidebar"><div class="mock-transfer-side-head"><h3>MOCK TRANSFERS</h3><small>EDIT YOUR 15-PLAYER SQUAD</small></div><p>Remove a player, then add a replacement from the full FPL player list. Your original squad stays unchanged.</p><div class="mock-side-stat"><span>Predicted points</span><b>'+Math.round(projected)+' pts</b></div><div class="mock-side-stat"><span>Squad value</span><b>£'+spent.toFixed(1)+'m</b></div><div class="mock-side-stat"><span>Budget remaining</span><b>£'+bank.toFixed(1)+'m</b></div><button type="button" class="mock-add-player wide" data-mock-open '+(state.squad.length>=15?'disabled':'')+'>＋ ADD PLAYER</button><button type="button" class="mock-reset" data-mock-reset>RESET MOCK SQUAD</button></aside></div>'+modal;
