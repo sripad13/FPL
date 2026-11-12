@@ -2136,3 +2136,32 @@ nav a[href="/fpl-tips-transfer"].on{
 .mock-market-sidebar .mock-side-stat:first-of-type{margin-top:12px}
 @media(max-width:900px){.mock-transfer-workspace{grid-template-columns:1fr}.mock-market-sidebar{position:static;max-height:none;overflow:visible}.mock-pitchstage .pitch{min-height:380px}}
 @media(max-width:700px){.mock-transfer-workspace{gap:14px}.mock-pitchstage .pitch{min-height:350px}.mock-market-sidebar{padding:12px}.mock-market-position{padding:8px}}
+
+/* Mock transfer pitch refinements and player controls */
+.mock-pitchstage .pitch{height:385px;min-height:385px;max-width:760px;transform:perspective(850px) rotateX(16deg);transform-origin:center bottom;border-radius:2px}
+.mock-pitchstage .starting{inset:5% 3%;justify-content:space-around}
+.mock-pitchstage .pitch-row{display:flex;justify-content:space-around;align-items:center;gap:4px}
+.mock-pitchstage .pitch-row .player{width:23%;min-width:0}
+.mock-pitchstage .pitch-row .shirt{width:44px;height:42px}
+.mock-pitchstage .position-label{position:absolute;left:8px;color:#d7ffe7;font-size:8px;font-weight:900;letter-spacing:1px}
+.mock-pitch-player{position:relative;min-width:0}
+.mock-pitch-remove,.mock-pitch-sub{position:absolute;z-index:3;top:-8px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;padding:0;font-size:13px;line-height:1;cursor:pointer}
+.mock-pitch-remove{right:-7px;border:1px solid #fff7;background:#35102e;color:#fff}
+.mock-pitch-sub{left:-7px;border:1px solid #fff7;background:#173e35;color:#baffd8}
+.mock-pitch-remove:hover{background:#d92d72}.mock-pitch-sub:hover{background:#fff000;color:#111}
+.mock-vacancy{gap:3px}
+.mock-vacancy-shirt{width:44px;height:42px;display:grid;place-items:center;margin:0 auto 4px;border:2px solid #fff000;border-radius:5px;background:#080b10;box-shadow:0 4px 8px #00150eaa}
+.mock-vacancy-shirt span{color:#fff000;font-size:9px;font-weight:1000;letter-spacing:.6px}
+.mock-vacancy .player-name{white-space:normal;line-height:1.15}
+.mock-vacancy-meta{display:flex;align-items:center;justify-content:center;gap:5px;max-width:100%;flex-wrap:wrap}
+.mock-vacancy-meta>span{color:#dce4ef;font-size:8px;font-weight:800}
+.mock-vacancy-meta button{padding:3px 5px;border:1px solid #fff000;border-radius:3px;background:#fff000;color:#111;font-size:7px;font-weight:1000;cursor:pointer}
+.mock-market-players .mock-player-row{grid-template-columns:minmax(0,1fr) 54px 28px}
+@media(max-width:700px){
+ .mock-pitchstage .pitch{height:350px;min-height:350px}
+ .mock-pitchstage .pitch-row .shirt{width:34px;height:33px}
+ .mock-pitchstage .pitch-row .player-name{font-size:8px;padding:2px 3px}
+ .mock-pitchstage .benchrow .shirt{width:29px;height:28px}
+ .mock-pitchstage .benchrow .player-name{font-size:8px;padding:2px 3px}
+ .mock-pitch-remove,.mock-pitch-sub{width:18px;height:18px;top:-6px;font-size:12px}
+}
