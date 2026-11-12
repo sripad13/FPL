@@ -69,7 +69,8 @@ function renderIdealBuilder(analytics){
    :{managerId:window.currentManagerId,squad:base,cash,pendingPosition:null,expanded:{},message:""};
   window.fplOriginalMockSquad=base.map(p=>({...p}));
  }
- const state=window.mockTransferState,pool=analytics.playerPool||window.fplPlayerPool||[];
+ const state=window.mockTransferState,pool=analytics.playerPool||window.fplPlayerPool||state.playerPool||[];
+ state.playerPool=pool;
  const positions=["GKP","DEF","MID","FWD"],labels={GKP:"Goalkeepers",DEF:"Defenders",MID:"Midfielders",FWD:"Forwards"};
  const limits={GKP:2,DEF:5,MID:5,FWD:3};
  const counts=Object.fromEntries(positions.map(pos=>[pos,state.squad.filter(p=>p.position===pos&&!p.mockVacancy).length]));
@@ -80,8 +81,8 @@ function renderIdealBuilder(analytics){
   const players=pool.filter(p=>p.position===pos&&!state.squad.some(s=>!s.mockVacancy&&s.id===p.id)&&Number(p.price||0)<=bank+.0001&&state.squad.filter(x=>!x.mockVacancy&&x.club===p.club).length<3).sort((a,b)=>Number(b.projectedPoints||0)-Number(a.projectedPoints||0));
   const shown=state.expanded[pos]?players:players.slice(0,3);
   const canAdd=state.pendingPosition===pos;
-  const disabledReason=state.pendingPosition&&state.pendingPosition!==pos?"Remove a "+state.pendingPosition+" first":!state.pendingPosition?"Remove a player from this position first":counts[pos]>=limits[pos]?"Position limit reached":state.squad.length>=15?"Squad already has 15 players":"";
-  return '<section class="mock-market-position '+(canAdd?"active":"locked")+'"><div class="mock-market-position-head"><div><b>'+labels[pos]+'</b><small>'+pos+' · '+counts[pos]+'/'+limits[pos]+'</small></div><span>'+players.length+' available</span></div><div class="mock-market-players">'+(shown.map(p=>row(p,"IN",!canAdd||counts[pos]>=limits[pos]||state.squad.length>=15||state.squad.filter(x=>x.club===p.club).length>=3||Number(p.price)>bank+.0001,disabledReason||"Unavailable under squad rules")).join("")||'<p class="mock-empty-position">No available players.</p>')+'</div>'+(players.length>3?'<button type="button" class="mock-load-more" data-mock-more="'+pos+'">'+(state.expanded[pos]?"Show fewer":"Load more "+labels[pos].toLowerCase())+'</button>':"")+'</section>';
+  const disabledReason=state.pendingPosition&&state.pendingPosition!==pos?"Remove a "+state.pendingPosition+" first":!state.pendingPosition?"Remove a player from this position first":counts[pos]>=limits[pos]?"Position limit reached":state.squad.filter(p=>!p.mockVacancy).length>=15?"Squad already has 15 players":"";
+  return '<section class="mock-market-position '+(canAdd?"active":"locked")+'"><div class="mock-market-position-head"><div><b>'+labels[pos]+'</b><small>'+pos+' · '+counts[pos]+'/'+limits[pos]+'</small></div><span>'+players.length+' available</span></div><div class="mock-market-players">'+(shown.map(p=>row(p,"IN",!canAdd||counts[pos]>=limits[pos]||state.squad.filter(x=>!x.mockVacancy).length>=15||state.squad.filter(x=>!x.mockVacancy&&x.club===p.club).length>=3||Number(p.price)>bank+.0001,disabledReason||"Unavailable under squad rules")).join("")||'<p class="mock-empty-position">No available players.</p>')+'</div>'+(players.length>3?'<button type="button" class="mock-load-more" data-mock-more="'+pos+'">'+(state.expanded[pos]?"Show fewer":"Load more "+labels[pos].toLowerCase())+'</button>':"")+'</section>';
  }).join("");
  const squad=state.squad;
  const starters=squad.filter(p=>p.mockStarter).sort((a,b)=>positions.indexOf(a.position)-positions.indexOf(b.position));
@@ -99,18 +100,18 @@ function renderIdealBuilder(analytics){
 }
 document.addEventListener("click",e=>{
  const state=window.mockTransferState;if(!state)return;
- const more=e.target.closest("[data-mock-more]");if(more){const pos=more.dataset.mockMore;state.expanded[pos]=!state.expanded[pos];renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
+ const more=e.target.closest("[data-mock-more]");if(more){const pos=more.dataset.mockMore;state.expanded[pos]=!state.expanded[pos];renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
  const out=e.target.closest("[data-mock-out]");if(out){
   const removed=state.squad.find(p=>p.id===Number(out.dataset.mockOut));if(!removed)return;
   if(state.pendingPosition){state.message="Complete the "+state.pendingPosition+" replacement before removing another player.";renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
   state.cash+=Number(removed.salePrice??removed.price??0);state.pendingPosition=removed.position;state.pendingStarter=Boolean(removed.mockStarter);state.squad=state.squad.map(p=>p.id===removed.id?{...p,mockVacancy:true}:p);state.message="Select a replacement or restore "+removed.webName+".";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:window.fplPlayerPool||[]});return;
  }
  const add=e.target.closest("[data-mock-in]");if(add){
-  const player=(window.fplPlayerPool||[]).find(p=>p.id===Number(add.dataset.mockIn));if(!player)return;
+  const player=(state.playerPool||window.fplPlayerPool||[]).find(p=>p.id===Number(add.dataset.mockIn));if(!player)return;
   if(state.pendingPosition!==player.position){state.message="Only "+state.pendingPosition+" players can be selected for this transfer.";return;}
-  const limits={GKP:2,DEF:5,MID:5,FWD:3},count=state.squad.filter(p=>p.position===player.position).length,clubCount=state.squad.filter(p=>p.club===player.club).length;
-  if(count>=limits[player.position]||state.squad.length>=15||clubCount>=3||Number(player.price)>state.cash+.0001){
-   state.message=count>=limits[player.position]?"Position limit reached":state.squad.length>=15?"Squad already has 15 players":clubCount>=3?"Maximum three players from one club":"Not enough budget";
+  const limits={GKP:2,DEF:5,MID:5,FWD:3},count=state.squad.filter(p=>p.position===player.position&&!p.mockVacancy).length,clubCount=state.squad.filter(p=>!p.mockVacancy&&p.club===player.club).length,activeCount=state.squad.filter(p=>!p.mockVacancy).length;
+  if(count>=limits[player.position]||activeCount>=15||clubCount>=3||Number(player.price)>state.cash+.0001){
+   state.message=count>=limits[player.position]?"Position limit reached":activeCount>=15?"Squad already has 15 players":clubCount>=3?"Maximum three players from one club":"Not enough budget";
    renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
   }
   const vacancy=state.squad.find(p=>p.mockVacancy&&p.position===player.position);if(!vacancy)return;state.cash-=Number(player.price);state.squad=state.squad.map(p=>p===vacancy?{...player,salePrice:Number(player.price),mockStarter:Boolean(vacancy.mockStarter),mockVacancy:false}:p);state.pendingPosition=null;state.pendingStarter=false;state.message="Transfer completed in your mock squad.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:null}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
