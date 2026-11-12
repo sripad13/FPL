@@ -2355,3 +2355,37 @@ nav a[href="/fpl-tips-transfer"].on{
  .mock-market-sidebar{position:static!important;max-height:none!important;overflow:visible!important}
  .mock-pitchstage .pitch{height:490px!important;min-height:490px!important}
 }
+
+
+/* Bottom summary bar: predicted points replaces the on-pitch count and its formation subline is omitted. */
+.mock-plan-footer{
+  display:flex;
+  align-items:center;
+  gap:22px;
+  width:100%;
+  box-sizing:border-box;
+  margin-top:18px;
+  padding:16px 18px;
+  border:1px solid #29394c;
+  border-radius:18px;
+  background:linear-gradient(110deg,#142235,#101a2a);
+  color:#f4f7fb;
+}
+.mock-plan-points{display:flex;align-items:center;gap:14px;min-width:0;margin-right:auto}
+.mock-plan-check{display:flex;align-items:center;justify-content:center;flex:0 0 42px;width:42px;height:42px;border-radius:50%;background:#087b42;color:white;font-size:27px;font-weight:800}
+.mock-plan-points>div{display:flex;align-items:baseline;gap:12px;white-space:nowrap}
+.mock-plan-points strong{font-size:18px;font-weight:750}
+.mock-plan-points b{font-size:34px;line-height:1;color:#ffe500}
+.mock-plan-value{display:flex;align-items:baseline;gap:14px;white-space:nowrap;color:#cbd5e1}
+.mock-plan-value strong{font-size:22px;color:#fff}
+.mock-plan-save{border:0;border-radius:12px;padding:15px 20px;background:#ffe500;color:#07111e;font-weight:800;font-size:15px;white-space:nowrap;cursor:pointer}
+.mock-plan-save:hover{filter:brightness(1.04)}
+@media(max-width:700px){
+ .mock-plan-footer{gap:10px;flex-wrap:wrap;padding:12px}
+ .mock-plan-points{flex:1 1 100%;margin:0}
+ .mock-plan-points strong{font-size:16px}
+ .mock-plan-points b{font-size:29px}
+ .mock-plan-value{flex:1 1 auto;font-size:12px;gap:6px}
+ .mock-plan-value strong{font-size:17px}
+ .mock-plan-save{padding:12px 14px;font-size:13px}
+}
