@@ -121,7 +121,7 @@ document.addEventListener("click",e=>{
   const first=state.squad.find(p=>p.id===Number(state.selectedPlayerId)&&!p.mockVacancy);
   if(first&&first.id!==clicked.id&&first.mockStarter!==clicked.mockStarter){
    if(first.position!==clicked.position){state.message="Select a player in the same position to make a valid FPL substitution.";state.selectedPlayerId=clicked.id;renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:state.playerPool||window.fplPlayerPool||[]});return;}
-   first.mockStarter=clicked.mockStarter;clicked.mockStarter=!first.mockStarter;
+   const firstWasStarter=first.mockStarter;first.mockStarter=clicked.mockStarter;clicked.mockStarter=firstWasStarter;
    state.message=clicked.webName+" replaces "+first.webName+" in your starting XI.";state.selectedPlayerId=clicked.id;
    localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition,pendingStarter:state.pendingStarter}));
   }else{
