@@ -62,8 +62,8 @@ function renderIdealBuilder(analytics){
  if(!initial.length){document.querySelector("#idealxi").textContent="Mock squad unavailable";return;}
  if(!window.mockTransferState||window.mockTransferState.managerId!==window.currentManagerId){
   const squad=initial.map(p=>({...p}));
-  const budget=squad.reduce((n,p)=>n+Number(p.price||0),0)+Number(window.currentManagerBank||0);
-  window.mockTransferState={managerId:window.currentManagerId,squad,budget,search:"",position:"ALL",sort:"points",modal:false};
+  const cash=Number(window.currentManagerBank||0);
+  window.mockTransferState={managerId:window.currentManagerId,squad,cash,search:"",position:"ALL",sort:"points",modal:false};
  }
  const state=window.mockTransferState,pool=analytics.playerPool||[];
  const positions=["GKP","DEF","MID","FWD"],limits={GKP:2,DEF:5,MID:5,FWD:3};
@@ -82,16 +82,16 @@ document.addEventListener("click",e=>{
  if(e.target.closest("[data-mock-open]")){state.modal=true;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});document.querySelector("#mock-player-search")?.focus();return;}
  if(e.target.closest("[data-mock-close]")){state.modal=false;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
  const pos=e.target.closest("[data-mock-position]");if(pos){state.position=pos.dataset.mockPosition;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
- const out=e.target.closest("[data-mock-out]");if(out){state.squad=state.squad.filter(p=>p.id!==Number(out.dataset.mockOut));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
+ const out=e.target.closest("[data-mock-out]");if(out){const removed=state.squad.find(p=>p.id===Number(out.dataset.mockOut));if(removed)state.cash+=Number(removed.salePrice??removed.price??0);state.squad=state.squad.filter(p=>p.id!==Number(out.dataset.mockOut));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
  const add=e.target.closest("[data-mock-in]");if(add){
   const player=(window.fplPlayerPool||[]).find(p=>p.id===Number(add.dataset.mockIn));if(!player)return;
   const limits={GKP:2,DEF:5,MID:5,FWD:3},count=state.squad.filter(p=>p.position===player.position).length;
   const clubCount=state.squad.filter(p=>p.club===player.club).length;
-  const spent=state.squad.reduce((n,p)=>n+Number(p.price||0),0),bank=state.budget-spent;
+  const bank=state.cash;
   if(state.squad.length>=15||count>=limits[player.position]||clubCount>=3||Number(player.price)>bank+0.0001){return;}
-  state.squad.push({...player});state.modal=false;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
+  state.cash-=Number(player.price);state.squad.push({...player,salePrice:Number(player.price)});state.modal=false;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
  }
- if(e.target.closest("[data-mock-reset]")){const base=window.fplOriginalMockSquad||[];state.squad=base.map(p=>({...p}));state.modal=false;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});}
+ if(e.target.closest("[data-mock-reset]")){const base=window.fplOriginalMockSquad||[];state.squad=base.map(p=>({...p}));state.cash=Number(window.currentManagerBank||0);state.modal=false;renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});}
 });
 document.addEventListener("input",e=>{if(e.target.id==="mock-player-search"&&window.mockTransferState){window.mockTransferState.search=e.target.value;const pos=window.mockTransferState.position,sort=window.mockTransferState.sort;renderIdealBuilder({idealXI:window.mockTransferState.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});const input=document.querySelector("#mock-player-search");if(input){input.focus();input.setSelectionRange(input.value.length,input.value.length);}}});
 document.addEventListener("change",e=>{if(e.target.id==="mock-player-sort"&&window.mockTransferState){window.mockTransferState.sort=e.target.value;renderIdealBuilder({idealXI:window.mockTransferState.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});}});
