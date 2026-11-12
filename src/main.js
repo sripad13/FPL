@@ -86,7 +86,9 @@ function renderIdealBuilder(analytics){
  const squad=state.squad;
  const starters=squad.filter(p=>p.mockStarter).sort((a,b)=>positions.indexOf(a.position)-positions.indexOf(b.position));
  const bench=squad.filter(p=>!p.mockStarter).sort((a,b)=>positions.indexOf(a.position)-positions.indexOf(b.position));
- const pitch='<div class="pitchstage mock-pitchstage"><div class="pitch"><div class="markings"><i></i><b></b><em></em></div><div class="starting">'+idealPitchRows(starters)+'</div></div><div class="bench bench-dugout"><small>SUBSTITUTES</small><div class="benchrow">'+bench.map(p=>'<div class="player"><div class="shirt-wrap">'+shirt(p)+'</div><div class="player-name">'+esc(p.webName)+'</div><div class="opponent">'+esc(p.club)+'</div></div>').join("")+'</div></div></div>';
+ const pitchPlayer=p=>'<div class="player mock-pitch-player"><button type="button" class="mock-pitch-remove" data-mock-out="'+p.id+'" aria-label="Remove '+esc(p.webName)+'">×</button><div class="shirt-wrap">'+shirt(p)+'</div><div class="player-name">'+esc(p.webName)+'</div><div class="opponent">'+esc(p.club)+'</div></div>';
+ const pitchRows=positions.map(pos=>{const group=starters.filter(p=>p.position===pos);return group.length?'<div class="pitch-row position-'+({GKP:"gk",DEF:"def",MID:"mid",FWD:"fwd"}[pos])+'"><span class="position-label">'+pos+'</span><div class="position-players">'+group.map(pitchPlayer).join("")+'</div></div>':""}).join("");
+ const pitch='<div class="pitchstage mock-pitchstage"><div class="pitch"><div class="markings"><i></i><b></b><em></em></div><div class="starting">'+pitchRows+'</div></div><div class="bench bench-dugout"><small>SUBSTITUTES</small><div class="benchrow">'+bench.map(pitchPlayer).join("")+'</div></div></div>';
  const squadRows=positions.map(pos=>'<section class="mock-position-group"><div class="mock-position-heading"><b>'+labels[pos]+'</b><span>'+counts[pos]+'/'+limits[pos]+'</span></div>'+(squad.filter(p=>p.position===pos).map(p=>row(p,"OUT")).join("")||'<p class="mock-empty-position">No '+labels[pos].toLowerCase()+' selected</p>')+'</section>').join("");
  document.querySelector("#idealxi").innerHTML=(state.message?'<p class="mock-feedback" role="status">'+esc(state.message)+'</p>':'')+
  '<div class="mock-summary"><div><small>PREDICTED POINTS</small><strong>'+Math.round(projected)+' <em>pts</em></strong></div><div><small>REMAINING BUDGET</small><strong>£'+bank.toFixed(1)+'m</strong></div><button type="button" class="mock-reset" data-mock-reset>RESET MOCK SQUAD</button></div>'+
@@ -99,7 +101,7 @@ document.addEventListener("click",e=>{
  const out=e.target.closest("[data-mock-out]");if(out){
   const removed=state.squad.find(p=>p.id===Number(out.dataset.mockOut));if(!removed)return;
   if(state.pendingPosition){state.message="Complete the "+state.pendingPosition+" replacement before removing another player.";renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;}
-  state.cash+=Number(removed.salePrice??removed.price??0);state.pendingPosition=removed.position;state.squad=state.squad.filter(p=>p.id!==Number(out.dataset.mockOut));state.message="Select one "+removed.position+" to complete this transfer.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
+  state.cash+=Number(removed.salePrice??removed.price??0);state.pendingPosition=removed.position;state.pendingStarter=Boolean(removed.mockStarter);state.squad=state.squad.filter(p=>p.id!==Number(out.dataset.mockOut));state.message="Select one "+removed.position+" to complete this transfer.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:state.pendingPosition}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
  }
  const add=e.target.closest("[data-mock-in]");if(add){
   const player=(window.fplPlayerPool||[]).find(p=>p.id===Number(add.dataset.mockIn));if(!player)return;
@@ -109,10 +111,10 @@ document.addEventListener("click",e=>{
    state.message=count>=limits[player.position]?"Position limit reached":state.squad.length>=15?"Squad already has 15 players":clubCount>=3?"Maximum three players from one club":"Not enough budget";
    renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
   }
-  state.cash-=Number(player.price);state.squad.push({...player,salePrice:Number(player.price),mockStarter:false});state.pendingPosition=null;state.message="Transfer completed in your mock squad.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:null}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
+  state.cash-=Number(player.price);state.squad.push({...player,salePrice:Number(player.price),mockStarter:Boolean(state.pendingStarter)});state.pendingPosition=null;state.pendingStarter=false;state.message="Transfer completed in your mock squad.";localStorage.setItem("tsz-mock-"+state.managerId,JSON.stringify({squad:state.squad,cash:state.cash,pendingPosition:null}));renderIdealBuilder({idealXI:state.squad,idealBench:[],playerPool:window.fplPlayerPool||[]});return;
  }
  if(e.target.closest("[data-mock-reset]")){
-  state.squad=(window.fplOriginalMockSquad||[]).map(p=>({...p}));state.cash=Number(window.currentManagerBank||0);state.pendingPosition=null;state.expanded={};state.message="";localStorage.removeItem("tsz-mock-"+state.managerId);renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:window.fplPlayerPool||[]});
+  state.squad=(window.fplOriginalMockSquad||[]).map(p=>({...p}));state.cash=Number(window.currentManagerBank||0);state.pendingPosition=null;state.pendingStarter=false;state.expanded={};state.message="";localStorage.removeItem("tsz-mock-"+state.managerId);renderIdealBuilder({idealXI:state.squad.filter(p=>p.mockStarter),idealBench:state.squad.filter(p=>!p.mockStarter),playerPool:window.fplPlayerPool||[]});
  }
 });
 
