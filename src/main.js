@@ -65,7 +65,7 @@ function renderIdealBuilder(analytics){
   const cash=Number(window.currentManagerBank||0);
   let saved=null;try{saved=JSON.parse(localStorage.getItem("tsz-mock-"+window.currentManagerId)||"null");}catch{}
   window.mockTransferState=saved&&Array.isArray(saved.squad)&&Number.isFinite(Number(saved.cash))
-   ?{managerId:window.currentManagerId,squad:saved.squad.map(p=>({...p,mockStarter:initial.slice(0,(analytics.idealXI||[]).length).some(x=>x.id===p.id)})),cash:Number(saved.cash),pendingPosition:saved.pendingPosition||null,pendingStarter:Boolean(saved.pendingStarter),expanded:{},message:""}
+   ?{managerId:window.currentManagerId,squad:saved.squad.map(p=>({...p,mockStarter:p.mockStarter??initial.slice(0,(analytics.idealXI||[]).length).some(x=>x.id===p.id)})),cash:Number(saved.cash),pendingPosition:saved.pendingPosition||null,pendingStarter:Boolean(saved.pendingStarter),expanded:{},message:""}
    :{managerId:window.currentManagerId,squad:base,cash,pendingPosition:null,expanded:{},message:""};
   window.fplOriginalMockSquad=base.map(p=>({...p}));
  }
