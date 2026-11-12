@@ -2409,3 +2409,12 @@ nav a[href="/fpl-tips-transfer"].on{
 .mock-pitch-player[data-mock-select]{cursor:pointer}
 .mock-pitch-player[data-mock-select]:hover{filter:drop-shadow(0 0 7px #ffe500)}
 @media(max-width:900px){.mock-transfer-workspace{grid-template-columns:1fr!important}.mock-change-panel{position:static}}
+
+
+/* Paired selection: make the first selected player unmistakable; no one-click promotion control. */
+.mock-pitch-player[data-mock-select]{cursor:pointer;transition:filter .15s ease,transform .15s ease}
+.mock-pitch-player.is-selected{filter:drop-shadow(0 0 8px #ffe500) drop-shadow(0 0 3px #ffe500);transform:scale(1.035);z-index:5}
+.mock-change-panel .mock-change-instruction{padding:13px 14px;border:1px solid #3a4b61;border-radius:10px;background:#0d1b2d;color:#d8e2ef;line-height:1.5}
+.mock-market-position.active .mock-market-position-head>span{color:#ffe500;font-weight:800}
+.mock-market-position.active .mock-player-row{margin:8px 0}
+.mock-pitch-sub{display:none!important}
